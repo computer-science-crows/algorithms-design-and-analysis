@@ -1,13 +1,12 @@
-import random 
 import numpy as np
 #import sys
 #sys.path.append('..')
 from solutions.backtrack_solution import backtrack_solution
 
 
-def generator(n,k,p, samples=1):
+def generator(n, k, p, samples=1):
 
-    i=0
+    i = 0
 
     while i < samples:  
     
