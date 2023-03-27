@@ -1,16 +1,30 @@
 import numpy as np
-import random
-
-import src.solutions
+#import sys
+#sys.path.append('..')
+from solutions.backtrack_solution import backtrack_solution
 
 
 def generator(n, k, p, samples=1):
 
     i = 0
 
-    while i < samples:
+    while i < samples:  
+    
+        a=[random.randint(0,10) for i in range(n)]    
+        s= np.random.randint(low=0,high=10,size=(n,p+k))
+        solution = backtrack_solution(n,p,k,a,s)
+        i+=1
+        
 
-        a = [random.random() for i in range(n)]
-        s = np.random.rand(n, p+k)
-        solution = backtrack_solution(n, p, k, a, s)
-        print(solution)
+        return n,k,p,a,s, solution
+
+        
+
+
+
+
+   
+    
+
+    
+
