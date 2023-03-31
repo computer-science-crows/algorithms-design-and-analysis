@@ -3,7 +3,7 @@ from solutions.backtrack_solution import backtrack_solution
 from solutions.dynamic_solution import dynamic_solution
 import numpy as np
 
-n,p,k,a,s, sol= generator(3,2,1)
+n,p,k,a,s, sol= generator(4,2,1)
 s_dynamic = np.negative(s)
 
 print(f'n: {n}')
