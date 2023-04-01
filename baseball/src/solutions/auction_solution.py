@@ -8,3 +8,5 @@ def auction_solution(n,m,a,s):
     e = 1/(n-1)
 
     random_assigment = np.arange(0,m)
+
+def backtrack_solution()
