@@ -2,15 +2,7 @@ import json
 import os
 import time
 from colored import fore, back, style
-
-cwd = os.getcwd()
-cwd += "/baseball/json"
-# print(cwd)
-
-t = [{"n": 2, "p": 3, "k": 6, "a": 9, "s": 4, "optimal_solution": 10},
-     {"n": 1, "p": 3, "k": 6, "a": 9, "s": 4, "optimal_solution": 19}]
-with open(cwd+"/test_cases.json", "w") as write_it:
-    json.dump(t, write_it)
+from tools import save_data
 
 
 def function1(n, p, k, a, s):
@@ -22,15 +14,25 @@ def function2(n, p, k, a, s):
 
 
 def tester(function):
+    cwd = os.getcwd()
+    cwd += "/baseball/json"
+
+    # gets test cases from json
     test_cases = {}
     with open(cwd+"/test_cases.json", "r") as read_it:
         test_cases = json.load(read_it)
 
+    # deletes previous tests for this function
+    with open(cwd+f"/tests/{function.__name__}.json", "w") as write_it:
+        json.dump([], write_it)
+
+    # prints function test in console
     print(style.BOLD + f"Testing {function.__name__}" + style.RESET)
     print("-------------------------------------------")
 
+    # for each test case calls the function with the specified parameters, times it and checks if the solution matches the
+    # optimal one obtained previously using backtrack. These results are saved in a json file
     for index, tc in enumerate(test_cases):
-        # print(tc)
         testing_data = {}
 
         start = time.time()
@@ -44,24 +46,9 @@ def tester(function):
         if testing_data["f_result"] == tc["optimal_solution"]:
             testing_data["matches"] = True
 
-        # print(testing_data)
+        save_data(testing_data, f"/tests/{function.__name__}.json")
 
-        try:
-            prev_testing_data = []
-            with open(cwd+f"/tests/{function.__name__}.json", "r") as read_it:
-                prev_testing_data.append(json.load(read_it))
-
-            if prev_testing_data[0] == None:
-                prev_testing_data = testing_data
-            else:
-                prev_testing_data.append(testing_data)
-
-            with open(cwd+f"/tests/{function.__name__}.json", "w") as write_it:
-                json.dump(prev_testing_data, write_it)
-        except:
-            with open(cwd+f"/tests/{function.__name__}.json", "w") as write_it:
-                json.dump(testing_data, write_it)
-
+        # prints test results
         print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
               "FAILED" + style.RESET if testing_data['matches'] == False else f"Test case #{index + 1} -> " + back.GREEN + style.BOLD +
               "SUCCESS" + style.RESET)
@@ -71,3 +58,4 @@ def tester(function):
 
 
 tester(function1)
+tester(function2)
