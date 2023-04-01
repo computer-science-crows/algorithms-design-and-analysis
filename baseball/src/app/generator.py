@@ -35,19 +35,3 @@ def generator(n=None, k=None, p=None, samples=1):
 
 
 print(generator())
-
-
-# save_test_case(1, 2, 3, 4, 5, 6)
-# def save_input(n,k,p,a,s,backtrack_sol):
-#
-#    cwd = os.getcwd()
-#    cwd += "/baseball/json"
-#
-#
-#    test_cases = {}
-#
-#    with open(cwd+"/test_cases.json", "r") as read_it:
-#        test_cases = json.load(read_it)
-#
-#    with open(cwd+"/test_cases.json", "w") as write_it:
-#            json.dump(t, write_it)

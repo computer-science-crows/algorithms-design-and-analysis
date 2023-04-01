@@ -23,5 +23,14 @@ def save_data(data: dict, path: str):
             json.dump(save, write_it)
 
 
-def Memoize():
-    pass
+def Memoize(f):
+    dict = {}
+
+    def memoized_function(*args):
+        if args in dict:
+            return dict[args]
+        else:
+            result = f(*args)
+            dict[args] = result
+            return result
+    return memoized_function
