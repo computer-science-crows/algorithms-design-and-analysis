@@ -1,31 +1,27 @@
 import numpy as np
 
-def unbalanced_assignment(cost_matrix):
-    n, m = cost_matrix.shape
-    max_dim = max(n, m)
-    # Pad the cost matrix with zeros to make it square
-    C = np.zeros((max_dim, max_dim))
-    C[:n, :m] = cost_matrix
+def dynamic_solution(n,m,a,s):
 
-    print(C)
-    
-    # Initialize the state array
-    M = np.full((max_dim, max_dim), np.inf)
-    M[0, 0] = 0
-    
-    # Compute the minimum cost for each pair (i, j)
-    for i in range(1, max_dim):
-        for j in range(1, max_dim):
-            min_case_a = C[i-1, j-1] + M[i-1, j-1]
-            min_case_b = M[i, j-1]
-            M[i, j] = min(M[i, j], min_case_a, min_case_b)
+    p = max(m,n)
 
-        print(M)
-    
-    # Return the optimal solution
-    return M[n, m]
+    dp = np.full((1<<(p+1),p),np.inf)
+    cost = np.zeros((p+1,p))
+    cost[:n,:m]=s
 
+    for i in range(p):
+        dp[1<<i][i] = 0
 
-def dynamic_solution(n,p,k,a,s):
+    for mask in range(1<<p):
+        print(mask)
+        print(dp)
+        for i in range(p):
+            print(dp[mask][i])
+            if dp[mask][i] is float('inf'):
+                continue
+            for j in range(p):
+                if mask and (1<<j) != 0:
+                    continue
+                dp[mask | (1<<j)][j]=min(dp[mask | (1<<j)][j],dp[mask][i]+cost[i][j])
     
-    return unbalanced_assignment(s)
+    return dp[n][m]
+
