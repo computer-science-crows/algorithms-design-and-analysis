@@ -7,12 +7,12 @@ def backtrack_solution(n,k,p,a,s):
     best_positions = [0 for i in range(p+k)]
     answer = []
 
-    aux_backtract_solution(0,candidates,0,a,s, answer, p+k)
+    aux_backtract_solution(0,candidates,positions,0,a,s, answer, p+k)
 
     return max(answer)
 
 @vs(node_properties_kwargs={"shape":"record", "color":"#f57542", "style":"filled", "fillcolor":"grey"})
-def aux_backtract_solution(max,candidates, count, a, s, answer,m):
+def aux_backtract_solution(max,candidates,position, count, a, s, answer,m):
     
     if count == m:
         answer.append(max)
@@ -36,7 +36,10 @@ def aux_backtract_solution(max,candidates, count, a, s, answer,m):
     for j in range(len(candidates)):
         if not candidates[j]:            
             candidates[j]=True
-            aux_backtract_solution(max + s[j][count], candidates, count + 1, a, s, answer,m)
+            temp = position[count]
+            position[count] = j
+            aux_backtract_solution(max + s[j][count] + a[j],candidates,position, count + 1, a, s, answer,m)
+            position[count] = temp
             candidates[j]=False
 
     
