@@ -14,7 +14,7 @@ def generator(n, k, p, samples=1):
         a=[random.randint(0,10) for i in range(n)]    
         s= np.random.randint(low=0,high=10,size=(n,p+k))
         solution = backtrack_solution(n,p,k,a,s)
-        vs.make_animation("backtrack_solution.gif", delay=2)
+        #vs.make_animation("backtrack_solution.gif", delay=2)
         i+=1
 
         #save_input(n,k,p,a,s,solution)  

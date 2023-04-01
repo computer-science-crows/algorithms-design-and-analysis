@@ -38,7 +38,7 @@ def aux_backtract_solution(max,candidates,position, count, a, s, answer,m):
             candidates[j]=True
             temp = position[count]
             position[count] = j
-            aux_backtract_solution(max + s[j][count],candidates,position, count + 1, a, s, answer,m)
+            aux_backtract_solution(max + s[j][count] + a[j],candidates,position, count + 1, a, s, answer,m)
             position[count] = temp
             candidates[j]=False
 
