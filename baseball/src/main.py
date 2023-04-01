@@ -1,6 +1,7 @@
 from app.generator import generator
 from solutions.backtrack_solution import backtrack_solution
 from solutions.dynamic_solution import dynamic_solution
+from solutions.simplex_solution import simplex_solution
 import numpy as np
 
 n,p,k,a,s, sol= generator(6,2,1)
@@ -13,8 +14,10 @@ print(f'a: {a}')
 print(f's: {s}')
 print(f'solution: {sol}')
 
-#dynamic_sol = dynamic_solution(n,p,k,a,s_dynamic)
+#simplex_solution(n,p+k,s,a)
 
-#print(f'dynamic solution: {dynamic_sol}')
+dynamic_sol = dynamic_solution(n,p+k,a,s_dynamic)
+
+print(f'dynamic solution: {dynamic_sol}')
 
 
