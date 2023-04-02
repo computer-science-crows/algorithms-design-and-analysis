@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 from networkx.algorithms import bipartite
 from math import inf
 
-# builds the corresponding complete weighted bipartite graph
-
 
 def build_graph(n, m, a, s):
+    """
+        builds the corresponding complete weighted bipartite graph
+    """
+
     G = nx.complete_bipartite_graph(n, m)
     left, right = nx.bipartite.sets(G)
 
@@ -29,6 +31,10 @@ def build_graph(n, m, a, s):
 
 
 def default_vertex_labeling(G: nx.Graph):
+    """
+        Initializes h values of G with the default vertex labeling
+    """
+
     left, right = nx.bipartite.sets(G)
 
     for node in left if len(left) <= len(right) else right:
@@ -45,6 +51,10 @@ def default_vertex_labeling(G: nx.Graph):
 
 
 def build_equality_subgraph(G: nx.Graph):
+    """
+        builds the corresponding equality subgraph G_h
+    """
+
     left, right = nx.bipartite.sets(G)
 
     G_h = nx.Graph()
@@ -65,6 +75,10 @@ def build_equality_subgraph(G: nx.Graph):
 
 
 def initial_greedy_bipartite_matching(G_h: nx.Graph):
+    """
+        gets the initial matching of G_h using greedy tecniche
+    """
+
     left = []
     right = []
     for node in G_h:
@@ -72,12 +86,6 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
             left.append(node)
         else:
             right.append(node)
-
-    print(left)
-
-    print(right)
-
-    # left, right = nx.bipartite.sets(G_h)
 
     M = nx.Graph()
 
@@ -88,8 +96,6 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
             if neighbour not in M.nodes() and G_h[node][neighbour]['weight'] > max_weight:
                 max_weight = G_h[node][neighbour]['weight']
                 max_neighbour = neighbour
-
-        print(node)
 
         if max_weight > -inf:
             G_h.nodes[node]['matched'] = True
@@ -114,7 +120,7 @@ def hungarian_solution(n, m, a, s):
     G = build_graph(n, m, a, s)
     default_vertex_labeling(G)
     G_h = build_equality_subgraph(G)
-    initial_greedy_bipartite_matching(G_h)
+    M = initial_greedy_bipartite_matching(G_h)
     pass
 
 
