@@ -130,6 +130,7 @@
 \newcommand{\mgccapt}[1]{\texttt{\_\_#1\_\_}}
 
 \newtheorem{thm}{Teorema}
+\newtheorem{mydef}{Definici\'on}
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
 
@@ -158,27 +159,53 @@
 	\begin{center}
 		\href{https://github.com/computer-science-crows/algorithms-design-and-analysis}{https://github.com/computer-science-crows/algorithms-design-and-analysis}
 	\end{center}
+
 	\section{Definici\'on inicial del problema} 
 	
-	\section{Preliminares}
-	
-	\subsection{Grafo bipartito}
-	
-	\subsection{Grafo bipartito completo}
-	
-	\subsection{Emparejamiento}
-	Para un grafo no dirigido $G = (V,E)$, un emparejamiento es un subconjunto de aristas $M \in E$ tal que cada v\'ertice en $V$ tiene al menos una a arista incidente en $M$.
-	
-	\subsection{Otras definiciones}
-	
-	\subsection{Camino M-alternativo}
-	
-	\subsection{Camino M-aumentativo}
+	Para un campeonato de pelota, el manager debe elegir de un conjunto de $ n $ personas, a su equipo de $ p $ jugadores, y a $ k $ espectadores especiales para que suban la moral del equipo.
+	De cada persona $ i $, el manager conoce el valor que aporta a la moral del equipo $ a_i $ y el valor que aporta siendo situado en la posici\'on $ j $, $ s_{i,j} $. 
+	Determine una alineación entre jugadores en el campo y espectadores de forma que el equipo tenga la mayor cantidad de valor acumulado posible.
 	
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
 	
-	\section{Soluci\'on emparejamiento de costo m\'aximo en el grafo bipartito}
+	\subsection{Preliminares}
 	
+	\begin{mydef}
+		Grafo bipartito
+	\end{mydef}
+	
+	\begin{mydef}
+		Grafo bipartito completo
+	\end{mydef}
+	
+	\begin{mydef}
+		Para un grafo no dirigido $G = (V,E)$, un emparejamiento es un subconjunto de aristas $M \in E$ tal que cada v\'ertice en $V$ tiene al menos una a arista incidente en $M$.
+	\end{mydef}
+
+	\begin{mydef}
+		Otras definiciones
+	\end{mydef}
+
+	\begin{mydef}
+		Camino M-alternativo
+	\end{mydef}
+	
+	\begin{mydef}
+		Camino M-aumentativo
+	\end{mydef}
+	
+	\subsection{Problema de asignaci\'on}
+	
+	\section{Posibles soluciones investigadas}
+	
+	\section{L\'inea de pensamiento}
+	\subsection{Max flow min cut para mayor emparejamiento}
+	No maximiza segun costos de aristas
+	
+	Se decidio implementar el Hungarian \todo{referencia al introduction} por ser la solucion existente que resuelve lo pensado. 
+	
+	
+	\section{Hungarian algorithm}
 	Dado un grafo bipartito completo ponderado $G = (V,E)$, donde $V = L \cup R$. Se asume que los v\'ertices de los conjuntos $L$ y $R$ contienen $n$ v\'ertice cada uno, por tanto el grafo contiene $n^2$ aristas. Para $l \in L$ y $r \in R$, se denota el peso de la arista $(l,r)$ como $w(l,r)$, lo cual representa ganancia de emparejar el v\'ertice $l$ con el v\'ertice $r$.
 	
 	El objetivo es encontrar el emparejamiento perfecto $M*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles. 
@@ -230,10 +257,6 @@
 		\end{equation}
 		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
 	\end{proof}
-
-
-	
-	
 	
 	\subsection{Correctitud}
 	
@@ -241,14 +264,21 @@
 	
 	\subsection{Complejidad Espacial}
 	
-	\section{Otras soluciones y demostraciones}
-	
 	\section{Generador de casos de prueba}
 	
 	\section{Tester}
 	
+	\section{Otras soluciones y demostraciones}
+	
 	\section{Comparaci\'on de soluciones implementadas}
-
+	
+	\begin{thebibliography}
+		a
+		\bibitem{introduction} Cormen, Thomas H. y otros. \emph{Introduction to Algorithms}. 
+		The MIT Press.
+		4ta Edici\'on.
+		2022.
+	\end{thebibliography}
 \end{document}
 
 
