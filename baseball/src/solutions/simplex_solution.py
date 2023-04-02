@@ -1,5 +1,6 @@
 #from scipy.optimize import linprog
 
+
 def simplex_solution(n,m,a,s):
 
     objective_function = [s[i][j]+ a[i] for i in range(n) for j in range(m)]

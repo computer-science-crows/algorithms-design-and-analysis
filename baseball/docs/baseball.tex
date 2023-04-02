@@ -68,6 +68,8 @@
 
 \usepackage{amsmath}
 
+
+
 % Keywords command
 \providecommand{\keywords}[1]
 {
@@ -110,10 +112,12 @@
 	\item\relax}
 {\endlist}
 
-
+\usepackage{amsthm}
+\usepackage{amssymb}
 \usepackage{todonotes} % \TODO
 \usepackage{listings} % Code listings
 \usepackage{xcolor}
+
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
 \newcommand{\csl}[1]{\colorbox{backcolour}{\texttt{#1}}}
@@ -123,6 +127,10 @@
 \newcommand{\mgc}[2][]{\colorbox{backcolour}{\texttt{\_\_#2\_\_#1}}}
 
 \newcommand{\mgccapt}[1]{\texttt{\_\_#1\_\_}}
+
+\newtheorem{thm}{Teorema}
+
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
 
 % Hyperlinks configurations
 \hypersetup{
@@ -158,6 +166,7 @@
 	\subsection{Grafo bipartito completo}
 	
 	\subsection{Emparejamiento}
+	Para un grafo no dirigido $G = (V,E)$, un emparejamiento es un subconjunto de aristas $M \in E$ tal que cada v\'ertice en $V$ tiene al menos una a arista incidente en $M$.
 	
 	\subsection{Otras definiciones}
 	
@@ -168,6 +177,62 @@
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
 	
 	\section{Soluci\'on emparejamiento de costo m\'aximo en el grafo bipartito}
+	
+	Dado un grafo bipartito completo ponderado $G = (V,E)$, donde $V = L \cup R$. Se asume que los v\'ertices de los conjuntos $L$ y $R$ contienen $n$ v\'ertice cada uno, por tanto el grafo contiene $n^2$ aristas. Para $l \in L$ y $r \in R$, se denota el peso de la arista $(l,r)$ como $w(l,r)$, lo cual representa ganancia de emparejar el v\'ertice $l$ con el v\'ertice $r$.
+	
+	El objetivo es encontrar el emparejamiento perfecto $M*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles. 
+	
+	Sea $w(M) = \sum_{(l,r) \in M} w(l,r)$ el peso total de las aristas en el emparejamiento $M$, se quiere encontrar el emparejamiento perfecto $M^*$ tal que,
+	\[w(M*)=\text{max}\{w(M):M \text{ es un emparejamiento perfecto}\}\].
+	
+	A encontrar un emparejamiento perfecto de peso m\'aximo se le llama \textbf{problema de asignaci\'on}. Una soluci\'on del problema de asignaci\'on es un emparejamiento perfecto que m\'aximice el costo total.
+	
+	Aunque se pueden enumerar los $n!$ emparejamientos perfectos pra resolver este problema, existe un algoritmo llamado \textbf{algoritmo H\'ungaro} que lo resuelve m\'as r\'apido. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad cambia en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on.
+	
+	El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. 
+	
+	Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$.
+	
+	Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
+	\begin{align}
+		l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
+		r.h &= 0 &\text{para todo } r \in R 
+	\end{align}
+
+	Dado un eqiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
+	
+	\begin{thm}
+		
+		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$.
+		
+	\end{thm}
+
+	\begin{proof}
+		Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
+		
+		\begin{align}
+			w(M*) &= \sum_{(l,r) \in M*} w(l,r)\\
+			&= \sum_{(l,r) \in M^*}(l.h + r.h) &\text{(porque todas las aristas de $M^*$ pertenecen a $G_h$)}\\
+			&= \sum_{l \in L}l.h + \sum_{r \in R} r.h &\text{(porque $M^{*}$ es un emparejamiento perfecto)}\\
+		\end{align} 
+		
+		Sea $M$ un emparejamiento perfecto cualquiera de $G$, se tiene
+		
+		\begin{align}
+			w(M) &= \sum_{(l,r) \in M} w(l,r)\\
+			&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertice factible)}\\
+			&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
+		\end{align}
+		Entonces se tiene
+		\begin{equation}
+			w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
+		\end{equation}
+		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
+	\end{proof}
+
+
+	
+	
 	
 	\subsection{Correctitud}
 	

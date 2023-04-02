@@ -112,7 +112,67 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
     return M
 
 
-def exists_M_augmentating_path():
+def exists_M_augmentating_path(G_M_h: nx.Graph):
+    Q = [] # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
+    F_l = set()
+    F_r = set()
+    d={}
+    
+    left, right = nx.bipartite.sets(G_M_h)
+
+    for node in left:
+        if not G_M_h.nodes[node]['matched']:
+            d[node]= None
+            Q.append(node)
+            F_l.add(node)
+
+            if not Q:
+                delta = search_min(F_l)
+                for l in F_l:
+                    G_M_h.nodes[l]['h'] = G_M_h.nodes[l]['h'] - delta
+                for r in F_r:
+                    G_M_h.nodes[r]['h'] = G_M_h.nodes[r]['h'] + delta
+
+                G_M_h, new_edges = modify_graph()
+
+                for (l,r) in new_edges:
+                    if r not in F_r:
+                        d[r] = l
+                        if G_M_h[r]['matches']:
+                            break
+                        else:
+                            Q.append(r)
+                            F_r.add(r)
+        u = Q.pop()
+        for v in  G_M_h.neighbors(u):
+            if v in left:
+                d[v]=u
+                F_l.add(v)
+                Q.append(v)
+            elif v not in F_r:
+                d[v] = u
+                if G_M_h[v]['matched']:
+                    break
+                else:
+                    Q.append(v)
+                    F_r.add(v)
+
+    P = construct_augmentative_path(d)
+
+    return P
+
+
+                
+
+# O(n)
+def search_min(F_l, R_F_r):
+    pass
+
+# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
+def modify_graph():
+    pass
+
+def construct_augmentative_path(d):
     pass
 
 
