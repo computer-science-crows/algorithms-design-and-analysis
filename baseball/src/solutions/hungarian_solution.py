@@ -16,7 +16,7 @@ def build_graph(n, m, a, s):
     artificial_nodes = [m + n + i if n > m else n + i for i in range(abs(n-m))]
 
     for _, (u, v) in enumerate(G.edges()):
-        if v if n > m else u in artificial_nodes:
+        if v in artificial_nodes if n > m else u in artificial_nodes:
             G[u][v]['weight'] = -inf
         else:
             G[u][v]['weight'] = a[u] + s[u][v - n]
@@ -43,7 +43,7 @@ def default_vertex_labeling(G: nx.Graph):
 
     left, right = nx.bipartite.sets(G)
 
-    for node in left if len(left) <= len(right) else right:
+    for node in left:
         max_weight = -inf
         # max_neighbour = 0
         for neighbour in G.neighbors(node):
@@ -74,8 +74,8 @@ def build_equality_subgraph(G: nx.Graph):
         if G.nodes[l]['h'] + G.nodes[r]['h'] == w:
             G_h.add_weighted_edges_from([(l, r, w)])
 
-    print(G_h.nodes())
-    print(G_h.edges())
+    # print(G_h.nodes())
+    # print(G_h.edges())
 
     return G_h
 
@@ -147,23 +147,23 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
             Q.append(node)
             F_l.add(node)
 
-            if not Q:
-                delta = search_min(F_l)
-                for l in F_l:
-                    G_M_h.nodes[l]['h'] = G_M_h.nodes[l]['h'] - delta
-                for r in F_r:
-                    G_M_h.nodes[r]['h'] = G_M_h.nodes[r]['h'] + delta
+            # if not Q:
+            #     delta = search_min(F_l)
+            #     for l in F_l:
+            #         G_M_h.nodes[l]['h'] = G_M_h.nodes[l]['h'] - delta
+            #     for r in F_r:
+            #         G_M_h.nodes[r]['h'] = G_M_h.nodes[r]['h'] + delta
 
-                G_M_h, new_edges = modify_graph()
+            #     G_M_h, new_edges = modify_graph()
 
-                for (l, r) in new_edges:
-                    if r not in F_r:
-                        d[r] = l
-                        if G_M_h[r]['matches']:
-                            break
-                        else:
-                            Q.append(r)
-                            F_r.add(r)
+            #     for (l, r) in new_edges:
+            #         if r not in F_r:
+            #             d[r] = l
+            #             if G_M_h[r]['matches']:
+            #                 break
+            #             else:
+            #                 Q.append(r)
+            #                 F_r.add(r)
         u = Q.pop()
         for v in G_M_h.neighbors(u):
             if v in left:
@@ -188,8 +188,8 @@ def hungarian_solution(n, m, a, s):
     default_vertex_labeling(G)
     G_h = build_equality_subgraph(G)
     M = initial_greedy_bipartite_matching(G_h)
-    pass
+    # pass
 
 
-# hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
-#    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])
+hungarian_solution(5, 4, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
+    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])
