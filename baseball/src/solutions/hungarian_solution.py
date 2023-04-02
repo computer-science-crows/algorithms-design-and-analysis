@@ -27,6 +27,21 @@ def build_graph(n, m, a, s):
 
     return G
 
+def build_dict_from_graph(G: nx.Graph):
+
+    left,right = nx.bipartite.sets(G)
+
+    dicc ={}
+
+    for node in left:
+        temp = {}
+        for neighbour in G.neighbors(node):
+            temp[neighbour] = G[node][neighbour]['weight']
+        dicc[node] = temp
+
+    return dicc
+
+
 
 def initial_greedy_bipartite_matching(G: nx.Graph):
     left, right = nx.bipartite.sets(G)
@@ -143,5 +158,5 @@ def hungarian_solution(n, m, a, s):
     pass
 
 
-hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
-    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])
+#hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
+#    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])

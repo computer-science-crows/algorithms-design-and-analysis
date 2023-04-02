@@ -1,4 +1,4 @@
-from visualiser.visualiser import Visualiser as vs
+import numpy as np
 
 
 def backtrack_solution(n,m,a,s):
@@ -16,16 +16,17 @@ def backtrack_solution(n,m,a,s):
 
     _backtrack_solution(0,candidates, positions, best_solution, 0, a, s, answer)
 
-    return best_solution, max(answer)
+    value = max(answer)
+    solution = best_solution[answer.index(value)]  
+    
+    return solution.tolist(),value
 
-@vs(node_properties_kwargs={"shape":"record", "color":"#f57542", "style":"filled", "fillcolor":"grey"})
 def _backtrack_solution(max,candidates, positions, best_solution, count, a, s, answer):
     
     # base case
     if count == len(positions):
         answer.append(max)
-        for i in range(len(positions)):
-            best_solution[i] = positions[i]
+        best_solution.append(np.copy(positions))        
         return      
 
     # in each iteration one candidate is assign to a position
