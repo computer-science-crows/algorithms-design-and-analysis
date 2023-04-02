@@ -4,31 +4,31 @@ import random
 from solutions.backtrack_solution import backtrack_solution
 import json
 from app.tools import save_data
+import time
 
 
 def generator(n=None, k=None, p=None, samples=1):
     i = 0
 
     while i < samples:
-        if n == None:
-            n = random.randint(0, 20)
-        if k == None:
-            k = random.randint(0, 20)
         if p == None:
-            p = random.randint(0, 20)
+            p = random.randint(1, 11)
+        if k == None:
+            k = random.randint(0, 11-p)
+        if n == None:
+            n = random.randint(p+k, 11)
 
         a = [random.randint(0, 10) for i in range(n)]
         s = np.random.randint(low=0, high=10, size=(n, p+k))
         s = s.tolist()
-        
-        solution, value = backtrack_solution(n,p+k,a,s)
+
+        start = time.time()
+        solution, value = backtrack_solution(n, p+k, a, s)
+        end = time.time()
+        print(f'time:{end-start}')
         i += 1
 
-        data = {"n": n, "p": p, "k": k, "a": a, "s": s,
+        data = {"n": n, "p": p, "k": k, "a": a, "s": s, 'elapsed_time': end - start,
                 "optimal_solution": solution, "optimal_value": value}
 
         save_data(data, "/test_cases.json")
-
-        return n, p, k, a, s, solution, value
-
-

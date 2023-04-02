@@ -8,12 +8,18 @@ def build_graph(n, m, a, s):
     """
         builds the corresponding complete weighted bipartite graph
     """
+    # makes graph complete
 
-    G = nx.complete_bipartite_graph(n, m)
+    G = nx.complete_bipartite_graph(n, n)
     left, right = nx.bipartite.sets(G)
 
+    artificial_nodes = [m + n + i if n > m else n + i for i in range(abs(n-m))]
+
     for _, (u, v) in enumerate(G.edges()):
-        G[u][v]['weight'] = a[u] + s[u][v - n]
+        if v if n > m else u in artificial_nodes:
+            G[u][v]['weight'] = -inf
+        else:
+            G[u][v]['weight'] = a[u] + s[u][v - n]
 
     # print(left)
     # print(right)
@@ -28,21 +34,6 @@ def build_graph(n, m, a, s):
     # plt.show()
 
     return G
-
-def build_dict_from_graph(G: nx.Graph):
-
-    left,right = nx.bipartite.sets(G)
-
-    dicc ={}
-
-    for node in left:
-        temp = {}
-        for neighbour in G.neighbors(node):
-            temp[neighbour] = G[node][neighbour]['weight']
-        dicc[node] = temp
-
-    return dicc
-
 
 
 def default_vertex_labeling(G: nx.Graph):
@@ -200,5 +191,5 @@ def hungarian_solution(n, m, a, s):
     pass
 
 
-#hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
+# hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
 #    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])

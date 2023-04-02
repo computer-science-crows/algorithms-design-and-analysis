@@ -6,16 +6,16 @@ from hungarian_algorithm import algorithm
 import numpy as np
 import time
 
-n,p,k,a,s, sol, val= generator(n=5,p=5,k=0)
+generator(samples=20)
 
 
-print(f'n: {n}')
-print(f'p: {p}')
-print(f'k: {k}')
-print(f'a: {a}')
-print(f's: {s}')
-print(f'solution: {sol}')
-print(f'values: {val}\n')
+# print(f'n: {n}')
+# print(f'p: {p}')
+# print(f'k: {k}')
+# print(f'a: {a}')
+# print(f's: {s}')
+# print(f'solution: {sol}')
+# print(f'values: {val}\n')
 
 # start = time.time()
 # backtrack_sol, backtrack_val = backtrack_solution(n,p+k,a,s)
@@ -28,9 +28,9 @@ print(f'values: {val}\n')
 # print(f'backtrack_sol {backtrack_sol}')
 # print(f'bactrack_val {backtrack_val}\n')
 
-simplex_sol,simplex_val = simplex_solution(n,p+k,np.array(a),np.array(s))
-print(f'simplex solution: {simplex_sol}')
-print(f'simplex value: {simplex_val}')
+# simplex_sol, simplex_val = simplex_solution(n, p+k, np.array(a), np.array(s))
+# print(f'simplex solution: {simplex_sol}')
+# print(f'simplex value: {simplex_val}')
 
 
 # G = build_graph(n,p+k,a,s)
@@ -45,4 +45,3 @@ print(f'simplex value: {simplex_val}')
 # print(f'hungarian solution {hungarian_sol}')
 
 # print(f'hungarian value {hungarian_val}')
-
