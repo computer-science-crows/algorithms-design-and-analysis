@@ -3,20 +3,22 @@ import matplotlib.pyplot as plt
 from networkx.algorithms import bipartite
 from math import inf
 
-# builds the corresponding complete weighted bipartite graph
-
 
 def build_graph(n, m, a, s):
+    """
+        builds the corresponding complete weighted bipartite graph
+    """
+
     G = nx.complete_bipartite_graph(n, m)
     left, right = nx.bipartite.sets(G)
 
     for _, (u, v) in enumerate(G.edges()):
         G[u][v]['weight'] = a[u] + s[u][v - n]
 
-    print(left)
-    print(right)
+    # print(left)
+    # print(right)
 
-    print(G.edges(data=True))
+    # print(G.edges(data=True))
 
     pos = dict()
     pos.update((n, (1, i)) for i, n in enumerate(left))
@@ -43,22 +45,81 @@ def build_dict_from_graph(G: nx.Graph):
 
 
 
-def initial_greedy_bipartite_matching(G: nx.Graph):
-    left, right = nx.bipartite.sets(G)
+def default_vertex_labeling(G: nx.Graph):
+    """
+        Initializes h values of G with the default vertex labeling
+    """
 
-    M = nx.Graph()
+    left, right = nx.bipartite.sets(G)
 
     for node in left if len(left) <= len(right) else right:
         max_weight = -inf
-        max_neighbour = 0
+        # max_neighbour = 0
         for neighbour in G.neighbors(node):
-            if neighbour not in M.nodes() and G[node][neighbour]['weight'] > max_weight:
+            if G[node][neighbour]['weight'] > max_weight:
                 max_weight = G[node][neighbour]['weight']
+                # max_neighbour = neighbour
+        G.nodes[node]['h'] = max_weight
+
+    for node in right:
+        G.nodes[node]['h'] = 0
+
+
+def build_equality_subgraph(G: nx.Graph):
+    """
+        builds the corresponding equality subgraph G_h
+    """
+
+    left, right = nx.bipartite.sets(G)
+
+    G_h = nx.Graph()
+    G_h.add_nodes_from(left, bipartite=0)
+    G_h.add_nodes_from(right, bipartite=1)
+
+    for edge in G.edges():
+        l = edge[0]
+        r = edge[1]
+        w = G[l][r]['weight']
+        if G.nodes[l]['h'] + G.nodes[r]['h'] == w:
+            G_h.add_weighted_edges_from([(l, r, w)])
+
+    print(G_h.nodes())
+    print(G_h.edges())
+
+    return G_h
+
+
+def initial_greedy_bipartite_matching(G_h: nx.Graph):
+    """
+        gets the initial matching of G_h using greedy tecniche
+    """
+
+    left = []
+    right = []
+    for node in G_h:
+        if G_h.nodes[node]['bipartite'] == 0:
+            left.append(node)
+        else:
+            right.append(node)
+
+    M = nx.Graph()
+
+    for node in left:
+        max_weight = -inf
+        max_neighbour = 0
+        for neighbour in G_h.neighbors(node):
+            if neighbour not in M.nodes() and G_h[node][neighbour]['weight'] > max_weight:
+                max_weight = G_h[node][neighbour]['weight']
                 max_neighbour = neighbour
 
-        M.add_node(node)
-        M.add_node(max_neighbour)
-        M.add_weighted_edges_from([(node, max_neighbour, max_weight)])
+        if max_weight > -inf:
+            G_h.nodes[node]['matched'] = True
+            G_h.nodes[max_neighbour]['matched'] = True
+            G_h[node][max_neighbour]['matched'] = True
+
+            M.add_node(node)
+            M.add_node(max_neighbour)
+            M.add_weighted_edges_from([(node, max_neighbour, max_weight)])
 
     print(M.nodes())
     print(M.edges(data=True))
@@ -66,39 +127,32 @@ def initial_greedy_bipartite_matching(G: nx.Graph):
     return M
 
 
-def default_vertex_labeling(G):
-    left, right = nx.bipartite.sets(G)
+# O(n)
+def search_min(F_l, R_F_r):
+    pass
 
-    for node in left if len(left) <= len(right) else right:
-        max_weight = -inf
-        max_neighbour = 0
-        for neighbour in G.neighbors(node):
-            if G[node][neighbour]['weight'] > max_weight:
-                max_weight = G[node][neighbour]['weight']
-                max_neighbour = neighbour
-        G.nodes[node]['h'] = ()
+# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
+
+
+def modify_graph():
     pass
 
 
-def build_directed_equality_subgraph(G, M):
-    left, right = nx.bipartite.sets(G)
-
-    G_h = nx.Graph()
-    G_h.add_nodes_from(left, bipartite=0)
-    G_h.add_nodes_from(right, bipartite=1)
+def construct_augmentative_path(d):
+    pass
 
 
 def exists_M_augmentating_path(G_M_h: nx.Graph):
-    Q = [] # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
+    Q = []  # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
     F_l = set()
     F_r = set()
-    d={}
-    
+    d = {}
+
     left, right = nx.bipartite.sets(G_M_h)
 
     for node in left:
         if not G_M_h.nodes[node]['matched']:
-            d[node]= None
+            d[node] = None
             Q.append(node)
             F_l.add(node)
 
@@ -111,7 +165,7 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
 
                 G_M_h, new_edges = modify_graph()
 
-                for (l,r) in new_edges:
+                for (l, r) in new_edges:
                     if r not in F_r:
                         d[r] = l
                         if G_M_h[r]['matches']:
@@ -120,9 +174,9 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
                             Q.append(r)
                             F_r.add(r)
         u = Q.pop()
-        for v in  G_M_h.neighbors(u):
+        for v in G_M_h.neighbors(u):
             if v in left:
-                d[v]=u
+                d[v] = u
                 F_l.add(v)
                 Q.append(v)
             elif v not in F_r:
@@ -138,23 +192,11 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
     return P
 
 
-                
-
-# O(n)
-def search_min(F_l, R_F_r):
-    pass
-
-# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
-def modify_graph():
-    pass
-
-def construct_augmentative_path(d):
-    pass
-
-
 def hungarian_solution(n, m, a, s):
-    B = build_graph(n, m, a, s)
-    initial_greedy_bipartite_matching(B)
+    G = build_graph(n, m, a, s)
+    default_vertex_labeling(G)
+    G_h = build_equality_subgraph(G)
+    M = initial_greedy_bipartite_matching(G_h)
     pass
 
 
