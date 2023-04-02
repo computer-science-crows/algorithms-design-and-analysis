@@ -36,14 +36,14 @@ def tester(function):
         testing_data = {}
 
         start = time.time()
-        testing_data["f_result"] = function(
+        testing_data["f_result"],testing_data["f_value"] = function(
             tc['n'], tc['p'], tc['k'], tc['a'], tc['s'])
         end = time.time()
 
         testing_data["elapsed_time"] = end - start
 
         testing_data["matches"] = False
-        if testing_data["f_result"] == tc["optimal_solution"]:
+        if testing_data["f_value"] == tc["optimal_value"]:
             testing_data["matches"] = True
 
         save_data(testing_data, f"/tests/{function.__name__}.json")

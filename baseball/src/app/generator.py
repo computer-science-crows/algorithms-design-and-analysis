@@ -1,10 +1,9 @@
 import numpy as np
 import os
 import random
-# from solutions.backtrack_solution import backtrack_solution
+from solutions.backtrack_solution import backtrack_solution
 import json
-from tools import save_data
-# from visualiser.visualiser import Visualiser as vs
+from app.tools import save_data
 
 
 def generator(n=None, k=None, p=None, samples=1):
@@ -21,17 +20,15 @@ def generator(n=None, k=None, p=None, samples=1):
         a = [random.randint(0, 10) for i in range(n)]
         s = np.random.randint(low=0, high=10, size=(n, p+k))
         s = s.tolist()
-        solution = 0
-        # solution = backtrack_solution(n,p,k,a,s)
-        # vs.make_animation("backtrack_solution.gif", delay=2)
+        
+        solution, value = backtrack_solution(n,p+k,a,s)
         i += 1
 
         data = {"n": n, "p": p, "k": k, "a": a, "s": s,
-                "optimal_solution": solution}
+                "optimal_solution": solution, "optimal_value": value}
 
         save_data(data, "/test_cases.json")
 
-        return n, p, k, a, s, solution
+        return n, p, k, a, s, solution, value
 
 
-print(generator())
