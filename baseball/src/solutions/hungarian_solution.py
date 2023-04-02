@@ -112,17 +112,32 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
     return M
 
 
+# O(n)
+def search_min(F_l, R_F_r):
+    pass
+
+# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
+
+
+def modify_graph():
+    pass
+
+
+def construct_augmentative_path(d):
+    pass
+
+
 def exists_M_augmentating_path(G_M_h: nx.Graph):
-    Q = [] # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
+    Q = []  # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
     F_l = set()
     F_r = set()
-    d={}
-    
+    d = {}
+
     left, right = nx.bipartite.sets(G_M_h)
 
     for node in left:
         if not G_M_h.nodes[node]['matched']:
-            d[node]= None
+            d[node] = None
             Q.append(node)
             F_l.add(node)
 
@@ -135,7 +150,7 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
 
                 G_M_h, new_edges = modify_graph()
 
-                for (l,r) in new_edges:
+                for (l, r) in new_edges:
                     if r not in F_r:
                         d[r] = l
                         if G_M_h[r]['matches']:
@@ -144,9 +159,9 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
                             Q.append(r)
                             F_r.add(r)
         u = Q.pop()
-        for v in  G_M_h.neighbors(u):
+        for v in G_M_h.neighbors(u):
             if v in left:
-                d[v]=u
+                d[v] = u
                 F_l.add(v)
                 Q.append(v)
             elif v not in F_r:
@@ -160,20 +175,6 @@ def exists_M_augmentating_path(G_M_h: nx.Graph):
     P = construct_augmentative_path(d)
 
     return P
-
-
-                
-
-# O(n)
-def search_min(F_l, R_F_r):
-    pass
-
-# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
-def modify_graph():
-    pass
-
-def construct_augmentative_path(d):
-    pass
 
 
 def hungarian_solution(n, m, a, s):
