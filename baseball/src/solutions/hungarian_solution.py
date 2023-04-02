@@ -46,7 +46,7 @@ def default_vertex_labeling(G: nx.Graph):
                 # max_neighbour = neighbour
         G.nodes[node]['h'] = max_weight
 
-    for node in right if len(right) <= len(right) else left:
+    for node in right:
         G.nodes[node]['h'] = 0
 
 
@@ -89,7 +89,7 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
 
     M = nx.Graph()
 
-    for node in left if len(left) <= len(right) else right:
+    for node in left:
         max_weight = -inf
         max_neighbour = 0
         for neighbour in G_h.neighbors(node):
