@@ -55,8 +55,7 @@ def format_answer(n,m,solution):
     Returns solution as a list with the candidate's number as elements
     """
     answer = [0 for i in range(m)]
-    print(f'answer {answer}')
-
+    
     for i in range(n):
         temp = solution[i*n:i*n + n]
         for j in range(m):

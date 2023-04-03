@@ -2,15 +2,7 @@ import json
 import os
 import time
 from colored import fore, back, style
-from tools import save_data
-
-
-def function1(n, p, k, a, s):
-    return 10
-
-
-def function2(n, p, k, a, s):
-    return 19
+from app.tools import save_data
 
 
 def tester(function):
@@ -37,7 +29,7 @@ def tester(function):
 
         start = time.time()
         testing_data["f_result"],testing_data["f_value"] = function(
-            tc['n'], tc['p'], tc['k'], tc['a'], tc['s'])
+            tc['n'], tc['p'] + tc['k'], tc['a'], tc['s'])
         end = time.time()
 
         testing_data["elapsed_time"] = end - start
@@ -57,5 +49,4 @@ def tester(function):
         print("-------------------------------------------")
 
 
-tester(function1)
-tester(function2)
+
