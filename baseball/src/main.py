@@ -1,12 +1,12 @@
 from app.generator import generator
 from solutions.backtrack_solution import backtrack_solution
 from solutions.simplex_solution import simplex_solution
-from solutions.hungarian_solution import *
-from hungarian_algorithm import algorithm
+#from solutions.hungarian_solution import *
+#from hungarian_algorithm import algorithm
 import numpy as np
 import time
 
-generator(samples=20)
+generator(samples=500)
 
 
 # print(f'n: {n}')
