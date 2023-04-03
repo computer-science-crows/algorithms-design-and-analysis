@@ -120,15 +120,6 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
     return M
 
 
-# O(n)
-def search_min(G_h, F_l, R_F_r):
-    min = inf
-
-    for l in F_l:
-        pass
-
-# se crea un nuevo emparejamiento tomendo la diferencia simetrica del emparejamiento M con el camino M-aumentativo encontrado.
-
 
 def symmetric_difference(P: nx.Graph,G_h: nx.Graph):
     """
@@ -144,54 +135,83 @@ def symmetric_difference(P: nx.Graph,G_h: nx.Graph):
             G_h.nodes[v]['matched'] = True
 
 
-def construct_augmentative_path(d):
-    pass
+def construct_augmentative_path(d: dict, unmatched_leave):
+    """
+    Constructs the augmentative path found during BFS through predecesors dictionary.
+    """
+
+    P = nx.Graph()
+    current = unmatched_leave
+    while current != None:
+        P.add_node(current)
+        predecesor = d[current]
+        if predecesor != None:
+            P.add_edge(current, predecesor)
+        current = predecesor
+    return P
 
 
-def exists_M_augmentating_path(G_M_h: nx.Graph, G: nx.Graph):
+def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
+    """
+    Finds M-augmentating path in G_h
+    """
+
     Q = []  # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
     F_l = set()
     F_r = set()
     d = {}
-       
+    unmatched_leaf = None   
 
-    left, right = nx.bipartite.sets(G_M_h)
+    left, right = nx.bipartite.sets(G_h)
 
+    # set R-F_r
     T = right
 
     for node in left:
-        if not G_M_h.nodes[node]['matched']:
+        if not G_h.nodes[node]['matched']:
             d[node] = None
             Q.append(node)
             F_l.add(node)
 
+            # if Q is empty it means that a M-augmentating path was not found in G_h, so the graph has to change
             if not Q:
+
+                # delta = min{ l.h + r.l - w(l,r): l in F_l and r in T}
                 delta = inf
+
+                # finds delta from attribute sigma of nodes in T 
                 for r in T:
-                    temp = G_M_h.nodes[r]['o']
+                    temp = G_h.nodes[r]['o']
                     if temp < delta:
-                        delta = temp                        
+                        delta = temp  
+
+                # update attribute h                      
                 for l in F_l:
-                    G_M_h.nodes[l]['h'] = G_M_h.nodes[l]['h'] - delta
+                    G_h.nodes[l]['h'] = G_h.nodes[l]['h'] - delta
                 for r in F_r:
-                    G_M_h.nodes[r]['h'] = G_M_h.nodes[r]['h'] + delta
-                old_edges = set(G_M_h.edges())
-                G_M_h = build_equality_subgraph(G_M_h)
-                new_edges = set(G_M_h.edges()).difference(old_edges)
+                    G_h.nodes[r]['h'] = G_h.nodes[r]['h'] + delta
+
+                # get new egdes of graph G_h
+                old_edges = set(G_h.edges())
+                G_h = build_equality_subgraph(G_h)
+                new_edges = set(G_h.edges()).difference(old_edges)
 
                 for (l, r) in new_edges:
                     if r not in F_r:
                         d[r] = l
-                        if G_M_h[r]['matches']:
+                        if G_h[r]['matches']:
+                            unmatched_leaf = r
                             break
                         else:
                             Q.append(r)
                             F_r.add(r)
+
         u = Q.pop()
 
+        # 
         if u in right:
-            for v in G_M_h.neighbors(u):
-                if G_M_h.nodes[v]['matched'] and v != d[u]:
+            for v in G_h.neighbors(u):
+                if G_h.nodes[v]['matched'] and v != d[u]:
                     d[v]=u
                     F_l.add(v)
                     Q.append(v)
@@ -199,21 +219,22 @@ def exists_M_augmentating_path(G_M_h: nx.Graph, G: nx.Graph):
         else:
             # calculate sigma
             for r in T:
-                temp = G_M_h.nodes[u]['h'] + G_M_h.nodes[u]['h'] - G[u][r]['weight']
-                if temp < G_M_h.nodes[r]['o']:
-                    G_M_h.nodes[r]['o'] = temp
+                temp = G_h.nodes[u]['h'] + G_h.nodes[u]['h'] - G[u][r]['weight']
+                if temp < G_h.nodes[r]['o']:
+                    G_h.nodes[r]['o'] = temp
 
-            for v in G_M_h.neighbors(u):
+            for v in G_h.neighbors(u):
                 if v != d[u] and v not in F_r:                    
                     d[v] = u
-                    if not G_M_h[v]['matched']:
+                    if not G_h[v]['matched']:
                         break
                     else:
                         Q.append(v)
                         F_r.add(v)  
                         T.remove(v)                  
+    
     # P grafito
-    P = construct_augmentative_path(d)
+    P = construct_augmentative_path(d, unmatched_leaf)
 
     return P
 
@@ -223,7 +244,19 @@ def hungarian_solution(n, m, a, s):
     default_vertex_labeling(G)
     G_h = build_equality_subgraph(G)
     M = initial_greedy_bipartite_matching(G_h)
-    pass
+    while len(M.edges()) != n:
+        P = find_augmentating_path(G_h, G)
+        symmetric_difference(P, G_h)
+    
+    answer = [-1 for i in range(m)]
+    max_value = 0
+    left, right = nx.bipartite.sets(G_h)
+    for node in left:
+        for neighbor in G_h.neighbors(node):
+            if G_h[node][neighbor]['matched'] and G_h[node][neighbor]['weight'] >= 0:
+                answer[neighbor] = node
+                max_value += G_h[node][neighbor]['weight']
+    return answer, max_value
 
 
 # hungarian_solution(5, 5, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
