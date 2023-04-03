@@ -12,11 +12,11 @@ def generator(n=None, k=None, p=None, samples=1):
 
     while i < samples:
         if p == None:
-            p = random.randint(1, 10)
+            p = random.randint(1, 11)
         if k == None:
-            k = random.randint(0, 10-p)
+            k = random.randint(0, 11-p)
         if n == None:
-            n = random.randint(p+k, 10)
+            n = random.randint(p+k, 11)
 
         a = [random.randint(0, 10) for i in range(n)]
         s = np.random.randint(low=0, high=10, size=(n, p+k))
@@ -33,11 +33,6 @@ def generator(n=None, k=None, p=None, samples=1):
 
         save_data(data, "/test_cases.json")
 
-        return n,p,k,a,s,solution,value
-        
-        p=None
-        k=None
-        n=None
-
-        
-
+        p = None
+        k = None
+        n = None
