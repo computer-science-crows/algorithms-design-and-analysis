@@ -6,7 +6,7 @@ from hungarian_algorithm import algorithm
 import numpy as np
 import time
 
-generator(samples=100)
+generator()
 
 
 # print(f'n: {n}')
