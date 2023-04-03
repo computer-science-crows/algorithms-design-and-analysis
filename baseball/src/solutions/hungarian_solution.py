@@ -56,6 +56,10 @@ def default_vertex_labeling(G: nx.Graph):
         G.nodes[node]['h'] = 0
 
 
+def update_vertex_labeling(G):
+    pass
+
+
 def build_equality_subgraph(G: nx.Graph):
     """
         builds the corresponding equality subgraph G_h
@@ -74,7 +78,7 @@ def build_equality_subgraph(G: nx.Graph):
         if G.nodes[l]['h'] + G.nodes[r]['h'] == w:
             G_h.add_weighted_edges_from([(l, r, w)])
 
-    # print(G_h.nodes())
+    print(G_h.nodes(data=True))
     # print(G_h.edges())
 
     return G_h
@@ -114,6 +118,7 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
 
     print(M.nodes())
     print(M.edges(data=True))
+    print(len(M.edges()))
 
     return M
 
@@ -188,8 +193,9 @@ def hungarian_solution(n, m, a, s):
     default_vertex_labeling(G)
     G_h = build_equality_subgraph(G)
     M = initial_greedy_bipartite_matching(G_h)
-    # pass
+    while len(M.edges()) != n:
+        pass
 
 
-hungarian_solution(5, 4, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
-    2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])
+# hungarian_solution(5, 4, [0, 0, 0, 0, 0], [[0, 1, 3, 5, 7], [0, 0, 89, 0, 0], [
+#     2, 0, 21, 0, 0], [0, 0, 0, 23, 0], [0, 5, 0, 0, 0]])

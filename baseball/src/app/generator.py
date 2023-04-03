@@ -32,3 +32,7 @@ def generator(n=None, k=None, p=None, samples=1):
                 "optimal_solution": solution, "optimal_value": value}
 
         save_data(data, "/test_cases.json")
+
+        p = None
+        k = None
+        n = None
