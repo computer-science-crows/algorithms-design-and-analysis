@@ -31,7 +31,7 @@
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
 
 \usepackage[spanish]{babel} % Language hyphenation and typographical rules
-
+\selectlanguage{spanish} 
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
@@ -68,7 +68,9 @@
 
 \usepackage{amsmath}
 
-
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algorithm2e}
 
 % Keywords command
 \providecommand{\keywords}[1]
@@ -135,6 +137,8 @@
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
 
+
+
 % Hyperlinks configurations
 \hypersetup{
 	colorlinks=true,
@@ -200,10 +204,13 @@
 	\section{Posibles soluciones investigadas}
 	
 	\section{L\'inea de pensamiento}
+	\subsection{Backtrack}
+	\subsection{Greedy}
+	\subsection{Simplex}
 	\subsection{Max flow min cut para mayor emparejamiento}
 	No maximiza segun costos de aristas
 	
-	Se decidio implementar el Hungarian \todo{referencia al introduction} por ser la solucion existente que resuelve lo pensado. 
+	Se decidi\'o implementar el Hungarian \todo{referencia al introduction} por ser la solucion existente que resuelve lo pensado. 
 	
 	
 	\section{Hungarian algorithm}
@@ -214,7 +221,7 @@
 	Sea $w(M) = \sum_{(l,r) \in M} w(l,r)$ el peso total de las aristas en el emparejamiento $M$, se quiere encontrar el emparejamiento perfecto $M^*$ tal que,
 	\[w(M*)=\text{max}\{w(M):M \text{ es un emparejamiento perfecto}\}\].
 	
-	A encontrar un emparejamiento perfecto de peso m\'aximo se le llama \textbf{problema de asignaci\'on}. Una soluci\'on del problema de asignaci\'on es un emparejamiento perfecto que m\'aximice el costo total.
+	A encontrar un emparejamiento perfecto de peso m\'aximo se le llama \textbf{problema de asignaci\'on}. Una soluci\'on del problema de asignaci\'on es un emparejamiento perfecto que maximice el costo total.
 	
 	Aunque se pueden enumerar los $n!$ emparejamientos perfectos pra resolver este problema, existe un algoritmo llamado \textbf{algoritmo H\'ungaro} que lo resuelve m\'as r\'apido. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad cambia en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on.
 	
@@ -277,6 +284,19 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 	\item Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
 \end{itemize}		
 
+	\subsection{Encontrar un camino $M$-aumentativo en $G_h$}
+	
+	Un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$, termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$.
+	
+	El algoritmo H\'ungaro busca un camino $M$-aumentativo desde cualquier v\'ertice no saturado de $L$ hacia cualquier v\'ertice no saturado de $R$. 
+	
+	Como m\'etodo de b\'usqueda exhaustiva en un grafo se utiliza el BFS. El algoritmo empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que descubra alg\'un v\'ertice no saturado de $R$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+	
+	\subsection{Cuando falla la b\'usqueda del camino M-aumentativo}
+	
+	Una vez actualizado el emparejamiento $M$ con el camino $M$-aumentativo, el algoritmo H\'ungaro actualiza el subgrafo de igualdad $G_h$ de acuerdo al nuevo emparejamineto y luego empieza una nueva b\'usqueda desde los v\'ertices no saturados de $L$.
+	
+	Existen casos en los que la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo H\'ungaro actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lemma.
 	
 	\begin{lem}
 		
@@ -301,9 +321,6 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 			\item Si (l,r) pertenece al emparejamiento M para $G_h$, entonces (l,r) $\in E_{h'}$.
 			\item Existen v\'ertices $l \in F_l$ y $r \in R - F_r$ tales que (l,r) $\notin E_h$, pero (l,r) $\in E_{h'}$.  
 		\end{enumerate} 
-	
-
-
 	\end{lem}
 	\begin{proof}
 		Primero se demuestra que $h'$ es un etiquetado de v\'ertice factible para $G$. Debido a que $h$ es un etiquetado de v\'ertice factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertice factible, entonces se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para alg\'un $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on \ref{eqn:delta}, se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertice factible.
@@ -334,10 +351,19 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 		\end{enumerate}
 		
 	\end{proof}
+
+	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
 	
 	\subsection{Correctitud}
 	
 	\subsection{Complejidad Temporal}
+	
+	La complejidad temporal del algoritmo H\'ungaro implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$.
+	
+	
+	
+	
+	
 	
 	\subsection{Complejidad Espacial}
 	
@@ -345,7 +371,6 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 	
 	\section{Tester}
 	
-	\section{Otras soluciones y demostraciones}
 	
 	\section{Comparaci\'on de soluciones implementadas}
 	

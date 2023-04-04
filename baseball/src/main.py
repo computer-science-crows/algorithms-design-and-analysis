@@ -9,7 +9,10 @@ import time
 
 #n,p,k,a,s,solution,value = generator()
 
-tester(simplex_solution)
+#tester(simplex_solution)
+s, v = simplex_solution(4, 4, [0, 0, 0, 0], [[2, 8, 2, 4], [1, 7, 2, 6], [3, 8, 1, 4], [1, 3, 5, 7]])
+print(s)
+print(v)
 
 #print(f'n: {n}')
 #print(f'p: {p}')
