@@ -24,6 +24,11 @@ def save_data(data: dict, path: str):
             json.dump(save, write_it)
 
 
+def addlabels(x, y):
+    for i in range(len(x)):
+        plt.text(i, y[i], y[i], ha='center')
+
+
 def plot_test_results():
     cwd = os.getcwd()
     cwd += "/baseball/json/"
@@ -33,42 +38,62 @@ def plot_test_results():
         save_b = json.load(read_it)
 
     et_b = [save_b[i]['elapsed_time'] for i in range(3000)]
+    sum_b = 0
 
     save_s = []
     with open(cwd+'tests/simplex_solution.json', "r") as read_it:
         save_s = json.load(read_it)
 
+    et_s = [save_s[i]['elapsed_time'] for i in range(3000)]
+    match_s = [save_s[i]['matches'] for i in range(3000)]
+    sum_s = 0
+
     save_h = []
+
     with open(cwd+'tests/hungarian_solution.json', "r") as read_it:
         save_h = json.load(read_it)
 
-    # x axis values
-    test_number = [i for i in range(3000)]
+    et_h = [save_h[i]['elapsed_time'] for i in range(3000)]
+    match_h = [save_h[i]['matches'] for i in range(3000)]
+    sum_h = 0
 
-    # plotting line
-    for i in range(3000):
-        plt.plot(test_number, et_b, color='gray')
+    solutions = {2: [et_b, None, 'Backtrack', 'limegreen', sum_b],
+                 0: [et_h, match_h, 'Hungarian', 'aqua', sum_h],
+                 1: [et_s, match_s, 'Simplex', 'orchid', sum_s]}
 
     # plotting the points
-    for i in range(3000):
-        fit = et_b[i]
-        plt.plot(i, fit, marker='o', color='limegreen')
+    for i in range(len(solutions)):
+        for j in range(3000):
+            et = solutions[i][0][j]
+            solutions[i][4] += et
+            plt.plot(j, et, marker='o',
+                     color='red' if solutions[i][1] == False else solutions[i][3])
+        plt.title(
+            f'Resultados obtenidos con la solución mediante {solutions[i][2]}')
 
-    # plt.plot(i, fit, marker='o',
-    #             color='red' if save_b[i]['matches'] else 'limegreen')
+        # naming the x axis
+        plt.xlabel('Test')
+        # naming the y axis
+        plt.ylabel('Tiempo')
 
-    # # naming the x axis
-    # plt.xlabel('Test')
-    # # naming the y axis
-    # plt.ylabel('Fitness de la solución final')
+        plt.savefig(cwd+f"tests/plots/{solutions[i][2]}_results.png")
+        plt.clf()
 
-    # giving a title to my graph
-    plt.title('Resultados obtenidos')
+    for i in range(len(solutions)):
+        ar_mean = solutions[i][4] / 3000
 
-    # plt.xticks(np.arange(0, 50, 1.0))
+        x = solutions[i][2]
+        y = ar_mean
+        plt.bar(x, y, color=solutions[i][3],
+                width=0.4)
 
-    # function to show the plot
-    plt.savefig(cwd+"tests/Comparative_Results.png")
+        plt.text(x, y, f'{round(y, 4)}', ha='center')
 
+        plt.title(
+            f'Comparación del tiempo promedio que demoró cada algoritmo')
+        # naming the x axis
+        plt.xlabel('Algoritmo')
+        # naming the y axis
+        plt.ylabel('Tiempo promedio')
 
-plot_test_results()
+        plt.savefig(cwd+f"tests/plots/Bar_comparative_plot.png")

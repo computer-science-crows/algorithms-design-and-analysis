@@ -15,13 +15,6 @@ import time
 
 # print(tester(hungarian_solution))
 
-
-def function1(n, m, a, s):
-    return [2, 0, 4, 3, 1], 70
-
-
-tester(function1)
-
 # print(f'n: {n}')
 # print(f'p: {p}')
 # print(f'k: {k}')
