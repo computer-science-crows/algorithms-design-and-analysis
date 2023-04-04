@@ -52,12 +52,13 @@ def tester(function):
                 print(f"   optimal value: {tc['optimal_value']}")
             print(f"  elapsed time: {testing_data['elapsed_time']}")
             print("-------------------------------------------")
-        except:
+        except Exception as ex:
             failed_tc += 1
             print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
                   "FAILED" + style.RESET)
             print("An Exception ocurred!!")
             print("-------------------------------------------")
+            print(ex)
 
     return (f'Failed: {failed_tc}')
     # save_data(dict(failed_tc), f"/tests/{function.__name__}_misses.json")
