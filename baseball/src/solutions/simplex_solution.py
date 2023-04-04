@@ -1,38 +1,70 @@
 from scipy.optimize import linprog
 import numpy as np
 
-# TODO comentar
-
 
 def simplex_solution(n, m, a, s):
+    """
+    Solution of assigment problem using linear programming (simplex).
+    """
 
-    objective_function = [-(s[i][j] + a[i])
-                          for i in range(n) for j in range(m)]
+    function_object =[]
+    
+    for i in range(n):
+        for j in range(n):
+            if j < m:
+                function_object.append(-(s[i][j] + a[i]))
+            else:
+                function_object.append(0)
 
-    A_eq, b_eq = constrains(n, m)
 
-    solution = linprog(objective_function, A_eq=A_eq,
+    A_eq, b_eq = constrains(n)
+  
+    solution = linprog(function_object, A_eq=A_eq,
                        b_eq=b_eq, bounds=None, method='simplex')
+    
+    answer = format_answer(n,m,solution.x)
 
-    return solution.x, solution.fun
+    return answer, int(-(solution.fun))
 
 
-def constrains(n, m):
+def constrains(n):
+    """
+    Returns the equality constraints of the optimization problem
+    """
 
     A_eq = []
-    b_eq = [1 for i in range(n+m)]
+    b_eq = [1 for i in range(2*n)]
 
-    ones = [1 for i in range(m)]
+    ones = [1 for i in range(n)]
 
     for i in range(n):
-        temp = [0 for j in range(n*m)]
-        temp[i*m:i*m + m] = ones
+        temp = [0 for j in range(n*n)]
+        temp[i*n:i*n + n] = ones
         A_eq.append(temp)
 
-    for i in range(m):
-        temp = [0 for j in range(n*m)]
+    for i in range(n):
+        temp = [0 for j in range(n*n)]
         for j in range(n):
-            temp[j*m+i] = 1
+            temp[j*n+i] = 1
         A_eq.append(temp)
 
     return np.array(A_eq), np.array(b_eq)
+
+def format_answer(n,m,solution):
+    """
+    Returns solution as a list with the candidate's number as elements
+    """
+    answer = [0 for i in range(m)]
+    
+    for i in range(n):
+        temp = solution[i*n:i*n + n]
+        for j in range(m):
+            if temp[j] == 1:
+                answer[j] = i
+
+    return answer
+
+
+
+
+
