@@ -31,7 +31,7 @@
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
 
 \usepackage[spanish]{babel} % Language hyphenation and typographical rules
-\selectlanguage{spanish} 
+
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
@@ -68,9 +68,7 @@
 
 \usepackage{amsmath}
 
-%\usepackage{algorithm}
-%\usepackage{algorithmic}
-\usepackage{algorithm2e}
+
 
 % Keywords command
 \providecommand{\keywords}[1]
@@ -134,10 +132,10 @@
 \newtheorem{thm}{Teorema}
 \newtheorem{mydef}{Definici\'on}%[section]
 \newtheorem{lem}{Lema}
+\newtheorem{fig}{\scriptsize{Figura}}
+
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
-
-
 
 % Hyperlinks configurations
 \hypersetup{
@@ -204,55 +202,63 @@
 	\begin{thm}
 		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. M es maximal si y solo si no existen caminos $ M $-aumentativos.
 	\end{thm}
-	\todo{Proof}
+%	\begin{proof}
+%		($\Rightarrow$) Supongamos que M es maximal y existe alg\'un camino M-aumentativo. En el camino simple alternativo se pueden cambiar las aristas 
+%	\end{proof}
+	%\todo{Proof}
 	
 	\subsection{Problema de asignaci\'on}
 	
+	La entrada de nuestro problema es el n\'umero de personas $ n $, el n\'umero de posiciones a ser asignadas $ m = p + k $, donde $ p $ es la cantidad de posiciones dentro del equipo y $ k $ el n\'umero de asientos en el estadio a ser ocupados. Adem\'as, se recibe una lista $ a $ de valor aportado de cada persona por ser parte de la asignaci\'on, y una matriz $ s $ del valor aportado por cada persona en cada una de las posiciones. La salida del algoritmo debe ser la asignaci\'on de personas a posiciones que maximice el valor del equipo.
+	
+	Dado un grafo bipartito completo ponderado $G = (V,E)$, donde $V = L \cup R$. Se asume que los v\'ertices de los conjuntos $L$ y $R$ contienen $n$ v\'ertices cada uno, por tanto el grafo contiene $n^2$ aristas. Para todo $l \in L$ y $r \in R$, se denota el peso de la arista $(l,r)$ como $w(l,r)$, lo cual representa ganancia de emparejar el v\'ertice $l$ con el v\'ertice $r$. A encontrar un emparejamiento perfecto $M^*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles se le llama \textit{problema de asignaci\'on}. Sea $w(M) = \sum_{(l,r) \in M} w(l,r)$ el peso total de las aristas en el emparejamiento $M$, se quiere encontrar el emparejamiento perfecto $M^*$ tal que,
+	\[w(M*)=\text{max}\{w(M):M \text{ es un emparejamiento perfecto}\} .\]
+	
+	As\'i, nuestro problema puede ser modelado como un grafo bipartito completo ponderado $ G = (L \cup R, E) $ donde $ L $ representan las personas y $ R $ las posiciones en el estadio a ser asignadas; y donde el peso de cada arista $ e = (u, v) $ es $ w(e) = a[u] + s[u][v] $ .
+	
 	\section{L\'inea de pensamiento}
 	
-	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de n = 11. 
+	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de 11. Dicha soluci\'on puede ser encontrada en \textit{solutions/backtrack\_solutions.py}.
 	
-	Se intent\'o resolver mediante un algoritmo \textit{greedy} pero la  forma de garantizar el \'optimo en la soluci\'on pensada, era en el caso peor tan mala como backtrack.
+	Se intent\'o resolver mediante un algoritmo \textit{greedy}, tomando por cada persona el m\'aximo del valor que puede aportar al equipo, y luego ir asignando de forma descendente a las posiciones. El problema de este enfoque est\'a en que cuando dos o m\'as personas aportan el mismo valor en una misma posici\'on se debe escoger aquel cuyo siguiente m\'aximo sea menor (pues de lo contrario en una pr\'oxima iteraci\'on se perder\'ia en valor en otra posici\'on). N\'otese que para el peor de los casos, cuando todos las personas aporten el mismo valor en todas las posiciones, esta soluci\'on es tan mala como backtrack.
 	
-	El pr\'oximo pensamiento fue resolverlo con \textit{programaci\'on din\'amica}, pero luego de graficar el backtrack y aplicar memorizaci\'on para varios casos se observ\'o que ninguno presentaba subproblemas solapados. Adem\'as se cree que este problema no tiene subestructura \'optima.
+	El pr\'oximo pensamiento fue resolverlo con \textit{programaci\'on din\'amica}. Para poder aplicar esta soluci\'on el problema debe cumplir con dos caracter\'isticas fundamentales: suproblemas solapados, es decir, que subproblemas iguales se repitan una y otra vez, por lo que se necesitar\'ia volver a calcular sus soluciones; y subestructura \'optima, lo cual significa que una soluci\'on \'optima para un subproblema forma parte de la soluci\'on \'optima del problema. Luego de graficar el backtrack y aplicar memorizaci\'on para varios casos se observ\'o que ninguno presentaba subproblemas solapados, por lo que la intuici\'on dice que probablemente no tenga.
+	Adem\'as se cree que este problema no tiene subestructura \'optima (al menos para las formas de pensar y picar el mismo analizadas) dado que asignar las personas que m\'as valor den a un subconjunto de las posiciones no garantiza un \'optimo, puede ocurrir que esas personas aportaran m\'as en otras posiciones fuera del subconjunto. 
 	
-	Este problema puede ser modelado como un problema de optimizaci\'on lineal, y por tanto se le di\'o soluci\'on con el algoritmo \textit{Simplex}, el cual es exponencial.
+	Este problema puede ser modelado tambi\'en como un problema de optimizaci\'on lineal. Sea $ x_{i, j} $ una variable binaria que indica que se asign\'o la persona $ i $ a la posici\'on $ j $. Se quiere maximizar la suma de $ w(i, j) = a[i] + s[i, j] \forall i \in n, \forall j \in m $. Las restricciones a\~nadidas  garantizan que todos los v\'ertices tengan exactamente un vecino, y por tanto la soluci\'on hallada sea un emparejamiento perfecto. 
 	
-	\todo{Modelaci\'on}
+	\begin{equation} \left\{
+	\begin{matrix}
+		\max & \displaystyle z=\sum_{i}\sum_{j}x_{i,j}\cdot(s_{i,j} + a_{i}) \\
+		\textrm{s.a.} & \sum_{j=1}^{m} x_{i, j} = 1 & \forall i \in n \\
+		& \sum_{i=1}^{n} x_{i, j} = 1 & \forall j \in m \\ 
+	\end{matrix} \right. 
+	\end{equation} 
+
+	Esta soluci\'on fue probada utilizando el algoritmo \textit{Simplex} implementado en la librer\'ia scipy y puede ser encontrada en \textit{solutions/simplex\_solution.py}. La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
 	
-	Investigando el estado del arte y siguiendo la idea de modelarlo mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro \cite{introduction}, el cual corre en tiempo polinomial.
+	Investigando el estado del arte y siguiendo la idea de modelar el problems mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro descrito en \cite{introduction}, el cual es una especie de greedy y se ejecuta en tiempo polinomial, y es explicado en la pr\'oxima secci\'on. Dicha implementaci\'on est\'a en \textit{solutions/hungarian\_solution.py}.
 	
-	\section{Hungarian algorithm}
-	Dado un grafo bipartito completo ponderado $G = (V,E)$, donde $V = L \cup R$. Se asume que los v\'ertices de los conjuntos $L$ y $R$ contienen $n$ v\'ertice cada uno, por tanto el grafo contiene $n^2$ aristas. Para $l \in L$ y $r \in R$, se denota el peso de la arista $(l,r)$ como $w(l,r)$, lo cual representa ganancia de emparejar el v\'ertice $l$ con el v\'ertice $r$.
+	\section{Algoritmo H\'ungaro}
+
+	El método Húngaro es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial.
 	
-	El objetivo es encontrar el emparejamiento perfecto $M*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles. 
-	
-	Sea $w(M) = \sum_{(l,r) \in M} w(l,r)$ el peso total de las aristas en el emparejamiento $M$, se quiere encontrar el emparejamiento perfecto $M^*$ tal que,
-	\[w(M*)=\text{max}\{w(M):M \text{ es un emparejamiento perfecto}\}\].
-	
-	A encontrar un emparejamiento perfecto de peso m\'aximo se le llama \textbf{problema de asignaci\'on}. Una soluci\'on del problema de asignaci\'on es un emparejamiento perfecto que maximice el costo total.
-	
-	Aunque se pueden enumerar los $n!$ emparejamientos perfectos pra resolver este problema, existe un algoritmo llamado \textbf{algoritmo H\'ungaro} que lo resuelve m\'as r\'apido. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad cambia en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on.
-	
-	El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. 
-	
-	Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$.
-	
-	Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
+	En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
 	\begin{align}
 		\label{eq:defecto}
 		l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
 		r.h &= 0 &\text{para todo } r \in R 
 	\end{align}
-
-	Dado un eqiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
 	
-	\begin{thm}
-		
-		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$.
+	Dado un etiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
+	
+	El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
+	\begin{thm} \cite{introduction}
+		\label{thm: emparejamiento}
+		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
 		
 	\end{thm}
-
+	
 	\begin{proof}
 		Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
 		
@@ -269,46 +275,33 @@
 			&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertice factible)}\\
 			&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
 		\end{align}
+		
 		Entonces se tiene
 		\begin{equation}
 			w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
 		\end{equation}
 		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
 	\end{proof}
-
-	El objetivo ahora ser\'ia encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
-
-Si se elige cualquier conjunto de etiquetas de v\'ertices que defina un subgrafo de igualdad, entonces un emparejamiento de cardinalidad m\'axima en este subgrafo tiene un valor total de a lo sumo la suma de las etiquetas de los v\'ertices. Si el conjunto de etiquetas de v\'ertices es el 'correcto', entonces tendr\'a un valor total igual a $w(M^*)$, y un emparejamiento de cardinalidad m\'axima es el subgrafo de igualdad es tambi\'en un emparejamiento perfecto de m\'aximo peso.
-
-\todo[inline]{Explicaci\'on del algoritmo H\'ungaro}
-El algoritmo H\'ungaro repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
-
-El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$. Repetidamente encuentra un camino $M$-aumentativo $P$ en $G_h$ y utilizando el Lema 25.1 \todo{Escribir lema}, actualiza el emparejamiento para que sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento. Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
-
-\todo[inline]{Caracteristicas del algoritmo}
-\begin{itemize}
-	\item El etiquetado de v\'ertices inicial del algoritmo es el etiquetado de v\'ertice por defecto de \ref{eq:defecto}.
-	\item El emparejamiento de $G_h$ inicial puede ser cualquier emparejamiento. En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy.
-	\item  Para encontrar un camino $M$ - aumentativo en $G_h$, se utiliza una variante de BFS.
-	\item Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
-\end{itemize}		
-
-	\subsection{Encontrar un camino $M$-aumentativo en $G_h$}
 	
-	Un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$, termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$.
+	Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
 	
-	El algoritmo H\'ungaro busca un camino $M$-aumentativo desde cualquier v\'ertice no saturado de $L$ hacia cualquier v\'ertice no saturado de $R$. 
+	\subsection{Explicaci\'on del algoritmo}
 	
-	Como m\'etodo de b\'usqueda exhaustiva en un grafo se utiliza el BFS. El algoritmo empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que descubra alg\'un v\'ertice no saturado de $R$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+	%El algoritmo H\'ungaro repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
 	
-	\subsection{Cuando falla la b\'usqueda del camino M-aumentativo}
+	El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ que es el de defecto \ref{eq:defecto} y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$.  En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy. Luego, el algoritmo repetidamente encuentra un \textbf{camino $M$-aumentativo} $P$ en $G_h$ utilizando una variante de B\'usqueda Primero a lo Ancho (\textit{en ingl\'es}, \textbf{BFS}). 
 	
-	Una vez actualizado el emparejamiento $M$ con el camino $M$-aumentativo, el algoritmo H\'ungaro actualiza el subgrafo de igualdad $G_h$ de acuerdo al nuevo emparejamineto y luego empieza una nueva b\'usqueda desde los v\'ertices no saturados de $L$.
+	El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+	
+	
+	Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
+	
+	Una vez encontrado un camino $M$-aumentativo, actualiza el emparejamiento para que este sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento.  Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
 	
 	Existen casos en los que la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo H\'ungaro actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lemma.
 	
 	\begin{lem}
-		
+		\cite{introduction}
 		Sea $h$ un etiquetado de v\'ertice factible en el grafo bipartito completo G con el grafo de igualdad $G_h$, y se $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de una B\'usqueda Primero a lo Ancho (en ingl\'es, BFS) sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
 		\begin{equation}
 			v.h' =  \left\{
@@ -322,7 +315,7 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 		donde 
 		\begin{equation}
 			\label{eqn:delta}
-		\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in F_r\}
+			\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in F_r\}
 		\end{equation}
 		con $F_l = L \cap V_f$ y $F_r = R \cap V_f$ son v\'ertices del bosque $F$ que pertenecen a $L$ y a $R$, respectivamente, es una etiqueta de v\'ertice factible para $G$ con las siguientes propiedades:
 		\begin{enumerate}
@@ -335,7 +328,6 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 		Primero se demuestra que $h'$ es un etiquetado de v\'ertice factible para $G$. Debido a que $h$ es un etiquetado de v\'ertice factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertice factible, entonces se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para alg\'un $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on \ref{eqn:delta}, se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertice factible.
 		
 		Ahora se mostrar\'a la veracidad de las propiedades:
-		
 		\begin{enumerate}
 			\item Si $l \in F_l$ y $r \in F_r$, entonces se tiene $l.h' + r.h' = l.h + r,h$ debido a que $\delta$ se adiciona a la etiqueta de $l$ y se substrae de la etiqueta de $r$. entonces, si una arista pertenece a $F$ para el grafo $G_h$, tambi\'en pertenece a $G_{h'}$.
 			\item Se afirma que para el momentp en que el algoritmo H\'ungaro computa el nuevo etiquetado de v\'ertice factible $h'$, para toda arista $(l,r) \in M$, se tiene que $l \in F_l$ si y solo s\'i $r \in F_r$. 
@@ -354,36 +346,34 @@ El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cua
 				&= l.h - (l.h + r.h -w(l,r)) + r.h\\
 				&= w(l,r)			
 			\end{align*}
-		y por tanto $(l,r) \in E_{h'}$. Dado que $(l,r) \notin E_h$, no est\'a en el emparejamiento $M$, entonces en $E_{h'}$ debe estar dirigida de $L$ a $R$\todo{arreglar esto porque nuestro grafo no es dirigido}. Por tanto, $(l,r) \in E_{h'}$.
+			y por tanto $(l,r) \in E_{h'}$. 
 			
 			
 		\end{enumerate}
 		
 	\end{proof}
-
-	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
 	
-	\subsection{Correctitud}
+	%	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
 	
 	\subsection{Complejidad Temporal}
 	
 	La complejidad temporal del algoritmo H\'ungaro implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$.
 	
-	
-	
-	
-	
-	
-	\subsection{Complejidad Espacial}
-	
 	\section{Generador de casos de prueba}
 	
-	Se generaron 3000 casos de prueba utilizando backtrack los cuales pueden ser encontrados en $ json/test\_cases.json $.
+	En \textit{app/generator.py} fue implementado un generador, el cual recibe una cantidad s de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con backtrack y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
 	
 	\section{Tester}
-	 Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex_solution.json $ y $ json/tests/hungarian_solution.json $
+	 En \textit{app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
+	 	 \begin{center}
+	 		\includegraphics[width=7cm]{tester_sample.png}
+	 		
+	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
+	 	\end{center}
+ 	 
+ 	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
 	
-	\section{Comparaci\'on de soluciones implementadas}
+%	\section{Comparaci\'on de soluciones implementadas}
 	
 	\begin{thebibliography}
 		a

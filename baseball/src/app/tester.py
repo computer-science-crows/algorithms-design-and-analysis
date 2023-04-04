@@ -61,4 +61,3 @@ def tester(function):
             print(ex)
 
     return (f'Failed: {failed_tc}')
-    # save_data(dict(failed_tc), f"/tests/{function.__name__}_misses.json")

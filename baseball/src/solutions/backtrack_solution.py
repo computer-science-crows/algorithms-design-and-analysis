@@ -1,5 +1,4 @@
 import numpy as np
-from app.tools import Memoize
 
 
 def backtrack_solution(n, m, a, s):
