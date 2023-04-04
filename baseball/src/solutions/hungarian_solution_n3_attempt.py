@@ -38,7 +38,7 @@ def build_graph(n, m, a, s):
 
     for _, (u, v) in enumerate(G.edges()):
         if v in artificial_nodes if n > m else u in artificial_nodes:
-            G[u][v]['weight'] = 0
+            G[u][v]['weight'] = a[u]
             G[u][v]['artificial'] = True
         else:
             G[u][v]['weight'] = a[u] + s[u][v - n]
@@ -47,12 +47,12 @@ def build_graph(n, m, a, s):
 
     default_vertex_labeling(G)
 
-    # print("!!!!!!!! G !!!!!!!!")
-    # print("NODES")
-    # print(G.nodes(data=True))
-    # print("EDGES")
-    # print(G.edges(data=True))
-    # print()
+    print("!!!!!!!! G !!!!!!!!")
+    print("NODES")
+    print(G.nodes(data=True))
+    print("EDGES")
+    print(G.edges(data=True))
+    print()
 
     return G
 
@@ -73,12 +73,12 @@ def build_equality_subgraph(G: nx.Graph):
                 nx.set_edge_attributes(
                     G_h, {(node, neighbor): G.get_edge_data(node, neighbor)})
 
-    # print("!!!!!!!! G_h !!!!!!!!")
-    # print("NODES")
-    # print(G_h.nodes(data=True))
-    # print("EDGES")
-    # print(G_h.edges(data=True))
-    # print()
+    print("!!!!!!!! G_h !!!!!!!!")
+    print("NODES")
+    print(G_h.nodes(data=True))
+    print("EDGES")
+    print(G_h.edges(data=True))
+    print()
 
     return G_h
 
@@ -135,12 +135,12 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
                 nx.set_edge_attributes(
                     M, {(node, max_neighbour): G_h.get_edge_data(node, max_neighbour)})
 
-    # print("!!!!!!!! M !!!!!!!!")
-    # print("NODES")
-    # print(M.nodes(data=True))
-    # print("EDGES")
-    # print(M.edges(data=True))
-    # print()
+    print("!!!!!!!! M !!!!!!!!")
+    print("NODES")
+    print(M.nodes(data=True))
+    print("EDGES")
+    print(M.edges(data=True))
+    print()
 
     return M
 
@@ -202,7 +202,6 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
                 d[node] = None
                 Q.append(node)
                 F_l.add(node)
-
         else:
             right.append(node)
 
@@ -216,12 +215,12 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
 
             # delta = min{ l.h + r.l - w(l,r): l in F_l and r in T}
             delta = inf
-            for l in F_l:
-                for r in T:
-                    temp = G_h.nodes[l]['h'] + \
-                        G_h.nodes[r]['h'] - G[l][r]['weight']
-                    if temp < delta and temp > 0:
-                        delta = temp
+
+            # finds delta from attribute sigma of nodes in T
+            for r in T:
+                temp = G_h.nodes[r]['o']
+                if temp < delta and temp > 0:
+                    delta = temp
 
             # update attribute h
             for l in F_l:
@@ -236,21 +235,8 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
 
             F_l = set()
             F_r = set()
+            d = {}
             unmatched_leaf = None
-
-            for (l, r) in new_edges:
-                if r not in F_r:
-                    d[r] = l
-                    if not G_h.nodes[r]['matched']:
-                        unmatched_leaf = r
-                        not_ap = False
-                        break
-                    else:
-                        Q.append(r)
-                        F_r.add(r)
-
-            if not not_ap:
-                break
 
             for node in left:
                 if not G_h.nodes[node]["matched"]:
@@ -261,23 +247,21 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
             # set R-F_r
             T = right.copy()
 
-        u = Q.pop(0)
+            # for (l, r) in new_edges:
+            #     if r not in F_r:
+            #         d[r] = l
+            #         if not G_h.nodes[r]['matched']:
+            #             unmatched_leaf = r
+            #             not_ap = False
+            #             break
+            #         else:
+            #             Q.append(r)
+            #             F_r.add(r)
 
-        # for v in G_h.neighbors(u):
-        #     if v in left:
-        #         d[v] = u
-        #         F_l.add(v)
-        #         Q.append(v)
-        #     elif v not in F_r:
-        #         d[v] = u
-        #         if not G_h.nodes[v]['matched']:
-        #             unmatched_leaf = v
-        #             not_ap = False
-        #             break
-        #         else:
-        #             Q.append(v)
-        #             F_r.add(v)
-        #             T.remove(v)
+            # if not not_ap:
+            #     break
+
+        u = Q.pop(0)
 
         #
         if u in right:
@@ -288,6 +272,13 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
                     Q.append(v)
         # u in left
         else:
+            # calculate sigma
+            for r in T:
+                temp = G_h.nodes[u]['h'] + \
+                    G_h.nodes[r]['h'] - G[u][r]['weight']
+                if temp < G_h.nodes[r]['o']:
+                    G_h.nodes[r]['o'] = temp
+
             for v in G_h.neighbors(u):
                 if not (G_h.nodes[u]['matched'] or G_h.nodes[v]['matched']):
                     continue
@@ -344,28 +335,23 @@ def hungarian_solution(n, m, a, s):
     return answer, max_value
 
 
-hungarian_solution(7, 6, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9], [6, 8, 5, 12, 9, 7], [11, 9, 6, 7, 9, 5], [
-    3, 9, 6, 7, 5, 0], [2, 6, 2, 3, 2, 4], [10, 8, 11, 4, 11, 2], [3, 4, 5, 4, 3, 6]])
+# hungarian_solution(7, 6, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9], [6, 8, 5, 12, 9, 7], [11, 9, 6, 7, 9, 5], [
+#                    3, 9, 6, 7, 5, 0], [2, 6, 2, 3, 2, 4], [10, 8, 11, 4, 11, 2], [3, 4, 5, 4, 3, 6]])
 
-hungarian_solution(8, 8, [3, 4, 7, 0, 2, 0, 0, 0], [[4, 4, 8, 5, 12, 9, 7, 2], [0, 4, 11, 6, 7, 9, 5, 15], [3, 6, 7, 5, 0, 7, 8, 3], [
-                   6, 4, 1, 2, 3, 2, 4, 2], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [3, 7, 8, 5, 4, 3, 6, 8]])
+# hungarian_solution(8, 8, [3, 4, 7, 0, 2, 0, 0, 0], [[4, 4, 8, 5, 12, 9, 7, 2], [0, 4, 11, 6, 7, 9, 5, 15], [3, 6, 7, 5, 0, 7, 8, 3], [
+#                    6, 4, 1, 2, 3, 2, 4, 2], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [3, 7, 8, 5, 4, 3, 6, 8]])
 
-hungarian_solution(9, 9, [2, 3, 4, 7, 0, 2, 0, 0, 0], [[1, 4, 4, 8, 5, 12, 9, 7, 2], [2, 0, 4, 11, 6, 7, 9, 5, 15], [3, 5, 6, 7, 5, 0, 7, 8, 3], [
-                   4, 6, 4, 1, 2, 3, 2, 4, 2], [5, 23, 4, 10, 8, 4, 11, 2, 11], [6, 23, 4, 10, 8, 4, 11, 2, 11], [7, 23, 4, 10, 8, 4, 11, 2, 11], [8, 3, 7, 8, 5, 4, 3, 6, 8], [9, 3, 7, 8, 5, 4, 3, 6, 8]])
-
-hungarian_solution(4, 2, [0, 0, 0, 0], [[2, 8], [1, 7], [3, 8], [1, 3]])
+# hungarian_solution(9, 9, [2, 3, 4, 7, 0, 2, 0, 0, 0], [[1, 4, 4, 8, 5, 12, 9, 7, 2], [2, 0, 4, 11, 6, 7, 9, 5, 15], [3, 5, 6, 7, 5, 0, 7, 8, 3], [
+#                    4, 6, 4, 1, 2, 3, 2, 4, 2], [5, 23, 4, 10, 8, 4, 11, 2, 11], [6, 23, 4, 10, 8, 4, 11, 2, 11], [7, 23, 4, 10, 8, 4, 11, 2, 11], [8, 3, 7, 8, 5, 4, 3, 6, 8], [9, 3, 7, 8, 5, 4, 3, 6, 8]])
 
 hungarian_solution(4, 4, [0, 0, 0, 0], [[2, 8, 2, 4], [
-    1, 7, 2, 6], [3, 8, 1, 4], [1, 3, 5, 7]])
+                   1, 7, 2, 6], [3, 8, 1, 4], [1, 3, 5, 7]])
 
-hungarian_solution(3, 3, [5, 10, 4], [[8, 6, 2], [7, 2, 3], [8, 1, 1]])
+# hungarian_solution(3, 3, [5, 10, 4], [[8, 6, 2], [7, 2, 3], [8, 1, 1]])
 
-hungarian_solution(3, 2, [1, 0, 3], [[8, 6], [7, 2], [8, 1]])
+# hungarian_solution(3, 2, [1, 0, 3], [[8, 6], [7, 2], [8, 1]])
 
-hungarian_solution(7, 7, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9, 3], [6, 8, 5, 12, 9, 7, 2], [11, 9, 6, 7, 9, 5, 15], [
-    3, 9, 6, 7, 5, 6, 3], [2, 6, 5, 3, 2, 4, 2], [10, 8, 11, 4, 11, 2, 11], [3, 4, 5, 4, 3, 6, 8]])
+# hungarian_solution(7, 7, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9, 3], [6, 8, 5, 12, 9, 7, 2], [11, 9, 6, 7, 9, 5, 15], [
+#                    3, 9, 6, 7, 5, 6, 3], [2, 6, 5, 3, 2, 4, 2], [10, 8, 11, 4, 11, 2, 11], [3, 4, 5, 4, 3, 6, 8]])
 
 # , "elapsed_time": 0.0023577213287353516, "optimal_solution": [1, 3, 4, 0, 2], "optimal_value": 69}
-hungarian_solution(6, 6, [4, 1, 4, 5, 1, 3], [[1, 2, 3, 1, 1, 8], [0, 5, 1, 2, 7, 6], [
-                   7, 0, 1, 7, 6, 7], [9, 4, 4, 5, 1, 1], [1, 3, 1, 1, 5, 3], [9, 4, 7, 1, 5, 2]])
-# {"n": 6, "p": 6, "k": 0, "a": [4, 1, 4, 5, 1, 3], "s": [[1, 2, 3, 1, 1, 8], [0, 5, 1, 2, 7, 6], [7, 0, 1, 7, 6, 7], [9, 4, 4, 5, 1, 1], [1, 3, 1, 1, 5, 3], [9, 4, 7, 1, 5, 2]], "elapsed_time": 0.0014333724975585938, "optimal_solution": [3, 1, 5, 2, 4, 0], "optimal_value": 59}

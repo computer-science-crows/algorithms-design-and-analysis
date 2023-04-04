@@ -2,25 +2,26 @@ from app.generator import generator
 from app.tester import tester
 from solutions.backtrack_solution import backtrack_solution
 from solutions.simplex_solution import simplex_solution
-#from solutions.hungarian_solution import *
-#from hungarian_algorithm import algorithm
+from solutions.hungarian_solution import *
+from hungarian_algorithm import algorithm
 import numpy as np
 import time
 
-#n,p,k,a,s,solution,value = generator()
+# generator()
 
-#tester(simplex_solution)
-s, v = simplex_solution(4, 4, [0, 0, 0, 0], [[2, 8, 2, 4], [1, 7, 2, 6], [3, 8, 1, 4], [1, 3, 5, 7]])
-print(s)
-print(v)
+s, v = backtrack_solution(7, 6, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9], [6, 8, 5, 12, 9, 7], [11, 9, 6, 7, 9, 5], [
+    3, 9, 6, 7, 5, 0], [2, 6, 2, 3, 2, 4], [10, 8, 11, 4, 11, 2], [3, 4, 5, 4, 3, 6]])
+print(s, v)
 
-#print(f'n: {n}')
-#print(f'p: {p}')
-#print(f'k: {k}')
-#print(f'a: {a}')
-#print(f's: {s}')
-#print(f'solution: {solution}')
-#print(f'value: {value}\n')
+print(tester(hungarian_solution))
+
+# print(f'n: {n}')
+# print(f'p: {p}')
+# print(f'k: {k}')
+# print(f'a: {a}')
+# print(f's: {s}')
+# print(f'solution: {sol}')
+# print(f'values: {val}\n')
 
 # start = time.time()
 # backtrack_sol, backtrack_val = backtrack_solution(n,p+k,a,s)
@@ -33,9 +34,9 @@ print(v)
 # print(f'backtrack_sol {backtrack_sol}')
 # print(f'bactrack_val {backtrack_val}\n')
 
-#simplex_sol, simplex_val = simplex_solution(n, p+k, np.array(a), np.array(s))
-#print(f'simplex solution: {simplex_sol}')
-#print(f'simplex value: {simplex_val}')
+# simplex_sol, simplex_val = simplex_solution(n, p+k, np.array(a), np.array(s))
+# print(f'simplex solution: {simplex_sol}')
+# print(f'simplex value: {simplex_val}')
 
 
 # G = build_graph(n,p+k,a,s)
