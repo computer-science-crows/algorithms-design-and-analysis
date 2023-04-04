@@ -132,6 +132,8 @@
 \newtheorem{thm}{Teorema}
 \newtheorem{mydef}{Definici\'on}%[section]
 \newtheorem{lem}{Lema}
+\newtheorem{fig}{\scriptsize{Figura}}
+
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
 
@@ -359,12 +361,19 @@
 	
 	\section{Generador de casos de prueba}
 	
-	Se generaron 3000 casos de prueba utilizando backtrack los cuales pueden ser encontrados en $ json/test\_cases.json $.
+	En \textit{app/generator.py} fue implementado un generador, el cual recibe una cantidad s de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con backtrack y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
 	
 	\section{Tester}
-	 Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex_solution.json $ y $ json/tests/hungarian_solution.json $
+	 En \textit{app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
+	 	 \begin{center}
+	 		\includegraphics[width=7cm]{tester_sample.png}
+	 		
+	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
+	 	\end{center}
+ 	 
+ 	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
 	
-	%\section{Comparaci\'on de soluciones implementadas}
+%	\section{Comparaci\'on de soluciones implementadas}
 	
 	\begin{thebibliography}
 		a
