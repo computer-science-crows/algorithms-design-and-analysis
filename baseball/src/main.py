@@ -1,4 +1,5 @@
 from app.generator import generator
+from app.tester import tester
 from solutions.backtrack_solution import backtrack_solution
 from solutions.simplex_solution import simplex_solution
 from solutions.hungarian_solution import *
@@ -6,8 +7,13 @@ from hungarian_algorithm import algorithm
 import numpy as np
 import time
 
-generator()
+# generator()
 
+s, v = backtrack_solution(7, 6, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9], [6, 8, 5, 12, 9, 7], [11, 9, 6, 7, 9, 5], [
+    3, 9, 6, 7, 5, 0], [2, 6, 2, 3, 2, 4], [10, 8, 11, 4, 11, 2], [3, 4, 5, 4, 3, 6]])
+print(s, v)
+
+print(tester(hungarian_solution))
 
 # print(f'n: {n}')
 # print(f'p: {p}')
