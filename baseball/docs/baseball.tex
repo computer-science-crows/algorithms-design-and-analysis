@@ -70,7 +70,7 @@
 
 %\usepackage{algorithm}
 %\usepackage{algorithmic}
-%\usepackage{algorithm2e}
+\usepackage{algorithm2e}
 
 % Keywords command
 \providecommand{\keywords}[1]
@@ -176,74 +176,80 @@
 	\subsection{Preliminares}
 	
 	\begin{mydef}
-		Grafo bipartito
+		Sea $ G= (V,E) $ un grafo. Se dice que $ G $ es bipartito si $ V(G) $ es la uni\'on de dos conjuntos independientes disjuntos. Si entre todo par de nodos de diferentes particiones existe una arista, se dice que es un grafo bipartito completo.
 	\end{mydef}
 	
 	\begin{mydef}
-		Grafo bipartito completo
-	\end{mydef}
-	
-	\begin{mydef}
-		Para un grafo no dirigido $G = (V,E)$, un emparejamiento es un subconjunto de aristas $M \in E$ tal que cada v\'ertice en $V$ tiene al menos una a arista incidente en $M$.
+		Un emparejamiento $ M $ es un conjunto de aristas en un grafo que son independientes, o sea, que no comparten v\'ertices.
 	\end{mydef}
 
 	\begin{mydef}
-		Otras definiciones
+		Dado un emparejamiento $ M $ se dice que:
+		\begin{itemize}
+			\item Si la arista $ e = (v, w) \in M $, se dice que $ v $ y $ w $ son saturados por $ M $.
+			\item Un conjunto de v\'ertices es saturado por $ M $ cuando $ M $ satura a todos los v\'ertices del conjunto.
+			\item Se dice que $ M $ es perfecto si satura a $ V(G) $.
+			\item $ M $ es m\'aximo cuando no existe $ M_{1} $ tal que $ |M_{1}| > |M| $.
+		\end{itemize}
 	\end{mydef}
 
 	\begin{mydef}
-		Camino M-alternativo
+		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. Un camino simple en $ G $ es $ M $-alternativo si sus aristas alternan entre pertenecer y no pertenecer a $ M $.
 	\end{mydef}
 	
 	\begin{mydef}
-		Camino M-aumentativo
+		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. Un camino simple en $ G $ es $ M $-aumentativo si es $ M $-alternativo y sus extremos no son saturados por $ M $.
 	\end{mydef}
+	
+	\begin{thm}
+		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. M es maximal si y solo si no existen caminos $ M $-aumentativos.
+	\end{thm}
+	\todo{Proof}
 	
 	\subsection{Problema de asignaci\'on}
 	
+	\section{L\'inea de pensamiento}
+	
+	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de n = 11. 
+	
+	Se intent\'o resolver mediante un algoritmo \textit{greedy} pero la  forma de garantizar el \'optimo en la soluci\'on pensada, era en el caso peor tan mala como backtrack.
+	
+	El pr\'oximo pensamiento fue resolverlo con \textit{programaci\'on din\'amica}, pero luego de graficar el backtrack y aplicar memorizaci\'on para varios casos se observ\'o que ninguno presentaba subproblemas solapados. Adem\'as se cree que este problema no tiene subestructura \'optima.
+	
+	Este problema puede ser modelado como un problema de optimizaci\'on lineal, y por tanto se le di\'o soluci\'on con el algoritmo \textit{Simplex}, el cual es exponencial.
+	
+	\todo{Modelaci\'on}
+	
+	Investigando el estado del arte y siguiendo la idea de modelarlo mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro \cite{introduction}, el cual corre en tiempo polinomial.
+	
+	\section{Hungarian algorithm}
 	Dado un grafo bipartito completo ponderado $G = (V,E)$, donde $V = L \cup R$. Se asume que los v\'ertices de los conjuntos $L$ y $R$ contienen $n$ v\'ertice cada uno, por tanto el grafo contiene $n^2$ aristas. Para $l \in L$ y $r \in R$, se denota el peso de la arista $(l,r)$ como $w(l,r)$, lo cual representa ganancia de emparejar el v\'ertice $l$ con el v\'ertice $r$.
 	
-	El objetivo es encontrar el emparejamiento perfecto $M^*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles. 
+	El objetivo es encontrar el emparejamiento perfecto $M*$ cuyas aristas tengan el peso m\'aximo total de todos los emparejamientos perfectos posibles. 
 	
 	Sea $w(M) = \sum_{(l,r) \in M} w(l,r)$ el peso total de las aristas en el emparejamiento $M$, se quiere encontrar el emparejamiento perfecto $M^*$ tal que,
 	\[w(M*)=\text{max}\{w(M):M \text{ es un emparejamiento perfecto}\}\].
 	
 	A encontrar un emparejamiento perfecto de peso m\'aximo se le llama \textbf{problema de asignaci\'on}. Una soluci\'on del problema de asignaci\'on es un emparejamiento perfecto que maximice el costo total.
 	
-	En nuestro problema, el conjunto $V$ ser\'ia los nodos representando los jugadores y las posiciones, donde $L$ corresponder\'ia a los jugadores y $R$ a las posiciones. El conjunto $E$ lo conformar\'ian las aristas que van de cada nodo del conjunto $L$ a cada nodo del conjunto $R$. El peso de cada arista ser\'ia $s[i][j] + a[i]$.
+	Aunque se pueden enumerar los $n!$ emparejamientos perfectos pra resolver este problema, existe un algoritmo llamado \textbf{algoritmo H\'ungaro} que lo resuelve m\'as r\'apido. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad cambia en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on.
 	
-	\section{Posibles soluciones investigadas}
+	El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. 
 	
-	\section{L\'inea de pensamiento}
-	\subsection{Backtrack}
-	\subsection{Greedy}
-	\subsection{Simplex}
-	\subsection{Max flow min cut para mayor emparejamiento}
-	No maximiza segun costos de aristas
+	Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$.
 	
-	Se decidi\'o implementar el Hungarian por ser la solucion existente que resuelve lo pensado. 
-	
-	
-	
-	
- 
-	\section{Algoritmo H\'ungaro}
-	
-	El método Húngaro es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial.
-	
-	En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
+	Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
 	\begin{align}
 		\label{eq:defecto}
 		l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
 		r.h &= 0 &\text{para todo } r \in R 
 	\end{align}
 
-	Dado un etiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
+	Dado un eqiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
 	
-	El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
-	\begin{thm} \cite{introduction}
-		\label{thm: emparejamiento}
-		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
+	\begin{thm}
+		
+		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$.
 		
 	\end{thm}
 
@@ -270,25 +276,39 @@
 		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
 	\end{proof}
 
-	Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
+	El objetivo ahora ser\'ia encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
 
-\subsection{Explicaci\'on del algoritmo}
+Si se elige cualquier conjunto de etiquetas de v\'ertices que defina un subgrafo de igualdad, entonces un emparejamiento de cardinalidad m\'axima en este subgrafo tiene un valor total de a lo sumo la suma de las etiquetas de los v\'ertices. Si el conjunto de etiquetas de v\'ertices es el 'correcto', entonces tendr\'a un valor total igual a $w(M^*)$, y un emparejamiento de cardinalidad m\'axima es el subgrafo de igualdad es tambi\'en un emparejamiento perfecto de m\'aximo peso.
 
-%El algoritmo H\'ungaro repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
+\todo[inline]{Explicaci\'on del algoritmo H\'ungaro}
+El algoritmo H\'ungaro repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
 
-El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ que es el de defecto \ref{eq:defecto} y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$.  En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy. Luego, el algoritmo repetidamente encuentra un \textbf{camino $M$-aumentativo} $P$ en $G_h$ utilizando una variante de B\'usqueda Primero a lo Ancho (\textit{en ingl\'es}, \textbf{BFS}). 
+El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$. Repetidamente encuentra un camino $M$-aumentativo $P$ en $G_h$ y utilizando el Lema 25.1 \todo{Escribir lema}, actualiza el emparejamiento para que sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento. Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
 
- El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+\todo[inline]{Caracteristicas del algoritmo}
+\begin{itemize}
+	\item El etiquetado de v\'ertices inicial del algoritmo es el etiquetado de v\'ertice por defecto de \ref{eq:defecto}.
+	\item El emparejamiento de $G_h$ inicial puede ser cualquier emparejamiento. En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy.
+	\item  Para encontrar un camino $M$ - aumentativo en $G_h$, se utiliza una variante de BFS.
+	\item Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
+\end{itemize}		
 
-
-Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
-
-Una vez encontrado un camino $M$-aumentativo, actualiza el emparejamiento para que este sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento.  Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
-
+	\subsection{Encontrar un camino $M$-aumentativo en $G_h$}
+	
+	Un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$, termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$.
+	
+	El algoritmo H\'ungaro busca un camino $M$-aumentativo desde cualquier v\'ertice no saturado de $L$ hacia cualquier v\'ertice no saturado de $R$. 
+	
+	Como m\'etodo de b\'usqueda exhaustiva en un grafo se utiliza el BFS. El algoritmo empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que descubra alg\'un v\'ertice no saturado de $R$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+	
+	\subsection{Cuando falla la b\'usqueda del camino M-aumentativo}
+	
+	Una vez actualizado el emparejamiento $M$ con el camino $M$-aumentativo, el algoritmo H\'ungaro actualiza el subgrafo de igualdad $G_h$ de acuerdo al nuevo emparejamineto y luego empieza una nueva b\'usqueda desde los v\'ertices no saturados de $L$.
+	
 	Existen casos en los que la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo H\'ungaro actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lemma.
 	
 	\begin{lem}
-		\cite{introduction}
+		
 		Sea $h$ un etiquetado de v\'ertice factible en el grafo bipartito completo G con el grafo de igualdad $G_h$, y se $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de una B\'usqueda Primero a lo Ancho (en ingl\'es, BFS) sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
 		\begin{equation}
 			v.h' =  \left\{
@@ -334,14 +354,14 @@ Una vez encontrado un camino $M$-aumentativo, actualiza el emparejamiento para q
 				&= l.h - (l.h + r.h -w(l,r)) + r.h\\
 				&= w(l,r)			
 			\end{align*}
-		y por tanto $(l,r) \in E_{h'}$. 
+		y por tanto $(l,r) \in E_{h'}$. Dado que $(l,r) \notin E_h$, no est\'a en el emparejamiento $M$, entonces en $E_{h'}$ debe estar dirigida de $L$ a $R$\todo{arreglar esto porque nuestro grafo no es dirigido}. Por tanto, $(l,r) \in E_{h'}$.
 			
 			
 		\end{enumerate}
 		
 	\end{proof}
 
-%	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
+	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
 	
 	\subsection{Correctitud}
 	
@@ -358,8 +378,10 @@ Una vez encontrado un camino $M$-aumentativo, actualiza el emparejamiento para q
 	
 	\section{Generador de casos de prueba}
 	
-	\section{Tester}
+	Se generaron 3000 casos de prueba utilizando backtrack los cuales pueden ser encontrados en $ json/test\_cases.json $.
 	
+	\section{Tester}
+	 Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex_solution.json $ y $ json/tests/hungarian_solution.json $
 	
 	\section{Comparaci\'on de soluciones implementadas}
 	
