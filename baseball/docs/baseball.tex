@@ -31,7 +31,7 @@
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
 
 \usepackage[spanish]{babel} % Language hyphenation and typographical rules
-
+\selectlanguage{spanish} 
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
@@ -68,7 +68,9 @@
 
 \usepackage{amsmath}
 
-
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algorithm2e}
 
 % Keywords command
 \providecommand{\keywords}[1]
@@ -135,6 +137,8 @@
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
 
+
+
 % Hyperlinks configurations
 \hypersetup{
 	colorlinks=true,
@@ -172,35 +176,28 @@
 	\subsection{Preliminares}
 	
 	\begin{mydef}
-		Sea $ G= (V,E) $ un grafo. Se dice que $ G $ es bipartito si $ V(G) $ es la uni\'on de dos conjuntos independientes disjuntos. Si entre todo par de nodos de diferentes particiones existe una arista, se dice que es un grafo bipartito completo.
+		Grafo bipartito
 	\end{mydef}
 	
 	\begin{mydef}
-		Un emparejamiento $ M $ es un conjunto de aristas en un grafo que son independientes, o sea, que no comparten v\'ertices.
+		Grafo bipartito completo
+	\end{mydef}
+	
+	\begin{mydef}
+		Para un grafo no dirigido $G = (V,E)$, un emparejamiento es un subconjunto de aristas $M \in E$ tal que cada v\'ertice en $V$ tiene al menos una a arista incidente en $M$.
 	\end{mydef}
 
 	\begin{mydef}
-		Dado un emparejamiento $ M $ se dice que:
-		\begin{itemize}
-			\item Si la arista $ e = (v, w) \in M $, se dice que $ v $ y $ w $ son saturados por $ M $.
-			\item Un conjunto de v\'ertices es saturado por $ M $ cuando $ M $ satura a todos los v\'ertices del conjunto.
-			\item Se dice que $ M $ es perfecto si satura a $ V(G) $.
-			\item $ M $ es m\'aximo cuando no existe $ M_{1} $ tal que $ |M_{1}| > |M| $.
-		\end{itemize}
+		Otras definiciones
 	\end{mydef}
 
 	\begin{mydef}
-		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. Un camino simple en $ G $ es $ M $-alternativo si sus aristas alternan entre pertenecer y no pertenecer a $ M $.
+		Camino M-alternativo
 	\end{mydef}
 	
 	\begin{mydef}
-		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. Un camino simple en $ G $ es $ M $-aumentativo si es $ M $-alternativo y sus extremos no son saturados por $ M $.
+		Camino M-aumentativo
 	\end{mydef}
-	
-	\begin{thm}
-		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. M es maximal si y solo si no existen caminos $ M $-aumentativos.
-	\end{thm}
-	%\todo{Proof}
 	
 	\subsection{Problema de asignaci\'on}
 	
@@ -215,64 +212,65 @@
 	
 	En nuestro problema, el conjunto $V$ ser\'ia los nodos representando los jugadores y las posiciones, donde $L$ corresponder\'ia a los jugadores y $R$ a las posiciones. El conjunto $E$ lo conformar\'ian las aristas que van de cada nodo del conjunto $L$ a cada nodo del conjunto $R$. El peso de cada arista ser\'ia $s[i][j] + a[i]$.
 	
+	\section{Posibles soluciones investigadas}
+	
 	\section{L\'inea de pensamiento}
+	\subsection{Backtrack}
+	\subsection{Greedy}
+	\subsection{Simplex}
+	\subsection{Max flow min cut para mayor emparejamiento}
+	No maximiza segun costos de aristas
 	
-	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de n = 11. 
+	Se decidi\'o implementar el Hungarian por ser la solucion existente que resuelve lo pensado. 
 	
-	Se intent\'o resolver mediante un algoritmo \textit{greedy} pero la  forma de garantizar el \'optimo en la soluci\'on pensada, era en el caso peor tan mala como backtrack.
 	
-	El pr\'oximo pensamiento fue resolverlo con \textit{programaci\'on din\'amica}, pero luego de graficar el backtrack y aplicar memorizaci\'on para varios casos se observ\'o que ninguno presentaba subproblemas solapados. Adem\'as se cree que este problema no tiene subestructura \'optima.
 	
-	Este problema puede ser modelado como un problema de optimizaci\'on lineal, y por tanto se le di\'o soluci\'on con el algoritmo \textit{Simplex}, el cual es exponencial.
 	
-%	\todo{Modelaci\'on}
-	
-	Investigando el estado del arte y siguiendo la idea de modelarlo mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro \cite{introduction}, el cual corre en tiempo polinomial.
-	
+ 
 	\section{Algoritmo H\'ungaro}
-
-El método Húngaro es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial.
-
-En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
-\begin{align}
-	\label{eq:defecto}
-	l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
-	r.h &= 0 &\text{para todo } r \in R 
-\end{align}
-
-Dado un etiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
-
-El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
-\begin{thm} \cite{introduction}
-	\label{thm: emparejamiento}
-	Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
 	
-\end{thm}
-
-\begin{proof}
-	Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
+	El método Húngaro es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial.
 	
+	En vez de trabajar con un grafo bipartito completo $G$, el algoritmo H\'ungaro trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice. El atributo $h$ se llama \textbf{etiqueta} del v\'ertice. Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
 	\begin{align}
-		w(M*) &= \sum_{(l,r) \in M*} w(l,r)\\
-		&= \sum_{(l,r) \in M^*}(l.h + r.h) &\text{(porque todas las aristas de $M^*$ pertenecen a $G_h$)}\\
-		&= \sum_{l \in L}l.h + \sum_{r \in R} r.h &\text{(porque $M^{*}$ es un emparejamiento perfecto)}\\
-	\end{align} 
-	
-	Sea $M$ un emparejamiento perfecto cualquiera de $G$, se tiene
-	
-	\begin{align}
-		w(M) &= \sum_{(l,r) \in M} w(l,r)\\
-		&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertice factible)}\\
-		&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
+		\label{eq:defecto}
+		l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
+		r.h &= 0 &\text{para todo } r \in R 
 	\end{align}
-	Entonces se tiene
-	\begin{equation}
-		w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
-	\end{equation}
-	por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
-\end{proof}
 
-Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
+	Dado un etiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
+	
+	El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
+	\begin{thm} \cite{introduction}
+		\label{thm: emparejamiento}
+		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonce $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
+		
+	\end{thm}
+
+	\begin{proof}
+		Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
+		
+		\begin{align}
+			w(M*) &= \sum_{(l,r) \in M*} w(l,r)\\
+			&= \sum_{(l,r) \in M^*}(l.h + r.h) &\text{(porque todas las aristas de $M^*$ pertenecen a $G_h$)}\\
+			&= \sum_{l \in L}l.h + \sum_{r \in R} r.h &\text{(porque $M^{*}$ es un emparejamiento perfecto)}\\
+		\end{align} 
+		
+		Sea $M$ un emparejamiento perfecto cualquiera de $G$, se tiene
+		
+		\begin{align}
+			w(M) &= \sum_{(l,r) \in M} w(l,r)\\
+			&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertice factible)}\\
+			&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
+		\end{align}
+		Entonces se tiene
+		\begin{equation}
+			w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
+		\end{equation}
+		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
+	\end{proof}
+
+	Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
 
 \subsection{Explicaci\'on del algoritmo}
 
@@ -280,85 +278,90 @@ Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en u
 
 El algoritmo H\'ungaro empieza con un etiquetado de v\'ertice factible $h$ que es el de defecto \ref{eq:defecto} y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$.  En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy. Luego, el algoritmo repetidamente encuentra un \textbf{camino $M$-aumentativo} $P$ en $G_h$ utilizando una variante de B\'usqueda Primero a lo Ancho (\textit{en ingl\'es}, \textbf{BFS}). 
 
-El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+ El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
 
 
 Si la b\'usqueda de un camino $M$-aumentativo falla, se debe actualizar el etiquetado de v\'ertice factible para adicionar a $G_h$ al menos una arista nueva.
 
 Una vez encontrado un camino $M$-aumentativo, actualiza el emparejamiento para que este sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento.  Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
 
-Existen casos en los que la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo H\'ungaro actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lemma.
-
-\begin{lem}
-	\cite{introduction}
-	Sea $h$ un etiquetado de v\'ertice factible en el grafo bipartito completo G con el grafo de igualdad $G_h$, y se $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de una B\'usqueda Primero a lo Ancho (en ingl\'es, BFS) sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
-	\begin{equation}
-		v.h' =  \left\{
-		\begin{array}{ll}
-			v.h-\delta & \text{si $v \in F_l$}, \\
-			v.h+\delta & \text{si $v \in F_r$}, \\
-			v.h & e.o.c \\
-		\end{array} 
-		\right.
-	\end{equation}				
-	donde 
-	\begin{equation}
-		\label{eqn:delta}
+	Existen casos en los que la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo H\'ungaro actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lemma.
+	
+	\begin{lem}
+		\cite{introduction}
+		Sea $h$ un etiquetado de v\'ertice factible en el grafo bipartito completo G con el grafo de igualdad $G_h$, y se $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de una B\'usqueda Primero a lo Ancho (en ingl\'es, BFS) sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
+		\begin{equation}
+			v.h' =  \left\{
+			\begin{array}{ll}
+				v.h-\delta & \text{si $v \in F_l$}, \\
+				v.h+\delta & \text{si $v \in F_r$}, \\
+				v.h & e.o.c \\
+			\end{array} 
+			\right.
+		\end{equation}				
+		donde 
+		\begin{equation}
+			\label{eqn:delta}
 		\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in F_r\}
-	\end{equation}
-	con $F_l = L \cap V_f$ y $F_r = R \cap V_f$ son v\'ertices del bosque $F$ que pertenecen a $L$ y a $R$, respectivamente, es una etiqueta de v\'ertice factible para $G$ con las siguientes propiedades:
-	\begin{enumerate}
-		\item Si (u,v) es una arista de bosque F para $G_h$, entonces (u,v) $\in E_{h'}$.
-		\item Si (l,r) pertenece al emparejamiento M para $G_h$, entonces (l,r) $\in E_{h'}$.
-		\item Existen v\'ertices $l \in F_l$ y $r \in R - F_r$ tales que (l,r) $\notin E_h$, pero (l,r) $\in E_{h'}$.  
-	\end{enumerate} 
-\end{lem}
-\begin{proof}
-	Primero se demuestra que $h'$ es un etiquetado de v\'ertice factible para $G$. Debido a que $h$ es un etiquetado de v\'ertice factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertice factible, entonces se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para alg\'un $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on \ref{eqn:delta}, se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertice factible.
-	
-	Ahora se mostrar\'a la veracidad de las propiedades:
-	
-	\begin{enumerate}
-		\item Si $l \in F_l$ y $r \in F_r$, entonces se tiene $l.h' + r.h' = l.h + r,h$ debido a que $\delta$ se adiciona a la etiqueta de $l$ y se substrae de la etiqueta de $r$. entonces, si una arista pertenece a $F$ para el grafo $G_h$, tambi\'en pertenece a $G_{h'}$.
-		\item Se afirma que para el momentp en que el algoritmo H\'ungaro computa el nuevo etiquetado de v\'ertice factible $h'$, para toda arista $(l,r) \in M$, se tiene que $l \in F_l$ si y solo s\'i $r \in F_r$. 
+		\end{equation}
+		con $F_l = L \cap V_f$ y $F_r = R \cap V_f$ son v\'ertices del bosque $F$ que pertenecen a $L$ y a $R$, respectivamente, es una etiqueta de v\'ertice factible para $G$ con las siguientes propiedades:
+		\begin{enumerate}
+			\item Si (u,v) es una arista de bosque F para $G_h$, entonces (u,v) $\in E_{h'}$.
+			\item Si (l,r) pertenece al emparejamiento M para $G_h$, entonces (l,r) $\in E_{h'}$.
+			\item Existen v\'ertices $l \in F_l$ y $r \in R - F_r$ tales que (l,r) $\notin E_h$, pero (l,r) $\in E_{h'}$.  
+		\end{enumerate} 
+	\end{lem}
+	\begin{proof}
+		Primero se demuestra que $h'$ es un etiquetado de v\'ertice factible para $G$. Debido a que $h$ es un etiquetado de v\'ertice factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertice factible, entonces se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para alg\'un $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on \ref{eqn:delta}, se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertice factible.
 		
-		Para demostrar por qu\'e, se considera el v\'ertice saturado $r$ y la arista $(l,r) \in M$. 
+		Ahora se mostrar\'a la veracidad de las propiedades:
 		
-		Primero se supone que $r \in F_r$, entonces la b\'usqueda encuentra $r$ y lo pone en la cola. Cuando $r$ se remueve de la cola, $l$ es descubierto, entonces $l \in F_l$. 
-		
-		Luego se supone que $r \notin F_r$, por tanto $r$ no se ha descubierto. Se demostrar\'a que $l \notin F_l$. La \'unica arista en $G_h$ que entra $l$ es $(r,l)$, y dado que $r$ no se ha descubierto, la b\'usqueda no ha tomado esta arista; si $l \in F_l$, no es por la arista ($r,l$). La \'unica otra forma que un v\'ertice en $L$ puede estar en $F_l$ es si es ra\'iz de la b\'usqueda, pero solo v\'ertices no saturados de $L$ son ra\'ices y $l$ est\'a saturado. Por tanto, $l \notin F_l$ y la afirmaci\'on se cumple.
-		
-		Se conoce que para $l \in F_l$ y $r \in F_r$ se cumple $l.h' + r.h' = l.h + r.h$. En caso contrario, cuando $l \in L-F_l$ y $r \in R-F_r$, se tiene que $l.h' = l.h$ y $r.h'=r.h$, entonces $l.h' + r.h' = l.h + r.h$. Por tanto, si la arista $(l,r)$ est\'a en el emparejamiento $M$ para el grafo $G_h$, entonces $(l,r) \in E_{h'}$.
-		\item Sea $(l,r)$ una arista que no pertenece a $E_h$, tal que $l \in F_l$, $r \in R-F_r$ y $\delta = l.h + r.h - w(l,r)$. Entonces, por definici\'on de $\delta$, existe al menos una de esas arista. Luego, se tiene 
-		
-		\begin{align*}
-			l.h' + r.h' &= l.h - \delta + r.h\\
-			&= l.h - (l.h + r.h -w(l,r)) + r.h\\
-			&= w(l,r)			
-		\end{align*}
+		\begin{enumerate}
+			\item Si $l \in F_l$ y $r \in F_r$, entonces se tiene $l.h' + r.h' = l.h + r,h$ debido a que $\delta$ se adiciona a la etiqueta de $l$ y se substrae de la etiqueta de $r$. entonces, si una arista pertenece a $F$ para el grafo $G_h$, tambi\'en pertenece a $G_{h'}$.
+			\item Se afirma que para el momentp en que el algoritmo H\'ungaro computa el nuevo etiquetado de v\'ertice factible $h'$, para toda arista $(l,r) \in M$, se tiene que $l \in F_l$ si y solo s\'i $r \in F_r$. 
+			
+			Para demostrar por qu\'e, se considera el v\'ertice saturado $r$ y la arista $(l,r) \in M$. 
+			
+			Primero se supone que $r \in F_r$, entonces la b\'usqueda encuentra $r$ y lo pone en la cola. Cuando $r$ se remueve de la cola, $l$ es descubierto, entonces $l \in F_l$. 
+			
+			Luego se supone que $r \notin F_r$, por tanto $r$ no se ha descubierto. Se demostrar\'a que $l \notin F_l$. La \'unica arista en $G_h$ que entra $l$ es $(r,l)$, y dado que $r$ no se ha descubierto, la b\'usqueda no ha tomado esta arista; si $l \in F_l$, no es por la arista ($r,l$). La \'unica otra forma que un v\'ertice en $L$ puede estar en $F_l$ es si es ra\'iz de la b\'usqueda, pero solo v\'ertices no saturados de $L$ son ra\'ices y $l$ est\'a saturado. Por tanto, $l \notin F_l$ y la afirmaci\'on se cumple.
+			
+			Se conoce que para $l \in F_l$ y $r \in F_r$ se cumple $l.h' + r.h' = l.h + r.h$. En caso contrario, cuando $l \in L-F_l$ y $r \in R-F_r$, se tiene que $l.h' = l.h$ y $r.h'=r.h$, entonces $l.h' + r.h' = l.h + r.h$. Por tanto, si la arista $(l,r)$ est\'a en el emparejamiento $M$ para el grafo $G_h$, entonces $(l,r) \in E_{h'}$.
+			\item Sea $(l,r)$ una arista que no pertenece a $E_h$, tal que $l \in F_l$, $r \in R-F_r$ y $\delta = l.h + r.h - w(l,r)$. Entonces, por definici\'on de $\delta$, existe al menos una de esas arista. Luego, se tiene 
+			
+			\begin{align*}
+				l.h' + r.h' &= l.h - \delta + r.h\\
+				&= l.h - (l.h + r.h -w(l,r)) + r.h\\
+				&= w(l,r)			
+			\end{align*}
 		y por tanto $(l,r) \in E_{h'}$. 
+			
+			
+		\end{enumerate}
 		
-		
-	\end{enumerate}
-	
-\end{proof}
+	\end{proof}
 
 %	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
-
-\subsection{Correctitud}
-
-\subsection{Complejidad Temporal}
-
-La complejidad temporal del algoritmo H\'ungaro implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$.
+	
+	\subsection{Correctitud}
+	
+	\subsection{Complejidad Temporal}
+	
+	La complejidad temporal del algoritmo H\'ungaro implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$.
+	
+	
+	
+	
+	
+	
+	\subsection{Complejidad Espacial}
 	
 	\section{Generador de casos de prueba}
 	
-	Se generaron 3000 casos de prueba utilizando backtrack los cuales pueden ser encontrados en $ json/test\_cases.json $.
-	
 	\section{Tester}
-	 Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex_solution.json $ y $ json/tests/hungarian_solution.json $
 	
-	%\section{Comparaci\'on de soluciones implementadas}
+	
+	\section{Comparaci\'on de soluciones implementadas}
 	
 	\begin{thebibliography}
 		a
