@@ -24,11 +24,6 @@ def save_data(data: dict, path: str):
             json.dump(save, write_it)
 
 
-def addlabels(x, y):
-    for i in range(len(x)):
-        plt.text(i, y[i], y[i], ha='center')
-
-
 def plot_test_results():
     cwd = os.getcwd()
     cwd += "/baseball/json/"

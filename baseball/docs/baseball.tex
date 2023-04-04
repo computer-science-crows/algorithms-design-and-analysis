@@ -218,7 +218,7 @@
 	
 	\section{L\'inea de pensamiento}
 	
-	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de 11. Dicha soluci\'on puede ser encontrada en \textit{solutions/backtrack\_solutions.py}.
+	Como primera soluci\'on al problema de asignaci\'on fue implementado un \textit{backtrack}. Esta es una soluci\'on correcta, ya que prueba todas las combinaciones y se queda con la que m\'as valor aporte, pero muy ineficiente, $ O(n!) $. En una computadora de 32GB de RAM, intel core i7-11na generaci\'on, se puede resolver para una cantidad m\'axima de personas y/o posiciones de 11. Dicha soluci\'on puede ser encontrada en \textit{src/solutions/backtrack\_solutions.py}.
 	
 	Se intent\'o resolver mediante un algoritmo \textit{greedy}, tomando por cada persona el m\'aximo del valor que puede aportar al equipo, y luego ir asignando de forma descendente a las posiciones. El problema de este enfoque est\'a en que cuando dos o m\'as personas aportan el mismo valor en una misma posici\'on se debe escoger aquel cuyo siguiente m\'aximo sea menor (pues de lo contrario en una pr\'oxima iteraci\'on se perder\'ia en valor en otra posici\'on). N\'otese que para el peor de los casos, cuando todos las personas aporten el mismo valor en todas las posiciones, esta soluci\'on es tan mala como backtrack.
 	
@@ -235,9 +235,9 @@
 	\end{matrix} \right. 
 	\end{equation} 
 
-	Esta soluci\'on fue probada utilizando el algoritmo \textit{Simplex} implementado en la librer\'ia scipy y puede ser encontrada en \textit{solutions/simplex\_solution.py}. La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
+	Esta soluci\'on fue probada utilizando el algoritmo \textit{Simplex} implementado en la librer\'ia scipy y puede ser encontrada en \textit{src/solutions/simplex\_solution.py}. La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
 	
-	Investigando el estado del arte y siguiendo la idea de modelar el problems mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro descrito en \cite{introduction}, el cual es una especie de greedy y se ejecuta en tiempo polinomial, y es explicado en la pr\'oxima secci\'on. Dicha implementaci\'on est\'a en \textit{solutions/hungarian\_solution.py}.
+	Investigando el estado del arte y siguiendo la idea de modelar el problems mediante grafos se decidi\'o implementar para su soluci\'on el algoritmo H\'ungaro descrito en \cite{introduction}, el cual es una especie de greedy y se ejecuta en tiempo polinomial, y es explicado en la pr\'oxima secci\'on. Dicha implementaci\'on est\'a en \textit{src/solutions/hungarian\_solution.py}.
 	
 	\section{Algoritmo H\'ungaro}
 
@@ -361,10 +361,10 @@
 	
 	\section{Generador de casos de prueba}
 	
-	En \textit{app/generator.py} fue implementado un generador, el cual recibe una cantidad s de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con backtrack y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
+	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba, con $ n $ m\'aximo igual a 11, dado que, como se mencion\'o anteriormente, es lo que puede ejecutar el $ backtrack $.
 	
 	\section{Tester}
-	 En \textit{app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
+	 En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
 	 	 \begin{center}
 	 		\includegraphics[width=7cm]{tester_sample.png}
 	 		
@@ -375,16 +375,19 @@
 	
 	\section{Comparaci\'on de soluciones implementadas}
 	
+	En los casos analizados, el \textit{backtrack} puede demorar desde menos de un segundo hasta casi dos minutos en ejecutarse. El \textit{simplex} demora para todos los casos menos de medio segundo, manteni\'endose para la mayor\'ia por debajo de los 0.2 segundos. Por \'ultimo el \textit{hungarian} implementado es el que mejores resultados muestra, tomando menos de 0.02 segundos para todos los casos, la d\'ecima parte de lo que demora el \textit{simplex}. A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. 
 	\begin{center}
 		\includegraphics[width=7cm]{Backtrack_results.png}\\
 		\includegraphics[width=7cm]{Simplex_results.png}
 		\includegraphics[width=7cm]{Hungarian_results.png}
-	\end{center}
-
+	\end{center}  
+	
+	Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
+	
 	\begin{center}
 		\includegraphics[width=7cm]{Bar_comparative_plot.png}
 	\end{center}
-
+	
 	\begin{thebibliography}
 		a
 		\bibitem{introduction} Cormen, Thomas H. y otros. \emph{Introduction to Algorithms}. 
