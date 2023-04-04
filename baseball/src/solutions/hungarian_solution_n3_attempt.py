@@ -82,7 +82,6 @@ def build_equality_subgraph(G: nx.Graph):
 
     return G_h
 
- 
 
 def modify_equality_subgraph(G_h: nx.Graph, G: nx.Graph):
 
@@ -133,7 +132,8 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
                 M.add_nodes_from([(node, nodedata)])
                 M.add_nodes_from([(max_neighbour, nodedata)])
                 M.add_edge(node, max_neighbour)
-                nx.set_edge_attributes(M, {(node, max_neighbour): G_h.get_edge_data(node, max_neighbour)})
+                nx.set_edge_attributes(
+                    M, {(node, max_neighbour): G_h.get_edge_data(node, max_neighbour)})
 
     # print("!!!!!!!! M !!!!!!!!")
     # print("NODES")
@@ -233,8 +233,7 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
             modify_equality_subgraph(G_h, G)     # n^2
             new_edges = set(G_h.edges()).difference(old_edges)
 
-           
-            #d = {}
+            # d = {}
             unmatched_leaf = None
 
             for node in left:
@@ -280,7 +279,7 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
                     G_h.nodes[r]['o'] = temp
 
             for v in G_h.neighbors(u):
-                #if not (G_h.nodes[u]['matched'] or G_h.nodes[v]['matched']):
+                # if not (G_h.nodes[u]['matched'] or G_h.nodes[v]['matched']):
                 #    continue
                 if not G_h[u][v]['matched'] and v not in F_r:
                     d[v] = u
@@ -341,7 +340,7 @@ hungarian_solution(7, 6, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9], [6, 8, 5
 hungarian_solution(8, 8, [3, 4, 7, 0, 2, 0, 0, 0], [[4, 4, 8, 5, 12, 9, 7, 2], [0, 4, 11, 6, 7, 9, 5, 15], [3, 6, 7, 5, 0, 7, 8, 3], [
                    6, 4, 1, 2, 3, 2, 4, 2], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [23, 4, 10, 8, 4, 11, 2, 11], [3, 7, 8, 5, 4, 3, 6, 8]])
 
-#hungarian_solution(9, 9, [2, 3, 4, 7, 0, 2, 0, 0, 0], [[1, 4, 4, 8, 5, 12, 9, 7, 2], [2, 0, 4, 11, 6, 7, 9, 5, 15], [3, 5, 6, 7, 5, 0, 7, 8, 3], [
+# hungarian_solution(9, 9, [2, 3, 4, 7, 0, 2, 0, 0, 0], [[1, 4, 4, 8, 5, 12, 9, 7, 2], [2, 0, 4, 11, 6, 7, 9, 5, 15], [3, 5, 6, 7, 5, 0, 7, 8, 3], [
 #                   4, 6, 4, 1, 2, 3, 2, 4, 2], [5, 23, 4, 10, 8, 4, 11, 2, 11], [6, 23, 4, 10, 8, 4, 11, 2, 11], [7, 23, 4, 10, 8, 4, 11, 2, 11], [8, 3, 7, 8, 5, 4, 3, 6, 8], [9, 3, 7, 8, 5, 4, 3, 6, 8]])
 
 hungarian_solution(4, 4, [0, 0, 0, 0], [[2, 8, 2, 4], [
@@ -352,8 +351,9 @@ hungarian_solution(3, 3, [5, 10, 4], [[8, 6, 2], [7, 2, 3], [8, 1, 1]])
 hungarian_solution(3, 2, [1, 0, 3], [[8, 6], [7, 2], [8, 1]])
 
 hungarian_solution(7, 7, [0, 0, 0, 0, 0, 0, 0], [[4, 10, 10, 10, 2, 9, 3], [6, 8, 5, 12, 9, 7, 2], [11, 9, 6, 7, 9, 5, 15], [
-                 3, 9, 6, 7, 5, 6, 3], [2, 6, 5, 3, 2, 4, 2], [10, 8, 11, 4, 11, 2, 11], [3, 4, 5, 4, 3, 6, 8]])
+    3, 9, 6, 7, 5, 6, 3], [2, 6, 5, 3, 2, 4, 2], [10, 8, 11, 4, 11, 2, 11], [3, 4, 5, 4, 3, 6, 8]])
 
 # , "elapsed_time": 0.0023577213287353516, "optimal_solution": [1, 3, 4, 0, 2], "optimal_value": 69}
 
-hungarian_solution(6, 6, [4, 1, 4, 5, 1, 3], [[1, 2, 3, 1, 1, 8], [0, 5, 1, 2, 7, 6], [7, 0, 1, 7, 6, 7], [9, 4, 4, 5, 1, 1], [1, 3, 1, 1, 5, 3], [9, 4, 7, 1, 5, 2]])
+hungarian_solution(6, 6, [4, 1, 4, 5, 1, 3], [[1, 2, 3, 1, 1, 8], [0, 5, 1, 2, 7, 6], [
+                   7, 0, 1, 7, 6, 7], [9, 4, 4, 5, 1, 1], [1, 3, 1, 1, 5, 3], [9, 4, 7, 1, 5, 2]])

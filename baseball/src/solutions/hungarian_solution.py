@@ -28,7 +28,7 @@ def default_vertex_labeling(G: nx.Graph):
 
 def build_graph(n, m, a, s):
     """
-        builds the corresponding complete weighted bipartite graph
+        Builds the corresponding complete weighted bipartite graph
     """
     # makes graph complete
 
@@ -52,7 +52,7 @@ def build_graph(n, m, a, s):
 
 def build_equality_subgraph(G: nx.Graph):
     """
-        builds the corresponding equality subgraph G_h
+        Builds the corresponding equality subgraph G_h
     """
 
     G_h = nx.Graph()
@@ -70,7 +70,10 @@ def build_equality_subgraph(G: nx.Graph):
 
 
 def modify_equality_subgraph(G_h: nx.Graph, G: nx.Graph):
-
+    """
+        Modifies equality subgraph removing edges that don't hold the condition and adding 
+        new ones from the original graph that do
+    """
     for edge in G_h.edges():
         u = edge[0]
         v = edge[1]
@@ -88,11 +91,9 @@ def modify_equality_subgraph(G_h: nx.Graph, G: nx.Graph):
                     G_h, {(node, neighbor): G.get_edge_data(node, neighbor)})
 
 
-
-
 def initial_greedy_bipartite_matching(G_h: nx.Graph):
     """
-        gets the initial matching of G_h using greedy tecniche
+        Gets the initial matching of G_h using greedy tecniche
     """
 
     M = nx.Graph()
@@ -116,7 +117,6 @@ def initial_greedy_bipartite_matching(G_h: nx.Graph):
                 nx.set_edge_attributes(
                     M, {(node, max_neighbour): G_h.get_edge_data(node, max_neighbour)})
 
-
     return M
 
 
@@ -132,7 +132,6 @@ def symmetric_difference(P: nx.Graph, G_h: nx.Graph):
             G_h[u][v]['matched'] = True
             G_h.nodes[u]['matched'] = True
             G_h.nodes[v]['matched'] = True
-
 
 
 def construct_augmentative_path(d: dict, unmatched_leave):
@@ -203,7 +202,6 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
             modify_equality_subgraph(G_h, G)     # n^2
             new_edges = set(G_h.edges()).difference(old_edges)
 
-           
             for (l, r) in new_edges:
                 if r not in F_r:
                     d[r] = l
@@ -215,7 +213,6 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
                         Q.append(r)
                         F_r.add(r)
                         T.remove(r)
-
 
             unmatched_leaf = None
 
@@ -230,8 +227,6 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
 
         u = Q.pop(0)
 
-
-
         if u in right:
             for v in G_h.neighbors(u):
                 if G_h[u][v]['matched']:
@@ -240,7 +235,7 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
                     Q.append(v)
         # u in left
         else:
-            for v in G_h.neighbors(u):               
+            for v in G_h.neighbors(u):
                 if not G_h[u][v]['matched'] and v not in F_r:
                     d[v] = u
                     if not G_h.nodes[v]['matched']:
@@ -286,7 +281,5 @@ def hungarian_solution(n, m, a, s):
                     answer[neighbor - n] = node
                     max_value += G_h[node][neighbor]['weight']
                     break
-   
+
     return answer, max_value
-
-

@@ -7,8 +7,8 @@ def simplex_solution(n, m, a, s):
     Solution of assigment problem using linear programming (simplex).
     """
 
-    function_object =[]
-    
+    function_object = []
+
     for i in range(n):
         for j in range(n):
             if j < m:
@@ -16,13 +16,12 @@ def simplex_solution(n, m, a, s):
             else:
                 function_object.append(0)
 
-
     A_eq, b_eq = constrains(n)
-  
+
     solution = linprog(function_object, A_eq=A_eq,
                        b_eq=b_eq, bounds=None, method='simplex')
-    
-    answer = format_answer(n,m,solution.x)
+
+    answer = format_answer(n, m, solution.x)
 
     return answer, int(-(solution.fun))
 
@@ -50,12 +49,13 @@ def constrains(n):
 
     return np.array(A_eq), np.array(b_eq)
 
-def format_answer(n,m,solution):
+
+def format_answer(n, m, solution):
     """
     Returns solution as a list with the candidate's number as elements
     """
     answer = [0 for i in range(m)]
-    
+
     for i in range(n):
         temp = solution[i*n:i*n + n]
         for j in range(m):
@@ -63,8 +63,3 @@ def format_answer(n,m,solution):
                 answer[j] = i
 
     return answer
-
-
-
-
-
