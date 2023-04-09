@@ -150,9 +150,9 @@ def construct_augmentative_path(d: dict, unmatched_leave):
     return P
 
 
-def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
+def find_augmenting_path(G_h: nx.Graph, G: nx.Graph):
     """
-    Finds M-augmentating path in G_h
+    Finds M-augmenting path in G_h
     """
 
     Q = []  # inicializar con vertices no emparejados, cada uno de estos vertices en la raiz de un bosque
@@ -179,7 +179,7 @@ def find_augmentating_path(G_h: nx.Graph, G: nx.Graph):
     not_ap = True
 
     while not_ap:
-        # if Q is empty it means that a M-augmentating path was not found in G_h, so the graph has to change
+        # if Q is empty it means that a M-augmenting path was not found in G_h, so the graph has to change
         if len(Q) == 0:
 
             # delta = min{ l.h + r.l - w(l,r): l in F_l and r in T}
@@ -264,7 +264,7 @@ def hungarian_solution(n, m, a, s):
     matching_cardinality = len(M.edges())
     while matching_cardinality != n:
 
-        P = find_augmentating_path(G_h, G)
+        P = find_augmenting_path(G_h, G)
         symmetric_difference(P, G_h)
 
         matching_cardinality = 0

@@ -476,6 +476,10 @@ Por lo anteriormente explicado, se llega a que el m\'etodo \textsc{finding\_augm
 	
 	\subsection{Complejidad espacial}
 	
+	La complejidad espacial de nuestra implementaci\'on es $O(n^2)$. El algoritmo utiliza como entrada una matriz de $n$ x $m$ y un arreglo de tama\~no $n$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo bipartito completo con la librer\'ia networkx de Python que tiene $n$ v\'ertices y $n^2$ aristas, cuyo costo asumimos no es mayor que $O(n^2)$.
+	
+	
+	
 	\section{Generador de casos de prueba}
 	
 	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba, con $ n $ m\'aximo igual a 11, dado que, como se mencion\'o anteriormente, es lo que puede ejecutar el $ backtrack $.
