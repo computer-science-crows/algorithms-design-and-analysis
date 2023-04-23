@@ -1,0 +1,12 @@
+\BOOKMARK [1][-]{section.1}{Repositorio del proyecto}{}% 1
+\BOOKMARK [1][-]{section.2}{Definici\363n inicial del problema}{}% 2
+\BOOKMARK [1][-]{section.3}{Definici\363n en t\351rminos matem\341tico - computacionales}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Preliminares}{section.3}% 4
+\BOOKMARK [1][-]{section.4}{L\355nea de pensamiento}{}% 5
+\BOOKMARK [1][-]{section.5}{Algoritmo}{}% 6
+\BOOKMARK [2][-]{subsection.5.1}{Explicaci\363n del algoritmo}{section.5}% 7
+\BOOKMARK [2][-]{subsection.5.2}{Complejidad Temporal}{section.5}% 8
+\BOOKMARK [2][-]{subsection.5.3}{Complejidad espacial}{section.5}% 9
+\BOOKMARK [1][-]{section.6}{Generador de casos de prueba}{}% 10
+\BOOKMARK [1][-]{section.7}{Tester}{}% 11
+\BOOKMARK [1][-]{section.8}{Comparaci\363n de soluciones implementadas}{}% 12
