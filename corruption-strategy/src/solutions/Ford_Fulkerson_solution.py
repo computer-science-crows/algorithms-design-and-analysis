@@ -37,15 +37,35 @@ def build_graph(n, m, a, w):
             G[city][road]['capacity'] = inf
             G[city][road]['flow'] = 0
 
-    print(f'G initial NODES: {G.nodes(data=True)}')
+    print(f'G NODES: {G.nodes(data=True)}')
     print("--------------------------------------")
-    print(f'G initial EDGES: {G.edges(data=True)}')
+    print(f'G EDGES: {G.edges(data=True)}')
 
     return G
 
 
-def build_residual_graph(G: nx.DiGraph):
-    pass
+def get_residual_graph(G: nx.DiGraph):
+    G_r = nx.DiGraph()
+    G_r.add_nodes_from(G.nodes(data=True))
+    print(G_r.nodes(data=True))
+
+    for edge in G.edges():
+        # add edges from G that still have capacity
+        u, v = edge[0], edge[1]
+        c_r = G[u][v]['capacity'] - G[u][v]['flow']
+        if c_r > 0:
+            G_r.add_edge(u, v)
+            G_r[u][v]['residual_capacity'] = c_r
+
+        # add edges from G that are in the flow with inverse direction
+        flow = G[u][v]['flow']
+        if flow > 0:
+            G_r.add_edge(v, u)
+            G_r[v][u]['residual_capacity'] = flow
+
+    print(f'G_r NODES: {G_r.nodes(data=True)}')
+    print("--------------------------------------")
+    print(f'G_r EDGES: {G_r.edges(data=True)}')
 
 
 def max_flow_min_cut(G: nx.Graph, G_r,s,t):
@@ -102,4 +122,5 @@ def capacity(G, p):
 
 
 
-build_graph(4, 3, [1, 2, 3, 4], [5, 6, 7, 8])
+G = build_graph(4, 3, [1, 2, 3, 4], [5, 6, 7, 8])
+get_residual_graph(G)
