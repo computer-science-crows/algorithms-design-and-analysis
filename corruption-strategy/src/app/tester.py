@@ -7,7 +7,7 @@ from app.tools import save_data
 
 def tester(function):
     cwd = os.getcwd()
-    cwd += "/baseball/json"
+    cwd += "/corruption-strategy/json"
 
     # gets test cases from json
     test_cases = {}
@@ -31,7 +31,7 @@ def tester(function):
 
             start = time.time()
             testing_data["f_result"], testing_data["f_value"] = function(
-                tc['n'], tc['p'] + tc['k'], tc['a'], tc['s'])
+                tc['n'], tc['m'], tc['a'], tc['w'])
             end = time.time()
 
             testing_data["elapsed_time"] = end - start
