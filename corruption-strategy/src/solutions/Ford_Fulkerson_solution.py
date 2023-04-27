@@ -131,7 +131,7 @@ def path_ff(G: nx.DiGraph,s,t):
     '''Finds a path p from the source s to the sink t in the residual network G_r'''
 
     pi = nx.dfs_predecessors(G,s)
-    if pi[t] == None:
+    if t not in pi.keys():
         return None
     
     path = []
