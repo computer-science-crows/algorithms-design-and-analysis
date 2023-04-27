@@ -14,3 +14,4 @@ from app.tools import plot_test_results
 
 # Plots each function's results and a comparison of the average elapsed time, and saves the pics in json/tests/plots
 # plot_test_results()
+

@@ -67,46 +67,91 @@ def get_residual_graph(G: nx.DiGraph):
     print("--------------------------------------")
     print(f'G_r EDGES: {G_r.edges(data=True)}')
 
+    return G_r
 
-def max_flow_min_cut(G: nx.Graph, G_r,s,t):
+def max_flow_min_cut(G: nx.DiGraph):
+
+    G_r = get_residual_graph(G)
+    s= 'source'
+    t='sink'
 
     p = path_ff(G_r,s,t)
-    while (p != None):
-        capacity_p = capacity(G_r,p)
-        for (u,v) in p:
-            if (u,v) in G.edges():
-                G[u][v]['flow'] = G[u][v]['flow'] + capacity_p
-            else:
-                G[v][u]['flow'] = G[v][u]['flow'] - capacity_p
-            G_r= get_residual_graph(G)
 
+    edges = G.edges()
+
+    while (p != None):
+        capacity_p = residual_capacity_path(G_r,p)
+        for (u,v) in p:
+            try:
+                G[u][v]['flow'] = G[u][v]['flow'] + capacity_p
+            except:
+                G[v][u]['flow'] = G[v][u]['flow'] - capacity_p
+        G_r= get_residual_graph(G)
+        p = path_ff(G_r,s,t)
+
+    max_flow = 0
+
+    for v in G.neighbors(t):
+        max_flow += G[v][t]['flow']
+
+    return max_flow
+
+def dfs(G:nx.DiGraph):
+
+    pi = {}
+    visited = {}
+
+    for u in G.nodes:
+        visited[u] = False
+        pi[u]=None
+
+    for u in G.nodes:
+        if not visited[u]:
+            visited[u]=True
+            visited,pi, visit_t = dfs_visit(G,u, visited,pi)
+
+    return pi
+
+
+def dfs_visit(G:nx.DiGraph,u, visited, pi):
+
+    visit_t = False
+    for v in G.neighbors(u):
+        if not visited[v]:
+            pi[v]=u
             
-def path_ff(G,s,t):
+            visited,pi, visit_t = dfs_visit(G,v,visited,pi)
+        
+
+    return visited,pi, visit_t
+
+
+def path_ff(G: nx.DiGraph,s,t):
+
+    '''Finds a path p from the source s to the sink t in the residual network G_r'''
+
     pi = nx.dfs_predecessors(G,s)
     if pi[t] == None:
         return None
     
     path = []
-    current_node = s
+    current_node = t
 
-    while current_node != t:
-        temp = np.copy(current_node)
+    while current_node != s:
+        temp = current_node
         current_node = pi[current_node]
-        path.append((temp,current_node))       
+        path.append((current_node,temp))   
     
-
     return path
 
-def capacity(G, p):
+def residual_capacity_path(G_r, p):
 
-    capacity_p = -inf
+    '''Calculates the residual capacity of the path p in de residual network G_r'''
 
-    for (u,v) in p: 
-        capacity_edge = 0
-        if (u,v) in G.edges:
-            capacity_edge = G[u][v]['capacity'] - G[u][v]['flow']
-        elif (v,u) in G.edges:
-            capacity_edge = G[v][u]['flow']
+    capacity_p = inf
+
+    for (u,v) in p:               
+        capacity_edge = G_r[u][v]['residual_capacity']         
         
         if capacity_p > capacity_edge:
             capacity_p = capacity_edge
@@ -114,13 +159,7 @@ def capacity(G, p):
     return capacity_p
 
 
-            
-    
-
-
-
-
-
-
 G = build_graph(4, 3, [1, 2, 3, 4], [5, 6, 7, 8])
-get_residual_graph(G)
+#get_residual_graph(G)
+
+print(max_flow_min_cut(G))
