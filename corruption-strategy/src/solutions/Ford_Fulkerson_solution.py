@@ -124,6 +124,7 @@ def max_flow_min_cut(G: nx.DiGraph):
         G_r = get_residual_graph(G)
         p = find_augmenting_path(G_r, s, t)
 
+    #
     max_flow = 0
 
     for v in G.neighbors(s):
@@ -132,10 +133,17 @@ def max_flow_min_cut(G: nx.DiGraph):
     return max_flow
 
 
-G = build_graph(4, 3, [1, 2, 3, 4], [5, 6, 7, 8])
+def get_minimum_cut(G_r: nx.DiGraph):
+    pi = nx.dfs_successors(G_r, 'source')
+
+    pass
+
+
+G = build_graph(3, 4, [10, 20, 3], [5, 15, 4, 7])
 # get_residual_graph(G)
 
-print(max_flow_min_cut(G))
+print(f'MAX FLOW: {max_flow_min_cut(G)}')
+print()
 
 T = nx.DiGraph()
 T.add_nodes_from(['source', 'a', 'b', 'c', 'd', 'e', 'sink'])

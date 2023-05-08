@@ -164,20 +164,32 @@
 	\end{center}
 
 	\section{Definici\'on inicial del problema} 
+
+	Tito se dió cuenta de que la carrera de computación estaba acabando con él y un día decidió darle un cambio radical a su vida. Comenzó a estudiar Ingeniería Industrial. Luego de unos años de fiesta, logró finalmente conseguir su título de ingeniero. Luego de otros tantos años ejerciendo sus estudios, consiguió ponerse a la cabeza de un gran proyecto de construcción de carreteras.
 	
-	Tito el corrupto
-	Tito se dió cuenta de que la carrera de computación estaba acabando con él y un día decidió darle un cambio radical a su vida. Comenzó a estudiar Ingeniería Industrial. Luego de unos años de fiesta, logró finalmente conseguir su título de ingeniero. Luego de otros tantos años ejerciendo sus estudios (¿?), consiguió ponerse a la cabeza de un gran proyecto de construcción de carreteras.
 	La zona en la que debe trabajar tiene $n$ ciudades con $m$ posibles carreteras a construir entre ellas. Cada ciudad que sea incluida en el proyecto aportará $a_i$ dólares al proyecto, mientras que cada carretera tiene un costo de $w_i$ dólares. Si una carretera se incluye en el proyecto, las ciudades unidas por esta también deben incluirse.
+	
 	El problema está en que Tito quiere utilizar una de las habilidades que aprendió en sus años de estudio, la de la malversación de fondos. Todo el dinero necesario para el proyecto que no sea un aporte de alguna ciudad, lo proveerá el país y pasará por manos de Tito. El dinero aportado por las ciudades no pasará por sus manos. Tito quiere maximizar la cantidad de dinero que pasa por él, para poder hacer su magia. Ayude a Tito a seleccionar el conjunto de carreteras a incluir en el proyecto para lograr su objetivo.
 	
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
 	
+	
 	\subsection{Preliminares}
 	
 	\section{L\'inea de pensamiento}
 	
-	\section{Algoritmo}
+	\section{Algoritmo Ford-Fulkerson}
+	
+	El algoritmo Ford-Fulkerson es un algoritmo utilizado para encontrar el flujo máximo en una red de flujo. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
+	
+	El algoritmo Ford-Fulkerson encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentante, es decir, un camino desde el nodo fuente hasta el nodo sumidero donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentante, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentantes en el grafo residual.
+	
+	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos aumentantes en el grafo residual sin utilizar aristas que ya están completamente saturadas.
+	
+	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentantes en el grafo residual y, por lo tanto, el flujo es óptimo.
+	
+	Existen varias implementaciones del algoritmo Ford-Fulkerson, como el método de la ruta más corta o el método de Edmonds-Karp, que utilizan diferentes estrategias para buscar caminos aumentantes de manera eficiente.
 	
 	\subsection{Explicaci\'on del algoritmo}
 	
