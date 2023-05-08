@@ -177,6 +177,104 @@
 	
 	\subsection{Preliminares}
 	
+	\begin{mydef}
+		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
+	\end{mydef}
+
+	\begin{mydef}
+		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
+		
+		\begin{enumerate}
+			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
+			\begin{equation}
+				0 \leq f(u,v) \leq c(u,v)
+			\end{equation}
+		
+			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
+			\begin{equation}
+				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
+			\end{equation}
+			
+		\end{enumerate}
+		
+	\end{mydef}
+
+	\begin{mydef}
+		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
+	\end{mydef}
+
+	\begin{mydef}
+		El \textbf{valor de un flujo} se define como:
+		
+		\begin{equation}
+			|f|=\sum_{v \in V} f(s,v)
+		\end{equation}
+	\end{mydef}
+
+	\begin{mydef}
+		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v$\in$V.
+		
+		Se define la \textbf{capacidad residual} mediante la siguiente función:
+		
+		\begin{equation}
+			c_f(u,v) = 	\left\{		
+			\begin{array}{lr}				
+				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
+				f(v,u) &, \text{si (v,u) $\in$ E}\\
+				0 &,\text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+	
+	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
+	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
+	\end{mydef}
+
+	\begin{mydef}
+		
+		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
+		
+		\begin{equation}
+			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
+				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
+				0 & \text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+		
+	\end{mydef}
+	
+	\begin{lem}
+		|f $\uparrow$ f'|=|f|+|f'|
+	\end{lem}
+	
+	\begin{mydef}
+		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
+	\end{mydef}
+
+	\begin{mydef}
+		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
+		\begin{equation}
+			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
+		\end{equation}
+	\end{mydef}
+
+	\begin{lem}
+		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
+		
+		\begin{equation}
+			f_p(u,v) = \left\{
+			\begin{array}{lr}
+				c_f(p) & \text{si (u,v) $\in$ p}\\
+				0 & \text{en otro caso}
+			\end{array}
+			\right.
+		\end{equation}
+		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$
+		
+		
+	\end{lem}
+	
 	\section{L\'inea de pensamiento}
 	
 	\section{Algoritmo Ford-Fulkerson}
