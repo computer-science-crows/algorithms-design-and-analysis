@@ -1,0 +1,324 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[10pt]{article} % Single column
+
+%\documentclass[twoside,twocolumn]{article} % Two column
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage[spanish]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Dise\~no y An\'alisis de Algoritmos. \textbf{Proyecto \# 2: Tito el corrupto}} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{graphicx} % For images
+
+\usepackage{pifont} % bullets
+
+\usepackage{amsmath}
+
+\usepackage{algpseudocode}
+
+% Keywords command
+\providecommand{\keywords}[1]
+{
+	\small	
+	\vspace{0.5em}
+	\noindent \textbf{\textit{Palabras clave --- }} #1
+}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+	\posttitle{\end{center}} % Article title closing formatting
+\title{\normalsize{Dise\~no y An\'alisis de Algoritmos }\\
+	\Huge\bfseries Proyecto \# 2: Tito el corrupto \\
+} % Article title
+\author{% 
+	%\includegraphics[width=15em]{logo.png}\\
+	Laura Victoria Riera P\'erez\\
+	Mari\'e del Valle Reyes \vspace{1em} \\
+	\small Cuarto a\~no. Ciencias de la Computaci\'on. \\ % institution
+	\small Facultad de Matem\'atica y Computaci\'on, Universidad de La Habana, Cuba \\ % institution
+}
+\date{\footnotesize \today } % Leave empty to omit a date
+
+
+% Abstract configurations
+\renewenvironment{abstract}
+{\small
+	\begin{center}
+		\bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+	\end{center}
+	\list{}{
+		\setlength{\leftmargin}{1.5cm}%
+		\setlength{\rightmargin}{\leftmargin}%
+	}%
+	\item\relax}
+{\endlist}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{todonotes} % \TODO
+\usepackage{listings} % Code listings
+\usepackage{xcolor}
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\newcommand{\csl}[1]{\colorbox{backcolour}{\texttt{#1}}}
+
+\newcommand{\imgcaption}[2]{\tiny \textbf{Figura #1.} #2.}
+
+\newcommand{\mgc}[2][]{\colorbox{backcolour}{\texttt{\_\_#2\_\_#1}}}
+
+\newcommand{\mgccapt}[1]{\texttt{\_\_#1\_\_}}
+
+\newtheorem{thm}{Teorema}
+\newtheorem{mydef}{Definici\'on}%[section]
+\newtheorem{lem}{Lema}
+\newtheorem{fig}{\scriptsize{Figura}}
+
+
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+
+% Hyperlinks configurations
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	% Print the title
+	\maketitle
+	
+	%----------------------------------------------------------------------------------------
+	%	ARTICLE CONTENTS
+	%----------------------------------------------------------------------------------------
+	
+	\section{Repositorio del proyecto}
+	
+	\begin{center}
+		\href{https://github.com/computer-science-crows/algorithms-design-and-analysis}{https://github.com/computer-science-crows/algorithms-design-and-analysis}
+	\end{center}
+
+	\section{Definici\'on inicial del problema} 
+
+	Tito se dió cuenta de que la carrera de computación estaba acabando con él y un día decidió darle un cambio radical a su vida. Comenzó a estudiar Ingeniería Industrial. Luego de unos años de fiesta, logró finalmente conseguir su título de ingeniero. Luego de otros tantos años ejerciendo sus estudios, consiguió ponerse a la cabeza de un gran proyecto de construcción de carreteras.
+	
+	La zona en la que debe trabajar tiene $n$ ciudades con $m$ posibles carreteras a construir entre ellas. Cada ciudad que sea incluida en el proyecto aportará $a_i$ dólares al proyecto, mientras que cada carretera tiene un costo de $w_i$ dólares. Si una carretera se incluye en el proyecto, las ciudades unidas por esta también deben incluirse.
+	
+	El problema está en que Tito quiere utilizar una de las habilidades que aprendió en sus años de estudio, la de la malversación de fondos. Todo el dinero necesario para el proyecto que no sea un aporte de alguna ciudad, lo proveerá el país y pasará por manos de Tito. El dinero aportado por las ciudades no pasará por sus manos. Tito quiere maximizar la cantidad de dinero que pasa por él, para poder hacer su magia. Ayude a Tito a seleccionar el conjunto de carreteras a incluir en el proyecto para lograr su objetivo.
+	
+
+	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
+	
+	
+	\subsection{Preliminares}
+	
+	\begin{mydef}
+		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
+	\end{mydef}
+
+	\begin{mydef}
+		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
+		
+		\begin{enumerate}
+			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
+			\begin{equation}
+				0 \leq f(u,v) \leq c(u,v)
+			\end{equation}
+		
+			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
+			\begin{equation}
+				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
+			\end{equation}
+			
+		\end{enumerate}
+		
+	\end{mydef}
+
+	\begin{mydef}
+		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
+	\end{mydef}
+
+	\begin{mydef}
+		El \textbf{valor de un flujo} se define como:
+		
+		\begin{equation}
+			|f|=\sum_{v \in V} f(s,v)
+		\end{equation}
+	\end{mydef}
+
+	\begin{mydef}
+		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v$\in$V.
+		
+		Se define la \textbf{capacidad residual} mediante la siguiente función:
+		
+		\begin{equation}
+			c_f(u,v) = 	\left\{		
+			\begin{array}{lr}				
+				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
+				f(v,u) &, \text{si (v,u) $\in$ E}\\
+				0 &,\text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+	
+	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
+	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
+	\end{mydef}
+
+	\begin{mydef}
+		
+		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
+		
+		\begin{equation}
+			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
+				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
+				0 & \text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+		
+	\end{mydef}
+	
+	\begin{lem}
+		|f $\uparrow$ f'|=|f|+|f'|
+	\end{lem}
+	
+	\begin{mydef}
+		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
+	\end{mydef}
+
+	\begin{mydef}
+		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
+		\begin{equation}
+			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
+		\end{equation}
+	\end{mydef}
+
+	\begin{lem}
+		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
+		
+		\begin{equation}
+			f_p(u,v) = \left\{
+			\begin{array}{lr}
+				c_f(p) & \text{si (u,v) $\in$ p}\\
+				0 & \text{en otro caso}
+			\end{array}
+			\right.
+		\end{equation}
+		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$
+		
+		
+	\end{lem}
+	
+	\section{L\'inea de pensamiento}
+	
+	\section{Algoritmo Ford-Fulkerson}
+	
+	El algoritmo Ford-Fulkerson es un algoritmo utilizado para encontrar el flujo máximo en una red de flujo. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
+	
+	El algoritmo Ford-Fulkerson encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentante, es decir, un camino desde el nodo fuente hasta el nodo sumidero donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentante, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentantes en el grafo residual.
+	
+	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos aumentantes en el grafo residual sin utilizar aristas que ya están completamente saturadas.
+	
+	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentantes en el grafo residual y, por lo tanto, el flujo es óptimo.
+	
+	Existen varias implementaciones del algoritmo Ford-Fulkerson, como el método de la ruta más corta o el método de Edmonds-Karp, que utilizan diferentes estrategias para buscar caminos aumentantes de manera eficiente.
+	
+	\subsection{Explicaci\'on del algoritmo}
+	
+	\subsection{Complejidad Temporal}
+	
+	\subsection{Complejidad espacial}
+		
+	\section{Generador de casos de prueba}
+	
+	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba, con $ n $ m\'aximo igual a 11, dado que, como se mencion\'o anteriormente, es lo que puede ejecutar el $ backtrack $.
+	
+	\section{Tester}
+	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
+%		 \begin{center}
+%	 		\includegraphics[width=7cm]{tester_sample.png}
+%	 		
+%	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
+%	 	\end{center}
+	 
+	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
+	
+	\section{Comparaci\'on de soluciones implementadas}
+	
+	\begin{thebibliography}
+		a
+		\bibitem{introduction} Cormen, Thomas H. y otros. \emph{Introduction to Algorithms}. 
+		The MIT Press.
+		4ta Edici\'on.		
+		Cambridge, Massachusetts.
+		2022.
+	\end{thebibliography}
+\end{document}
+
+

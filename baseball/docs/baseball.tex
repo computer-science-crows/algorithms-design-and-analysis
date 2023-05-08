@@ -193,6 +193,7 @@
 	\end{mydef}
 	
 	\begin{mydef}
+		\label{def:alternativo}
 		Sea $ G $ un grafo y $ M $ un emparejamiento del mismo. Un camino simple en $ G $ es $ M $-alternativo si sus aristas alternan entre pertenecer y no pertenecer a $ M $.
 	\end{mydef}
 	
@@ -243,256 +244,277 @@
 	
 	\section{Algoritmo Hungarian}
 
-El método Húngaro es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo Hungarian trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice, llamado \textbf{etiqueta} del v\'ertice. Se dice que $h$ es un \textbf{etiquetado de vértice factible} de $G$ si $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Un etiquetado de v\'ertice factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
-\begin{align}
-	\label{eq:defecto}
-	l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
-	r.h &= 0 &\text{para todo } r \in R 
-\end{align}
-
-Dado un etiquetado de v\'ertice factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
-
-El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
-\begin{thm} \cite{introduction}
-	\label{thm: emparejamiento}
-	Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertice factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonces $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
-	
-\end{thm}
-
-\begin{proof}
-	Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
-	
+	El método $ hungarian $ es un algoritmo de optimización-combinatoria que resuelve el problema de asignación en tiempo polinomial. En vez de trabajar con un grafo bipartito completo $G$, el algoritmo Hungarian trabaja con un subgrafo de $G$ llamado \textbf{subgrafo de igualdad}. El subgrafo de igualdad depende de asignar un atributo $h$ a cada v\'ertice, llamado \textbf{etiqueta} del v\'ertice. Se dice que, para todo $l \in L$ y $r \in R$,  $h$ es un \textbf{etiquetado de vértices factible} de $G$ si $l.h + r.h \geq w(l,r)$ . Un etiquetado de v\'ertices factible siempre existe, como el \textbf{etiquetado de v\'ertice por defecto} dado por
 	\begin{align}
-		w(M*) &= \sum_{(l,r) \in M*} w(l,r)\\
-		&= \sum_{(l,r) \in M^*}(l.h + r.h) &\text{(porque todas las aristas de $M^*$ pertenecen a $G_h$)}\\
-		&= \sum_{l \in L}l.h + \sum_{r \in R} r.h &\text{(porque $M^{*}$ es un emparejamiento perfecto)}\\
-	\end{align} 
-	
-	Sea $M$ un emparejamiento perfecto cualquiera de $G$, se tiene
-	
-	\begin{align}
-		w(M) &= \sum_{(l,r) \in M} w(l,r)\\
-		&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertice factible)}\\
-		&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
+		\label{eq:defecto}
+		l.h &= \text{max} \{w(l,r):r \in R\} &\text{para todo } l \in R,\\
+		r.h &= 0 &\text{para todo } r \in R 
 	\end{align}
-	Entonces se tiene
-	\begin{equation}
-		w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
-	\end{equation}
-	por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
-\end{proof}
-
-Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
-
-\subsection{Explicaci\'on del algoritmo}
-
-%El algoritmo Hungarian repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
-
-El algoritmo Hungarian empieza con un etiquetado de v\'ertices factible $h$ que es el etiquetado por defecto [\ref{eq:defecto}] y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$.  En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy, el cual consiste en escoger aristas que conformen un emparejamiento de tal forma que la suma total de sus pesos  sea m\'axima. Luego, el algoritmo repetidamente encuentra un \textbf{camino $M$-aumentativo} $P$ en $G_h$ utilizando una variante de B\'usqueda Primero a lo Ancho (\textit{en ingl\'es}, \textbf{BFS}). 
-
-El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
-
-Una vez encontrado un camino $M$-aumentativo, se actualiza el emparejamiento para que este sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento por lema [\ref{lm:ds}]. La \textbf{diferencia sim\'etrica} de dos conjuntos $A$ y $B$, se define como $A \Delta B = (A \cup B) - (A \cap B)$. Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
-
-\begin{lem}\cite{introduction}
-	\label{lm:ds}
-	Sea $M$ un emparejamiento en un grafo no dirigido $G=(V,E)$, y sea $P$ un camino $M$-aumentativo. Entonces el conjunto de aristas $M' = M \Delta P$ es tambi\'en un emparejamiento en $G$ con $|M'| = |M| + 1$.
-\end{lem}
-
-\begin{proof}
-	Sea $m$ la cantidad de aristas que contiene $P$, tal que $\lceil m/2 \rceil$ aristas pertenezcan a $E-M$ y $\lfloor m/2 \rfloor$ aristas pertenezcan a $M$ y sean las aristas $(v_1,v_2),(v_2,v_3),...,(v_m,v_{m+1})$. Por deficici\'on [\ref{def:aumentativo}] los extremos $v_1$ y $v_{m+1}$ de $P$  no est\'an saturados y todos los dem\'as v\'ertices si est\'an saturados. Las aristas $(v_1,v_2),(v_3,v_4),...,(v_m,v_{m+1})$ pertenecen a $E-M$, y las aristas $(v_2,v_3), (v_4,v_5),...,(v_{m-1},v_m)$ pertenecen a $M$. La diferencia sim\'etrica $M'=M \Delta P$ intercambia los conjunto de aristas $M$ y $E-M$, quedando en $M'$ las aristas $(v_1,v_2),(v_3,v_4),...,(v_m,v_{m+1})$. Cada v\'ertice $v_1,v_2,...,v_m,v_{m+1}$ est\'an saturadas en $M'$, teniendo $M'$ una arista m\'as en relaci\'on con $M$.
-\end{proof}
-La b\'usqueda falla cuando  la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo Hungarian actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lema, para adicionar a $G_h$ al menos una arista nueva.
-
-\begin{lem}
-	\cite{introduction}
-	Sea $h$ un etiquetado de v\'ertice factible en el grafo bipartito completo G con el subgrafo de igualdad $G_h$, y sea $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de un BFS sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
-	\begin{equation}
-		v.h' =  \left\{
-		\begin{array}{ll}
-			v.h-\delta & \text{si $v \in F_l$}, \\
-			v.h+\delta & \text{si $v \in F_r$}, \\
-			v.h & e.o.c \\
-		\end{array} 
-		\right.
-	\end{equation}				
-	donde 
-	\begin{equation}
-		\label{eqn:delta}
-		\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in R-F_r\}
-	\end{equation}
-	con $F_l = L \cap V_f$ y $F_r = R \cap V_f$ son v\'ertices del bosque $F$ que pertenecen a $L$ y a $R$, respectivamente, es una etiqueta de v\'ertice factible para $G$ con las siguientes propiedades:
-	\begin{enumerate}
-		\item Si (u,v) es una arista de bosque F para $G_h$, entonces (u,v) $\in E_{h'}$.
-		\item Si (l,r) pertenece al emparejamiento M para $G_h$, entonces (l,r) $\in E_{h'}$.
-		\item Existen v\'ertices $l \in F_l$ y $r \in R - F_r$ tales que (l,r) $\notin E_h$, pero (l,r) $\in E_{h'}$.  
-	\end{enumerate} 
-\end{lem}
-\begin{proof}
-	Primero se demuestra que $h'$ es un etiquetado de v\'ertices factible para $G$. Debido a que $h$ es un etiquetado de v\'ertice factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertice factible, se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para v\'ertices $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on [\ref{eqn:delta}], se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertice factible.
 	
-	A continuaci\'on se demostrar\'a la veracidad de las propiedades:
+	Dado un etiquetado de v\'ertices factible $h$, el \textbf{subgrafo de igualdad} $G_h = (V, E_h)$ de $G$ consiste de los mismos v\'ertice de $G$ y el subconjunto de aristas $E_h = \{(l,r) \in E: l.h + r.h = w(l,r)\}$.
 	
-	\begin{enumerate}
-		\item Si $l \in F_l$ y $r \in F_r$, entonces se tiene $l.h' + r.h' = l.h + r.h$ debido a que $\delta$ se adiciona a la etiqueta de $l$ y se substrae de la etiqueta de $r$. Entonces, si una arista pertenece a $F$ para el grafo $G_h$, tambi\'en pertenece a $G_{h'}$.
-		\item Se afirma que para el momento en que el algoritmo Hungarian computa el nuevo etiquetado de v\'ertice factible $h'$, para toda arista $(l,r) \in M$, se tiene que $l \in F_l$ si y solo si $r \in F_r$. 
+	El subgrafo de igualdad puede cambiar en el tiempo y tiene la propiedad que cualquier emparejamiento perfecto en el subgrafo de igualdad es tambi\'en una soluci\'on \'optima del problema de asignaci\'on como se demuestra en el siguiente teorema.
+	\begin{thm} \cite{introduction}
+		\label{thm: emparejamiento}
+		Sea $G=(V,E)$, donde $V = L \cup R$, un grafo bipartito completo donde cada arista $(l,r) \in E$ tiene peso $w(l,r)$. Sea $h$ un etiquetado de v\'ertices factible de $G$ y $G_h$ el subgrafo de igualdad de $G$. Si $G_h$ contiene un emparejamiento perfecto $M^*$, entonces $M^*$ es una soluci\'on \'optima del problema de asignaci\'on $G$. 
 		
-		Para demostrar por qu\'e, se considera el v\'ertice saturado $r$ y la arista $(l,r) \in M$. Primero se supone que $r \in F_r$, entonces la b\'usqueda encuentra $r$ y lo pone en la cola. Cuando $r$ se quita de la cola, $l$ es descubierto, entonces $l \in F_l$. 
+	\end{thm}
+	
+	\begin{proof}
+		Si $G_h$ tiene un emparejamiento perfecto $M^*$, entonces debido a que $G_h$ y $G$ tienen el mismo conjunto de v\'ertices, $M^*$ es tambi\'en un emparejamiento perfecto en $G$. Debido a que cada arista de $M^*$ pertenece a $G_h$ y cada v\'ertice tiene exactamente una arista incidente del emparejamiento perfecto, entonces se tiene
 		
-		Luego se supone que $r \notin F_r$, por tanto $r$ no se ha descubierto. Se demostrar\'a que $l \notin F_l$. La \'unica arista en $G_h$ que entra el v\'ertice $l$ es $(r,l)$, y dado que $r$ no se ha descubierto, la b\'usqueda no ha tomado esta arista; si $l \in F_l$, no es por la arista ($r,l$). La \'unica otra forma que un v\'ertice en $L$ puede estar en $F_l$ es si es ra\'iz de la b\'usqueda, pero solo v\'ertices no saturados de $L$ son ra\'ices y $l$ est\'a saturado. Por tanto, $l \notin F_l$ y la afirmaci\'on se cumple.
+		\begin{align}
+			w(M*) &= \sum_{(l,r) \in M*} w(l,r)\\
+			&= \sum_{(l,r) \in M^*}(l.h + r.h) &\text{(porque todas las aristas de $M^*$ pertenecen a $G_h$)}\\
+			&= \sum_{l \in L}l.h + \sum_{r \in R} r.h &\text{(porque $M^{*}$ es un emparejamiento perfecto)}\\
+		\end{align} 
 		
-		Se conoce que para $l \in F_l$ y $r \in F_r$ se cumple $l.h' + r.h' = l.h + r.h$. En caso contrario, cuando $l \in L-F_l$ y $r \in R-F_r$, se tiene que $l.h' = l.h$ y $r.h'=r.h$, entonces $l.h' + r.h' = l.h + r.h$. Por tanto, si la arista $(l,r)$ est\'a en el emparejamiento $M$ para el grafo $G_h$, entonces $(l,r) \in E_{h'}$.
-		\item Sea $(l,r)$ una arista que no pertenece a $E_h$, tal que $l \in F_l$, $r \in R-F_r$ y $\delta = l.h + r.h - w(l,r)$. Entonces, por definici\'on de $\delta$, existe al menos una de esas arista. Luego, se tiene 
+		Sea $M$ un emparejamiento perfecto cualquiera de $G$, se tiene
 		
-		\begin{align*}
-			l.h' + r.h' &= l.h - \delta + r.h\\
-			&= l.h - (l.h + r.h -w(l,r)) + r.h\\
-			&= w(l,r)			
-		\end{align*}
-		y por tanto $(l,r) \in E_{h'}$. 
+		\begin{align}
+			w(M) &= \sum_{(l,r) \in M} w(l,r)\\
+			&\leq \sum_{(l,r) \in M} (l.h + r.h) &\text{(porque $h$ es un etiquetado de v\'ertices factible)}\\
+			&= \sum_{l \in L} l.h + \sum_{r \in R} r.h &\text{(porque $M$ es un emparejamiento perfecto)}
+		\end{align}
+		Entonces se tiene
+		\begin{equation}
+			w(M) \leq \sum_{l \in L} l.h + \sum_{r \in R} r.h = w(M^*),
+		\end{equation}
+		por tanto $M^*$ es un emparejamiento perfecto de m\'aximo costo en $G$.
+	\end{proof}
+	
+	Entonces, el objetivo del algoritmo es encontrar un emparejamiento perfecto en un subgrafo de igualdad. 
+	
+	\subsection{Explicaci\'on del algoritmo}
+	
+	%El algoritmo Hungarian repetidamente modifica el emparejamiento y las etiquetas de v\'ertices en orden de alcanzar su objetivo.
+	
+	El algoritmo Hungarian empieza con un etiquetado de v\'ertices factible $h$ que es el etiquetado por defecto [\ref{eq:defecto}] y cualquier emparejamiento $M$ en el subgrafo de igualdad $G_h$.  En la resoluci\'on de este problema se utiliz\'o un algoritmo de emparejamiento maximal greedy, el cual consiste en escoger aristas que conformen un emparejamiento de tal forma que la suma total de sus pesos  sea m\'axima. Luego, el algoritmo repetidamente encuentra un \textbf{camino $M$-aumentativo} $P$ en $G_h$ utilizando una variante de B\'usqueda Primero a lo Ancho (\textit{en ingl\'es}, \textbf{BFS}). 
+	
+	El algoritmo BFS empieza la b\'usqueda desde todos los v\'ertices no saturados de $L$, los cuales al inicio se insertan en la cola $Q$. La condici\'on de parada es que se descubra alg\'un v\'ertice no saturado de $R$, ya que un camino $M$-aumentativo es aquel que empieza en un v\'ertice no saturado de $L$ y termina en un v\'ertice no saturado de $R$, tomando aristas no saturadas de $L$ a $R$ y aristas saturadas de $R$ a $L$. El resultado del algoritmo es un bosque primero a lo ancho $F = (V_f, E_f)$, donde cada v\'ertice no saturado de $L$ es ra\'iz de alg\'un \'arbol de $F$.
+	
+	Una vez encontrado un camino $M$-aumentativo, se actualiza el emparejamiento para que este sea la diferencia sim\'etrica de $M$ y $P$, incrementando as\'i el tama\~no del emparejamiento por lema [\ref{lm:ds}]. La \textbf{diferencia sim\'etrica} de dos conjuntos $A$ y $B$, se define como $A \Delta B = (A \cup B) - (A \cap B)$. Mientras haya alg\'un subgrafo de igualdad que contenga un camino $M$- aumentativo, el tama\~no del emparejamiento puede incrementar, hasta que un emparejamiento perfecto se logre.
+	
+	\begin{lem}\cite{introduction}
+		\label{lm:ds}
+		Sea $M$ un emparejamiento en un grafo no dirigido $G=(V,E)$, y sea $P$ un camino $M$-aumentativo. Entonces el conjunto de aristas $M' = M \Delta P$ es tambi\'en un emparejamiento en $G$ con $|M'| = |M| + 1$.
+	\end{lem}
+	
+	\begin{proof}
+		Sea $m$ la cantidad de aristas que contiene $P$, tal que $\lceil m/2 \rceil$ aristas pertenezcan a $E-M$ y $\lfloor m/2 \rfloor$ aristas pertenezcan a $M$ y sean las aristas $(v_1,v_2),(v_2,v_3),...,(v_m,v_{m+1})$. Por definici\'on [\ref{def:aumentativo}] los extremos $v_1$ y $v_{m+1}$ de $P$  no est\'an saturados y todos los dem\'as v\'ertices si est\'an saturados. Las aristas $(v_1,v_2),(v_3,v_4),...,(v_m,v_{m+1})$ pertenecen a $E-M$, y las aristas $(v_2,v_3), (v_4,v_5),...,(v_{m-1},v_m)$ pertenecen a $M$. La diferencia sim\'etrica $M'=M \Delta P$ intercambia los conjunto de aristas $M$ y $E-M$, quedando en $M'$ las aristas $(v_1,v_2),(v_3,v_4),...,(v_m,v_{m+1})$. Cada v\'ertice $v_1,v_2,...,v_m,v_{m+1}$ est\'a saturado en $M'$, teniendo $M'$ una arista m\'as en relaci\'on con $M$.
+	\end{proof}
+	La b\'usqueda falla cuando  la cola $Q$ se vac\'ia sin que se halla llegado a encontrar un v\'ertice no saturado de $R$ que conforme un camino $M$-aumentativo. Cuando esto ocurre, el algoritmo Hungarian actualiza el etiquetado de v\'ertices factible $h$ de acuerdo al siguiente lema, para adicionar a $G_h$ al menos una arista nueva.
+	
+	\begin{lem}
+		\cite{introduction}
+		Sea $h$ un etiquetado de v\'ertices factible en el grafo bipartito completo G con el subgrafo de igualdad $G_h$, y sea $M$ un emparejamiento para $G_h$ y $F$ el bosque constru\'ido a partir de un BFS sobre el subgrafo de igualdad $G_h$. Entonces, la etiqueta $h'$,
+		\begin{equation}
+			v.h' =  \left\{
+			\begin{array}{ll}
+				v.h-\delta & \text{si $v \in F_l$}, \\
+				v.h+\delta & \text{si $v \in F_r$}, \\
+				v.h & e.o.c \\
+			\end{array} 
+			\right.
+		\end{equation}				
+		donde 
+		\begin{equation}
+			\label{eqn:delta}
+			\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in R-F_r\}
+		\end{equation}
+		con $F_l = L \cap V_f$ y $F_r = R \cap V_f$ son v\'ertices del bosque $F$ que pertenecen a $L$ y a $R$, respectivamente, es una etiqueta de v\'ertice factible para $G$ con las siguientes propiedades:
+		\begin{enumerate}
+			\item Si (u,v) es una arista de bosque F para $G_h$, entonces (u,v) $\in E_{h'}$.
+			\item Si (l,r) pertenece al emparejamiento M para $G_h$, entonces (l,r) $\in E_{h'}$.
+			\item Existen v\'ertices $l \in F_l$ y $r \in R - F_r$ tales que (l,r) $\notin E_h$, pero (l,r) $\in E_{h'}$.  
+		\end{enumerate} 
+	\end{lem}
+	\begin{proof}
+		Primero se demuestra que $h'$ es un etiquetado de v\'ertices factible para $G$. Debido a que $h$ es un etiquetado de v\'ertices factible, se tiene $l.h + r.h \geq w(l,r)$ para todo $l \in L$ y $r \in R$. Para que $h'$ no sea un etiquetado de v\'ertices factible, se necesitar\'ia que $l.h' + r.h' < l.h + r.h$ para alg\'un $l \in L$ y $r \in R$. La \'unica forma en que esto pudiera ocurrir ser\'ia para v\'ertices $l \in F_l$ y $r \in R-F_r$. En esta instancia, la cantidad de decrecimiento es igual a $\delta$, entonces $l.h' + r.h' = l.h - \delta + r.h$. Por ecuaci\'on [\ref{eqn:delta}], se tiene que $l.h - \delta + r.h \geq w(l,r)$ para cualquier $l \in F_l$ y $r \in R - F_r$, por tanto $l.h' + r.h' \geq w(l,r)$. Para cualquier otra arista, se tiene $l.h' + r.h' \geq l.h + r.h \geq w(l,r)$. Por tanto, $h'$ es un etiquetado de v\'ertices factible.
+		
+		A continuaci\'on se demostrar\'a la veracidad de las propiedades:
+		
+		\begin{enumerate}
+			\item Si $l \in F_l$ y $r \in F_r$, entonces se tiene $l.h' + r.h' = l.h + r.h$ debido a que $\delta$ se adiciona a la etiqueta de $l$ y se substrae de la etiqueta de $r$. Entonces, si una arista pertenece a $F$ para el grafo $G_h$, tambi\'en pertenece a $G_{h'}$.
+			\item Se afirma que para el momento en que el algoritmo Hungarian computa el nuevo etiquetado de v\'ertices factible $h'$, para toda arista $(l,r) \in M$, se tiene que $l \in F_l$ si y solo si $r \in F_r$. 
+			
+			Para demostrar por qu\'e, se considera el v\'ertice saturado $r$ y la arista $(l,r) \in M$. Primero se supone que $r \in F_r$, entonces la b\'usqueda encuentra $r$ y lo pone en la cola. Cuando $r$ se quita de la cola, $l$ es descubierto, entonces $l \in F_l$. 
+			
+			Luego se supone que $r \notin F_r$, por tanto $r$ no se ha descubierto. Se demostrar\'a que $l \notin F_l$. La \'unica arista en $G_h$ que entra el v\'ertice $l$ es $(r,l)$, y dado que $r$ no se ha descubierto, la b\'usqueda no ha tomado esta arista; si $l \in F_l$, no es por la arista ($r,l$). La \'unica otra forma que un v\'ertice en $L$ puede estar en $F_l$ es si es ra\'iz de la b\'usqueda, pero solo v\'ertices no saturados de $L$ son ra\'ices y $l$ est\'a saturado. Por tanto, $l \notin F_l$ y la afirmaci\'on se cumple.
+			
+			Se conoce que para $l \in F_l$ y $r \in F_r$ se cumple $l.h' + r.h' = l.h + r.h$. En caso contrario, cuando $l \in L-F_l$ y $r \in R-F_r$, se tiene que $l.h' = l.h$ y $r.h'=r.h$, entonces $l.h' + r.h' = l.h + r.h$. Por tanto, si la arista $(l,r)$ est\'a en el emparejamiento $M$ para el grafo $G_h$, entonces $(l,r) \in E_{h'}$.
+			\item Sea $(l,r)$ una arista que no pertenece a $E_h$, tal que $l \in F_l$, $r \in R-F_r$ y $\delta = l.h + r.h - w(l,r)$. Entonces, por definici\'on de $\delta$, existe al menos una de esas arista. Luego, se tiene 
+			
+			\begin{align*}
+				l.h' + r.h' &= l.h - \delta + r.h\\
+				&= l.h - (l.h + r.h -w(l,r)) + r.h\\
+				&= w(l,r)			
+			\end{align*}
+			y por tanto $(l,r) \in E_{h'}$. 
+			
+			
+		\end{enumerate}
+		
+	\end{proof}
+	
+	%	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
+	
+	\subsection{Complejidad Temporal}
+	
+	La complejidad temporal del algoritmo Hungarian implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on de dicho algoritmo.
+	
+	\vspace{1em}
+	\begin{algorithmic}[1]
+		\Function{hungarian\_solution}{$n, m, a, s$}
+		\State $G$ = \textsc{build\_graph($n, m, a, s$)}
+		\State $G_h$ = \textsc{build\_equality\_subgraph($G$})
+		\State $M$ =\textsc{ initial\_greedy\_bipartite\_matching($G_h$)}
+		
+		\While {en $G_h$ no se encuentre emparejamiento perfecto}
+		\State $P$ = \textsc{find\_augmenting\_path($G_h$)}
+		\State \textsc{symmetric\_difference($P$,$G_h$)}
 		
 		
-	\end{enumerate}
+		\EndWhile
+		\EndFunction 
+	\end{algorithmic}
+	\vspace{1em}
 	
-\end{proof}
-
-%	Es posible que una arista pertenezca a $E_h$ pero no a $E_{h'}$.\todo{demostrar esto ex 25.3-3}
-
-\subsection{Complejidad Temporal}
-
-La complejidad temporal del algoritmo Hungarian implementado es $O(n^4)$, donde $|V|=2n$ y $|E|=n^2$ en el grafo original $G$. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on de dicho algoritmo.
-
-\vspace{1em}
-\begin{algorithmic}[1]
-	\Function{hungarian\_solution}{$n, m, a, s$}
-	\State $G$ = \textsc{build\_graph($n, m, a, s$)}
-	\State $G_h$ = \textsc{build\_equality\_subgraph($G$})
-	\State $M$ =\textsc{ initial\_greedy\_bipartite\_matching($G_h$)}
+	Para el trabajo con grafos por razones de comodidad se utiliz\'o la librer\'ia networkx de Python. En el c\'alculo de la complejidad temporal no se tiene en cuenta el costo de las operaciones sobre grafos creados con la librer\'ia anterior.
 	
-	\While {en $G_h$ no se encuentre emparejamiento perfecto}
-	\State $P$ = \textsc{finding\_augmenting\_path($G_h$)}
-	\State \textsc{symmetric\_difference($P$,$G_h$)}
+	Las l\'ineas 2-4 se encargan de crear las condiciones necesarias para hallar un emparejamiento perfecto $M^*$ en $G$. En la l\'inea 2, el m\'etodo \textsc{build\_graph(\textit{n,m,s,a})} construye un grafo bipartito completo $G = (V,E)$, con $V = L \cup R$, a partir de los datos de entrada del problema. Si $m<n$, se adicionan v\'ertices y aristas artificiales a $G$ para que pueda quedar bipartito completo. En este m\'etodo adem\'as de insertar $2n$ v\'ertices en un grafo de la librer\'ia networkx, se insertan $n^2$ aristas con sus respectivos pesos, por tanto el m\'etodo tiene un costo de $O(n^2)$. 
 	
+	El m\'etodo \textsc{build\_equality\_subgraph($G$}), construye el subgrafo de igualdad $G_h$ a partir de $G$ y el m\'etodo \textsc{ initial\_greedy\_bipartite\_matching($G_h$)} halla un emparejamiento $M$ en $G_h$ como se explic\'o en la secci\'on anterior. Ambos m\'etodos tienen una complejidad temporal de $O(n^2)$, ya que hay que recorrer todas las aristas del grafo $G$.
 	
-	\EndWhile
-	\EndFunction 
-\end{algorithmic}
-\vspace{1em}
-
-Para el trabajo con grafos por razones de comodidad se utiliz\'o la librer\'ia networkx de Python. En el c\'alculo de la complejidad temporal no se tiene en cuenta el costo de las operaciones sobre grafos creados con la librer\'ia anterior.
-
-Las l\'ineas 2-4 se encargan de crear las condiciones necesarias para hallar un emparejamiento perfecto $M^*$ en $G$. En la l\'inea 2, el m\'etodo \textsc{build\_graph(\textit{n,m,s,a})} construye un grafo bipartito completo $G = (V,E)$, con $V = L \cup R$, a partir de los datos de entrada del problema. Si $m<n$, se adicionan v\'ertices y aristas artificiales a $G$ para que pueda quedar bipartito completo. En este m\'etodo adem\'as de insertar $n$ v\'ertices en un grafo de la librer\'ia networkx, se insertan $n^2$ aristas con sus respectivos pesos, por tanto el m\'etodo tiene un costo de $O(n^2)$. 
-
-El m\'etodo \textsc{build\_equality\_subgraph($G$}), construye el subgrafo de igualdad $G_h$ a partir de $G$ y el m\'etodo \textsc{ initial\_greedy\_bipartite\_matching($G_h$)} halla un emparejamiento $M$ en $G_h$ como se explic\'o en la secci\'on anterior. Ambos m\'etodos tienen una complejidad temporal de $O(n^2)$, ya que hay que recorrer todas las aristas del grafo $G$.
-
-El ciclo de las l\'ineas 5-8 termina cuando se encuentra un emparejamiento perfecto $M$ de $G_h$. Por definici\'on [\ref{def:matching}], $M$ es perfecto si satura a $V$ y |$M$|= $\frac{|V|}{2}$ = $n$. En el m\'etodo \textsc{finding\_augmenting\_path($G_h$)} se halla un camino $M$-aumentativo $P$ en $G_h$ utilizando BFS, con el cual incrementa en 1 la cardinalidad de M. Por tanto, el ciclo itera a lo sumo $n$ veces. El m\'etodo \textsc{symmetric\_difference($P$,$G_h$)} actualiza el emparejamiento de $G_h$ a partir del nuevo camino $M$-aumentativo encontrado. Para ello se utiliza la diferencia sim\'etrica de $P$ y el emparejamiento existente en $G_h$. En dicho m\'etodo se comparan y actualizan las aristas de ambos grafos seg\'un las siguiente condiciones:
-\begin{itemize}
-	\item  Si existe una arista en $P$ que no est\'a saturada en $G_h$, entonces esa arista se satura en $G_h$.
-	\item Si existe una arista saturada en $P$ y en $G_h$ a la vez, entonces esa arista deja de estar saturada en $G_h$.
-\end{itemize}
-
-A continuaci\'on se observa el pseudoc\'odigo del m\'etodo \textsc{finding\_augmenting\_path($G_h$)}. 
-
-\vspace{1em}
-\begin{algorithmic}[1]
-	\Function{finding\_augmenting\_path}{$G_h$}
-	\State $Q$ = $\emptyset$
-	\State $F_l$ = $\emptyset$
-	\State $F_r$ = $\emptyset$
-	\State $d$ = \{\}
+	El ciclo de las l\'ineas 5-8 termina cuando se encuentra un emparejamiento perfecto $M$ de $G_h$. Por definici\'on [\ref{def:matching}], $M$ es perfecto si satura a $V$ y |$M$|= $\frac{|V|}{2}$ = $n$. En el m\'etodo \textsc{find\_augmenting\_path($G_h$)} se halla un camino $M$-aumentativo $P$ en $G_h$ utilizando BFS, con el cual incrementa en 1 la cardinalidad de M. Por tanto, el ciclo itera a lo sumo $n$ veces. El m\'etodo \textsc{symmetric\_difference($P$,$G_h$)} actualiza el emparejamiento de $G_h$ a partir del nuevo camino $M$-aumentativo encontrado. Para ello se utiliza la diferencia sim\'etrica de $P$ y el emparejamiento existente en $G_h$. En dicho m\'etodo se comparan y actualizan las aristas de ambos grafos seg\'un las siguiente condiciones:
+	\begin{itemize}
+		\item  Si existe una arista en $P$ que no est\'a saturada en $G_h$, entonces esa arista se satura en $G_h$.
+		\item Si existe una arista saturada en $P$ y en $G_h$ a la vez, entonces esa arista deja de estar saturada en $G_h$.
+	\end{itemize}
 	
-	\For{$l$ no saturado en $L$}
-	\State $d[l] = \textsc{nil}$
-	\State \textsc{enqueue($l$,$Q$)}
-	\State $F_l$ = $F_l \cup \{l\}$
+	A continuaci\'on se observa el pseudoc\'odigo del m\'etodo \textsc{find\_augmenting\_path($G_h$)}. 
 	
-	\EndFor
+	\vspace{1em}
+	\begin{algorithmic}[1]
+		\Function{find\_augmenting\_path}{$G_h$}
+		\State $Q$ = $\emptyset$
+		\State $F_l$ = $\emptyset$
+		\State $F_r$ = $\emptyset$
+		\State $d$ = \{\}
+		
+		\For{$l$ no saturado en $L$}
+		\State $d[l] = \textsc{nil}$
+		\State \textsc{enqueue($l$,$Q$)}
+		\State $F_l$ = $F_l \cup \{l\}$
+		
+		\EndFor
+		
+		\Repeat
+		\If{$Q$ est\'a vac\'ia}
+		\State $\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in R-F_r\}$ 
+		\For{cada $l \in F_l$}
+		\State $l.h = l.h -\delta$
+		\EndFor
+		\For{cada $l \in F_l$}
+		\State $r.h = r.h -\delta$
+		\EndFor
+		\State \textsc{modify\_equality\_subgraph($G_h$, $G$)}
+		\For{cada arista ($l,r$) nueva en $G_h$ }
+		\If{$ r \notin F_r$}
+		\State $d[r] = l $
+		\If{$r$ no saturado}
+		\State \textbf{break}
+		\Else
+		\State \textsc{Enqueue($Q$,$r$)}
+		\State $F_r = F_r \cup \{r\}$
+		\EndIf
+		\EndIf
+		\EndFor
+		\EndIf
+		\State $u$ = \textsc{Dequeue($Q$)}
+		\If {$u \in R$}
+		\For{cada $v \in G_h.neighbors(u)$}
+		\If {$(u,v)$ est\'a saturada}
+		\State $d[v] = u$
+		\State $F_l = F_l \cup \{v\}$
+		\State \textsc{Enqueue($Q$)}
+		\EndIf
+		\EndFor	
+		\Else 
+		\For{cada $v \in G_h.neighbors(u)$}
+		\If {$(u,v)$ no est\'a saturada \textbf{and} \ $v \notin F_r$} 
+		\State $d[v] = u$
+		\If {$v$ no est\'a saturado}
+		\State \textbf{break}
+		\Else						
+		\State $F_r = F_r \cup \{v\}$
+		\State \textsc{Enqueue($Q$)}
+		\EndIf
+		\EndIf
+		
+		\EndFor	
+		
+		\EndIf
+		
+		\Until{se halle camino $M$-aumentativo}
+		\State $P$ = \textsc{construct\_augmenting\_path($d$)}
+		\State \Return $P$
+		\EndFunction 
+	\end{algorithmic}
+	\vspace{1em}
 	
-	\Repeat
-	\If{$Q$ est\'a vac\'ia}
-	\State $\delta = min\{l.h + r.l - w(l,r): l\in F_l, r \in R-F_r\}$ 
-	\For{cada $l \in F_l$}
-	\State $l.h = l.h -\delta$
-	\EndFor
-	\For{cada $l \in F_l$}
-	\State $r.h = r.h -\delta$
-	\EndFor
-	\State \textsc{modify\_equality\_subgraph($G_h$, $G$)}
-	\For{cada arista ($l,r$) nueva en $G_h$ }
-	\If{$ r \notin F_r$}
-	\State $d[r] = l $
-	\If{$r$ no saturado}
-	\State \textbf{break}
-	\Else
-	\State \textsc{Enqueue($Q$,$r$)}
-	\State $F_r = F_r \cup \{r\}$
-	\EndIf
-	\EndIf
-	\EndFor
-	\EndIf
-	\State $u$ = \textsc{Dequeue($Q$)}
-	\If {$u \in R$}
-	\For{cada $v \in G_h.neighbors(u)$}
-	\If {$(u,v)$ est\'a saturada}
-	\State $d[v] = u$
-	\State $F_l = F_l \cup \{v\}$
-	\State \textsc{Enqueue($Q$)}
-	\EndIf
-	\EndFor	
-	\Else 
-	\For{cada $v \in G_h.neighbors(u)$}
-	\If {$(u,v)$ no est\'a saturada \textbf{and} \ $v \notin F_r$} 
-	\State $d[v] = u$
-	\If {$v$ no est\'a saturado}
-	\State \textbf{break}
-	\Else						
-	\State $F_r = F_r \cup \{v\}$
-	\State \textsc{Enqueue($Q$)}
-	\EndIf
-	\EndIf
+	Las l\'inea 2-5 inicializan las estructuras necesarias en la b\'usqueda en $O(1)$ cada l\'inea. El diccionario $d$ almacena el predecesor del v\'ertice $v$ en $d[v]$. El \textbf{for} de la l\'inea 6 itera $|L|=n$ veces. En el cuerpo del mismo se insertan los v\'ertices de $L$ no saturados por $M$ que se encuentran en la cola $Q$ y en el conjunto $F_l$, y se asigna \textsc{none} a $d[l]$, ya que dichos v\'ertices ser\'an ra\'ices del bosque $F$ que conforma la b\'usqueda.
 	
-	\EndFor	
+	Omitiendo las l\'ineas 12-32, se puede apreciar que el m\'etodo es un BFS. La complejidad temporal del BFS es $O(|V| + |E|) = O(n^2)$. Las l\'ineas 12-32 se ejecutan cuando se vac\'ia $Q$ y no se encontr\'o un v\'ertice no saturado de $R$. En este caso, se actualiza el etiquetado de v\'ertices factible de los v\'ertices de $G_h$ y as\'i, por el lema [\ref{eqn:delta}] se adiciona al menos una arista nueva a $G_h$. Como la arista nueva es de la forma, $(l,r)$ con $l\in F_l$ y $r \in R-F_r$, se garantiza que se descubra un v\'ertice de $R$. Por tanto, esa secuencia de l\'ineas de c\'odigo se ejecutan a lo sumo $|R|=n$.
 	
-	\EndIf
+	Hallar el valor de $\delta$ en la l\'inea 13 tiene costo $O(n^2)$ y el m\'etodo \textsc{modify\_equality\_subgraph($G_h$, $G$)}, que actualiza $G_h$ dado el nuevo etiquetado $h'$, tambi\'en tiene costo $O(n^2)$. 
+	Como las l\'ineas 12-32 se pueden ejecutar hasta $n$ veces y, en cada ejecuci\'on se modifica $G_h$ y se realiza un BFS sobre el nuevo $G_h$ con costo $O(n^2)$, se concluye que la ejecuci\'on de las l\'ineas 11-55 tiene un costo de $O(n^3)$.
+	El m\'etodo \textsc{construct\_augmenting\_path($d$)} de la l\'inea 56 construye un grafo $P$ a partir del camino $M$-aumentativo registrado en $d$. Este m\'etodo tiene costo $O(n)$. 
 	
-	\Until{se halle camino $M$-aumentativo}
-	\State $P$ = \textsc{construct\_augmenting\_path($d$)}
-	\State \Return $P$
-	\EndFunction 
-\end{algorithmic}
-\vspace{1em}
-
-Las l\'inea 2-5 inicializan las estructuras necesarias en la b\'usqueda en $O(1)$ cada l\'inea. El diccionario $d$ almacena el predecesor del v\'ertice $v$ en $d[v]$. El \textbf{for} de la l\'inea 6 itera $|L|=n$ veces. En el cuerpo del mismo se insertan los v\'ertices de $L$ no saturados por $M$ que se encuentran en la cola $Q$ y en el conjunto $F_l$ y se asigna \textsc{none} a $d[l]$, ya que dichos v\'ertices ser\'an ra\'ices del bosque $F$ que conforma la b\'usqueda.
-
-Omitiendo las l\'ineas 12-32, se puede apreciar que el m\'etodo es un BFS. La complejidad temporal del BFS es $O(|V| + |E|) = O(n^2)$. Las l\'ineas 12-32 se ejecutan cuando se vac\'ia $Q$ y no se encontr\'o un v\'ertice no saturado de $R$. En este caso, se actualiza el etiquetado de v\'ertices factible de los v\'ertices de $G_h$ y as\'i, por el lema [\ref{eqn:delta}] se adiciona al menos una arista nueva a $G_h$. Como la arista nueva es de la forma, $(l,r)$ con $l\in F_l$ y $r \in R-F_r$, se garantiza que se descubra un v\'ertice de $R$. Por tanto, esa secuencia de l\'ineas de c\'odigo se ejecutan a lo sumo $|R|=n$.
-
-Hallar el valor de $\delta$ en la l\'inea 13 tiene costo $O(n^2)$ y el m\'etodo \textsc{modify\_equality\_subgraph($G_h$, $G$)}, que actualiza $G_h$ dado el nuevo etiquetado $h'$, tambi\'en tiene costo $O(n^2)$. 
-
-Como las l\'ineas 12-32 se pueden ejecutar hasta $n$ veces y, en cada ejecuci\'on se modifica $G_h$ y se realiza un BFS sobre el nuevo $G_h$ con costo $O(n^2)$, se concluye que la ejecuci\'on de las l\'ineas 11-55 tiene un costo de $O(n^3)$.
-
-El m\'etodo \textsc{construct\_augmenting\_path($d$)} de la l\'inea 56 construye un grafo $P$ a partir del camino $M$-aumentativo registrado en $d$. Este m\'etodo tiene costo $O(n)$. 
-
-Por lo anteriormente explicado, se llega a que el m\'etodo \textsc{finding\_augmenting\_path($G_h$)} tiene costo $O(n^3)$, y como este se encuentra dentro de un ciclo que itera a lo sumo $n$ veces en el m\'etodo \textsc{hungarian\_solution($n,m,a,s$)}, entonces este \'ultimo m\'etodo tiene costo $O(n^4)$.
+	Por lo anteriormente explicado, se llega a que el m\'etodo \textsc{find\_augmenting\_path($G_h$)} tiene costo $O(n^3)$, y como este se encuentra dentro de un ciclo que itera a lo sumo $n$ veces en el m\'etodo \textsc{hungarian\_solution($n,m,a,s$)}, entonces este \'ultimo m\'etodo tiene costo $O(n^4)$.
+		
+	\subsubsection{Mejora de la complejidad temporal}
+	La complejidad temporal del algoritmo hungarian para el problema de asignaci\'on realmente es $ O(n^3) $, y se logra al reducir la complejidad del m\'etodo \textsc{find\_augmenting\_path($G_h$)} a $ O(n^2) $. En \cite{introduction} dan algunos hints para poder hacerlo. 
 	
+	En la implementaci\'on que se le da en el libro se utiliza un grafo dirigido para hallar el camino M-aumentativo, resultado de dirigir de R a L todas las aristas de $ G_h $ que pertenezcan al emparejamiento, y de L a R las dem\'as. Todo camino que pertenezca a este nuevo grafo dirigido ser\'a entonces M-alternativo, y los caminos M-aumentativos ser\'an todos aquellos que comiencen en un v\'ertice de L y terminen en uno de R, ambos no saturados. El primer se\~nalamiento es que esto no es necesario.
+	
+	Esto fue resuelto durante el BFS. Se comienza siempre con los nodos de L que no se encuentren emparejados, y solo se consideran los vecinos que no hayan sido descubiertos antes por el BFS. Al sacar un v\'ertice de la cola se pregunta a qu\'e partici\'on pertenece y si est\'a emparejado o no, y se procede de la siguiente forma:
+	\begin{itemize}
+		\item Si el nodo se encuentra en la derecha y est\'a emparejado, se a\~nade el nodo emparejado con \'el del lado izquierdo (equivalente a dirigir aristas del emparejamiento de R a L). 
+		\item Si el nodo se encuentra a la izquierda y no est\'a emparejado se a\~naden sus vecinos que s\'i lo est\'en. 
+		\item Si el nodo se encuentra a la izquierda y est\'a emparejado se a\~naden todos sus vecinos.
+		\item Si el nodo se encuentra a la derecha y no est\'a emparejado, como comenzamos por uno no emparejado, entonces hemos encontrado el camino M-aumentativo.
+	\end{itemize} 
+	
+	Luego, se recomienda definir un nuevo atributo $ r.\sigma $ por cada v\'ertice $ r \in R - F_{R} $ donde:
+	
+	\begin{center}
+		$ r.\sigma = min\{l.h + r.h - w(l,r) : l \in F_{L}\}$ ,
+	\end{center}
+	
+	para poder calcular el atributo $\delta$ en O(n).
+	
+	N\'otese que $ r \in R - F_{R} = T$ son todos los v\'ertices de $ R $ que no hayan sido descubiertos por el BFS. Inicialmente ser\'a todo $ R $ y cada vez que se descubra uno, se elimina de la lista. Cuando se saca de la cola un v\'ertice de $ L $, se recalcula $\sigma$ para todo $ r \in T$. Una vez no hayan m\'as v\'ertices en la cola, se calcula $ \delta $ a partir de los $ r.\sigma $ que hayan quedado en $ T $, lo cual es efectivamente $ O(n) $. Esto esta implementado en \textit{hungarian\_solution\_n3\_attempt.py}, sin embargo no funciona de forma correcta para algunos casos. 
+	
+	Adem\'as, al construir el nuevo subgrafo de igualdad se siguen recorriendo todas las aristas de $ G $ en b\'usqueda de las que cumplen la igualdad, lo cual tiene un costo de $ n^2 $ y este m\'etodo est\'a a su vez dentro de un ciclo por lo que el costo del m\'etodo \textsc{find\_augmenting\_path($G_h$)} sigue siendo $ O(n^3) $ en este intento. 
+
 	\subsection{Complejidad espacial}
 	
-	La complejidad espacial de nuestra implementaci\'on es $O(n^2)$. El algoritmo utiliza como entrada una matriz de $n$ x $m$ y un arreglo de tama\~no $n$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo bipartito completo con la librer\'ia networkx de Python que tiene $n$ v\'ertices y $n^2$ aristas, cuyo costo asumimos no es mayor que $O(n^2)$.
-	
-	
+	La complejidad espacial de nuestra implementaci\'on es $O(n^2)$. El algoritmo utiliza como entrada una matriz de $n$ x $m$ y un arreglo de tama\~no $n$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo bipartito completo con la librer\'ia networkx de Python que tiene $2n$ v\'ertices y $n^2$ aristas, cuyo costo asumimos no es mayor que $O(n^2)$.
 	
 	\section{Generador de casos de prueba}
 	
 	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba, con $ n $ m\'aximo igual a 11, dado que, como se mencion\'o anteriormente, es lo que puede ejecutar el $ backtrack $.
 	
 	\section{Tester}
-	 En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
-	 	 \begin{center}
+	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
+		 \begin{center}
 	 		\includegraphics[width=7cm]{tester_sample.png}
 	 		
 	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
 	 	\end{center}
- 	 
- 	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
+	 
+	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
 	
 	\section{Comparaci\'on de soluciones implementadas}
 	
