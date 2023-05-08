@@ -133,10 +133,28 @@ def max_flow_min_cut(G: nx.DiGraph):
     return max_flow
 
 
-def get_minimum_cut(G_r: nx.DiGraph):
-    pi = nx.dfs_successors(G_r, 'source')
+def get_project_distro(G: nx.DiGraph):
+    cities = []
+    roads = []
+    value = 0
 
-    pass
+    for edge in G.edges():
+        u, v = edge[0], edge[1]
+        c = G[u][v]['capacity']
+        if c != inf:
+            f = G[u][v]['flow']
+            if c == f:
+                if G.nodes[v]['type'] == 'city':
+                    cities.append(v)
+                    value += c
+                # if G.nodes[u]['type'] == 'road':
+                #     roads.append(u)
+            else:
+                if G.nodes[u]['type'] == 'road':
+                    roads.append(u)
+                    value -= c
+
+    return cities, roads, value
 
 
 G = build_graph(3, 4, [10, 20, 3], [5, 15, 4, 7])
