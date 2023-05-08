@@ -37,8 +37,10 @@ def _backtrack_solution(cities, best_solution, count, a, w, answer, n):
         for j in range(n):
             if cities[i][j] < 0 and i != j:
                 cities[i][j] = count
+                cities[j][i] = count
                 _backtrack_solution(cities, best_solution, count + 1, a,w,answer,n)
                 cities[i][j]=-1
+                cities[j][i] =-1
 
 
 def cost(cities, a, w, n):
@@ -47,11 +49,14 @@ def cost(cities, a, w, n):
     solution_cost = 0
 
     mark = [False for i in range(len(a))]
+    mark_cities = [[False for i in range(n)] for i in range(n)]
 
     for i in range(n):        
         for j in range(n):
             road_cost = 0
-            if cities[i][j] > -1:
+            if not mark_cities[i][j] and cities[i][j] > -1:
+                mark_cities[i][j] = True
+                mark_cities[j][i]=True
                 road_cost += w[cities[i][j]]
                 if not mark[i]:
                     road_cost -= a[i]

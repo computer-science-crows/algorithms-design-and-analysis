@@ -129,10 +129,22 @@ def max_flow_min_cut(G: nx.DiGraph):
     for v in G.neighbors(s):
         max_flow += G[s][v]['flow']
 
-    return max_flow
+    min_cut_edges = find_min_cut_edges(G_r)
+
+    return max_flow, min_cut_edges
+
+def find_min_cut_edges(G_r):
+    
+    S = list(nx.bfs_successors(G_r,'source'))
+    T = list(nx.bfs_predecessors(G_r,'sink'))
+   
+    print(f'CONJUNTO DE CORTE S {S}')  
+    print(f'CONJUNTO DE CORTE T {T}') 
 
 
-G = build_graph(4, 3, [1, 2, 3, 4], [5, 6, 7, 8])
+
+
+G = build_graph(3,4,[10,20,3],[5,15,4,7])
 # get_residual_graph(G)
 
 print(max_flow_min_cut(G))
@@ -167,5 +179,5 @@ T['b']['e']['flow'] = 0
 T['e']['sink']['flow'] = 0
 T['d']['sink']['flow'] = 0
 
-print(max_flow_min_cut(T))
+# print(max_flow_min_cut(T))
 # print(nx.dfs_predecessors(T))
