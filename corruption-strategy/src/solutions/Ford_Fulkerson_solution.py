@@ -124,30 +124,26 @@ def max_flow_min_cut(G: nx.DiGraph):
         G_r = get_residual_graph(G)
         p = find_augmenting_path(G_r, s, t)
 
+    #
     max_flow = 0
 
     for v in G.neighbors(s):
         max_flow += G[s][v]['flow']
 
-    min_cut_edges = find_min_cut_edges(G_r)
-
-    return max_flow, min_cut_edges
-
-def find_min_cut_edges(G_r):
-    
-    S = list(nx.bfs_successors(G_r,'source'))
-    T = list(nx.bfs_predecessors(G_r,'sink'))
-   
-    print(f'CONJUNTO DE CORTE S {S}')  
-    print(f'CONJUNTO DE CORTE T {T}') 
+    return max_flow
 
 
+def get_minimum_cut(G_r: nx.DiGraph):
+    pi = nx.dfs_successors(G_r, 'source')
+
+    pass
 
 
-G = build_graph(3,4,[10,20,3],[5,15,4,7])
+G = build_graph(3, 4, [10, 20, 3], [5, 15, 4, 7])
 # get_residual_graph(G)
 
-print(max_flow_min_cut(G))
+print(f'MAX FLOW: {max_flow_min_cut(G)}')
+print()
 
 T = nx.DiGraph()
 T.add_nodes_from(['source', 'a', 'b', 'c', 'd', 'e', 'sink'])
@@ -179,5 +175,5 @@ T['b']['e']['flow'] = 0
 T['e']['sink']['flow'] = 0
 T['d']['sink']['flow'] = 0
 
-# print(max_flow_min_cut(T))
+print(max_flow_min_cut(T))
 # print(nx.dfs_predecessors(T))
