@@ -17,7 +17,8 @@ from solutions.Ford_Fulkerson_solution import max_flow_min_cut
 # Plots each function's results and a comparison of the average elapsed time, and saves the pics in json/tests/plots
 # plot_test_results()
 
-sol, val = backtrack_solution(3,4,[-10,-20,-3],[-5,-15,-4,-7])
-flujo = 
+
+sol, val = backtrack_solution(4,3,[5,15,4,7],[10,20,3])
+
 print(f"solucion backtrack {sol}")
 print(f'valor backtrack {val}')

@@ -91,7 +91,7 @@
 	\Huge\bfseries Proyecto \# 2: Tito el corrupto \\
 } % Article title
 \author{% 
-	\includegraphics[width=15em]{logo.png}\\
+	%\includegraphics[width=15em]{logo.png}\\
 	Laura Victoria Riera P\'erez\\
 	Mari\'e del Valle Reyes \vspace{1em} \\
 	\small Cuarto a\~no. Ciencias de la Computaci\'on. \\ % institution
@@ -175,8 +175,24 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
 	
+	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con el costo de cada carretera. La salida del problema son dos lista, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
 	
-	\subsection{Preliminares}
+	En la resoluci\'on del problema se construye un grafo dirigido $G=(V,E)$, donde $|V| = m + n + 2$ y $|E|= m + n + n \cdot m$. El conjunto $V$ de v\'ertices est\'a conformado por v\'ertices que representen cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que represente la fuente y un v\'ertice $t$ que representa el receptor. El conjunto de los arcos $E$, contiene los siguientes arcos:
+	\begin{itemize}
+		\item Arcos desde $s$ hasta cada v\'ertice que representa una carretera. El peso de estos arcos es el valor $w_i$ dado de entrada, que representa el costo de cada carretera.
+		
+		\item Arcos desde cada v\'ertice que representa una ciudad hacia el v\'ertice $t$. El peso de estos arcos es el valor $a_i$ que representa el aporte de cada ciudad.
+		
+		\item Arcos desde cada v\'ertice que representa una carretera hacia cada v\'ertice que representa una ciudad. El peso de estos arcos es $infinito$.
+		
+	\end{itemize}
+
+	La idea es aplicar un algoritmo de flujo a $G$, particularmente el algoritmo de Ford-Fulkerson. 
+	
+	
+	
+	
+	\section{Algoritmo Ford-Fulkerson}
 	
 	\begin{mydef}
 		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
@@ -213,7 +229,7 @@
 	\end{mydef}
 
 	\begin{mydef}
-		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v$\in$V.
+		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v $\in$ V.
 		
 		Se define la \textbf{capacidad residual} mediante la siguiente función:
 		
@@ -317,29 +333,34 @@
 		\end{enumerate}
 	\end{thm}
 
+	\subsection{Problema}
+	
+	
+	
+	
 %	\section{L\'inea de pensamiento}
 	
-	\section{Algoritmo Ford-Fulkerson}
+
 	
 	El algoritmo Ford-Fulkerson es un algoritmo utilizado para encontrar el flujo máximo en una red de flujo. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
 	
-	El algoritmo Ford-Fulkerson encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentante, es decir, un camino desde el nodo fuente hasta el nodo sumidero donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentante, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentantes en el grafo residual.
+	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo, es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
 	
-	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos aumentantes en el grafo residual sin utilizar aristas que ya están completamente saturadas.
+	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
 	
-	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentantes en el grafo residual y, por lo tanto, el flujo es óptimo.
+	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
 	
-	Existen varias implementaciones del algoritmo Ford-Fulkerson, como el método de la ruta más corta o el método de Edmonds-Karp, que utilizan diferentes estrategias para buscar caminos aumentantes de manera eficiente.
 	
-	\subsection{Explicaci\'on del algoritmo}
 	
-	\subsection{Complejidad Temporal}
+%	\subsection{Explicaci\'on del algoritmo}
 	
-	\subsection{Complejidad espacial}
+%	\subsection{Complejidad Temporal}
+	
+%	\subsection{Complejidad espacial}
 		
 	\section{Generador de casos de prueba}
 	
-	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba, con $ n $ m\'aximo igual a 11, dado que, como se mencion\'o anteriormente, es lo que puede ejecutar el $ backtrack $.
+	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
 	
 	\section{Tester}
 	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
@@ -349,7 +370,7 @@
 %	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
 %	 	\end{center}
 	 
-	 Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
+	 %Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
 	
 %	\section{Comparaci\'on de soluciones implementadas}
 	

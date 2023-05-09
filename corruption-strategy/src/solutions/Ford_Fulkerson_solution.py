@@ -159,7 +159,6 @@ def get_project_distro(G: nx.DiGraph):
 
 G = build_graph(3, 4, [10, 20, 3], [5, 15, 4, 7])
 # get_residual_graph(G)
-
 print(f'MAX FLOW: {max_flow_min_cut(G)}')
 print()
 
