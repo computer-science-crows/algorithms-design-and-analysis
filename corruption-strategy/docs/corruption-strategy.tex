@@ -133,6 +133,7 @@
 \newtheorem{mydef}{Definici\'on}%[section]
 \newtheorem{lem}{Lema}
 \newtheorem{fig}{\scriptsize{Figura}}
+\newtheorem{col}{Corolario}
 
 
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
@@ -270,11 +271,51 @@
 			\end{array}
 			\right.
 		\end{equation}
-		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$
-		
+		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$	
 		
 	\end{lem}
+
+	\begin{col}
+		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Sea $f_p$ definida mediante la ecuación * y supóngase que se aumenta f por $f_p$. Entonces la función f $\uparrow$ $f_p$ es un flujo en G con valor |f $\uparrow$ $f_p$| = |f| + |$f_p$| > |f|.
+	\end{col}
+
+	\begin{mydef}
+		Un \textbf{corte} (S,T) de una red de flujo G = (V,E) es una partici\'on de V en dos conjuntos S y T = V-S de modo 	ue s $\in$ S y t $\in$ T.
+	\end{mydef}
+
+	\begin{mydef}
+		Si f es un flujo, entonces el \textbf{flujo neto} f(S,T) a trav\'es del corte (S,T) se define como
+		\begin{equation}
+			f(S,T) = \sum_{u\in S} \sum_{v\in T} f(u,v) - \sum_{u \in S}\sum_{v \in T} f(u,v)
+		\end{equation}
+	Adem\'as, la \textbf{capacidad} del corte (S,T) se define como
+	\begin{equation}
+		c(S,T) = \sum_{u \in S}\sum_{v \in T}c(u,v).
+	\end{equation} 
+	\end{mydef}
+
+	\begin{lem}
+		Sea f un flujo en una red de flujo G con origen s y receptor t. Sea (S,T) un corte cualquiera de G. Entonces el flujo neto a través del corte f(S,T) es igual al valor del flujo, osea, |f|
+		\begin{equation}
+			f(S,T) = |f|
+		\end{equation}
+	\end{lem}
+
+	\begin{col}
+		El valor de cualquier flujo en una red de flujo G está acotado superiormente por la capacidad de cualquier corte de G.
+		\begin{equation}
+			f(S,T) = |f| \leq c(S,T)
+		\end{equation}
+	\end{col}
 	
+	\begin{thm}
+		Si f es un flujo en una red de flujo G=〈V,E〉 con un origen s y un receptor t, entonces las siguientes condiciones son equivalentes:
+		\begin{enumerate}
+			\item f es un flujo máximo en G. 
+			\item En la red residual $G_f$ no se pueden encontrar más caminos aumentativos.
+			\item  |f|=c(S,T) para algún corte (S,T) de G.
+		\end{enumerate}
+	\end{thm}
 	\section{L\'inea de pensamiento}
 	
 	\section{Algoritmo Ford-Fulkerson}
