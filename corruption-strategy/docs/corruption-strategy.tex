@@ -179,11 +179,11 @@
 	
 	En la resoluci\'on del problema se construye un grafo dirigido $G=(V,E)$, donde $|V| = m + n + 2$ y $|E|= m + n + n \cdot m$. El conjunto $V$ de v\'ertices est\'a conformado por v\'ertices que representen cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que represente la fuente y un v\'ertice $t$ que representa el receptor. El conjunto de los arcos $E$, contiene los siguientes arcos:
 	\begin{itemize}
-		\item Arcos desde $s$ hasta cada v\'ertice que representa una carretera. El peso de estos arcos es el valor $w_i$ dado de entrada, que representa el costo de cada carretera.
+		\item Arcos desde $s$ hasta cada v\'ertice que representa una carretera. La capacidad de estos arcos es el valor $w_i$ dado de entrada, que representa el costo de cada carretera.
 		
-		\item Arcos desde cada v\'ertice que representa una ciudad hacia el v\'ertice $t$. El peso de estos arcos es el valor $a_i$ que representa el aporte de cada ciudad.
+		\item Arcos desde cada v\'ertice que representa una ciudad hacia el v\'ertice $t$. La capacidad de estos arcos es el valor $a_i$ que representa el aporte de cada ciudad.
 		
-		\item Arcos desde cada v\'ertice que representa una carretera hacia cada v\'ertice que representa una ciudad. El peso de estos arcos es $infinito$.
+		\item Arcos desde cada v\'ertice que representa una carretera hacia cada v\'ertice que representa una ciudad. La capacidad de estos arcos es $infinito$.
 		
 	\end{itemize}
 
