@@ -13,28 +13,28 @@ def build_graph(n, m, a, w):
     G.nodes['source']['type'] = 'source'
 
     # add city nodes and edges between source and cities with revenue a
-    for i in range(n):
+    for i in range(m):
         G.add_node(i)
         G.add_edge('source', i)
-        G['source'][i]['capacity'] = a[i]
+        G['source'][i]['capacity'] = w[i]
         G['source'][i]['flow'] = 0
-        G.nodes[i]['type'] = 'city'
+        G.nodes[i]['type'] = 'road'
 
     # add artificial node sink
     G.add_node('sink')
     G.nodes['sink']['type'] = 'sink'
 
     # add road nodes and edges between roads and sink with cost w
-    for i in range(n, n+m):
+    for i in range(m, n+m):
         G.add_node(i)
         G.add_edge(i, "sink")
-        G[i]['sink']['capacity'] = w[i-n]
+        G[i]['sink']['capacity'] = a[i-m]
         G[i]['sink']['flow'] = 0
-        G.nodes[i]['type'] = 'road'
+        G.nodes[i]['type'] = 'city'
 
     # add artificial edges with infinite capacity
-    for city in range(n):
-        for road in range(n, n+m):
+    for city in range(m):
+        for road in range(m, n+m):
             G.add_edge(city, road)
             G[city][road]['capacity'] = inf
             G[city][road]['flow'] = 0
@@ -73,6 +73,39 @@ def get_residual_graph(G: nx.DiGraph):
 
     return G_r
 
+def dfs(G: nx.DiGraph):
+    
+    pi = {}
+    visited = {}
+    CC = {}
+    i = 1
+
+    for v in G.nodes():
+        pi[v] = inf
+        visited[v]=False
+        CC[v] = -1
+
+    for v in G.nodes():
+        if not visited[v]:
+            dfs_visit(G,v, visited, pi, CC, i)
+            i+=1
+
+    print(f'PI {pi}')
+    print(f'visited {visited}')
+    print(f'CC {CC}')
+
+    return CC
+
+def dfs_visit(G: nx.DiGraph,u, visited, pi, CC, i):
+    visited[u] = True
+
+    for v in G.neighbors(u):
+        if not visited[v]:
+            pi[v] = u
+            dfs_visit(G,v,visited,pi, CC, i)
+    CC[u] = i
+    
+    
 
 def find_augmenting_path(G_r: nx.DiGraph, s, t):
     '''Finds a path p from the source s to the sink t in the residual network G_r'''
@@ -126,9 +159,12 @@ def max_flow_min_cut(G: nx.DiGraph):
 
     #
     max_flow = 0
-
+    
     for v in G.neighbors(s):
         max_flow += G[s][v]['flow']
+
+    dfs(G)
+    min_cut(G, G_r)
 
     return max_flow
 
@@ -156,41 +192,117 @@ def get_project_distro(G: nx.DiGraph):
 
     return cities, roads, value
 
+def min_cut(G: nx.DiGraph, G_r: nx.DiGraph):
 
-G = build_graph(3, 4, [10, 20, 3], [5, 15, 4, 7])
+    
+    # Falta verificar si alguna arista de costo inf se corto
+    print(f'G_r edges min cut: {G_r.edges(data=True)}')
+    print(f'G edges min cut: {G.edges(data=True)}')
+    CC = dfs(G)
+    
+    s =set()
+    roads = set()
+    cities = set()
+    profit = 0
+    
+
+    for key in CC.keys():
+        if CC[key] == 1:
+            s.add(key)
+        
+
+    print(f'S {list(s)}')
+
+    for v in s:
+        if G.nodes[v]['type'] == 'road':
+            roads.add(v)
+            profit += G['source'][v]['capacity']
+
+        if G.nodes[v]['type'] == 'city':
+            cities.add(v)
+            profit -= G[v]['sink']['capacity']
+
+    print(f'Profit {profit}')
+    print(f'Road {list(roads)}')
+    print(f'Cities {list(cities)}')
+    
+
+    return profit, roads, cities
+
+
+
+
+
+
+
+
+    
+
+
+
+G = build_graph(4,5,[1,5,2,2],[4,4,5,2,2])
 # get_residual_graph(G)
 print(f'MAX FLOW: {max_flow_min_cut(G)}')
 print()
 
-T = nx.DiGraph()
-T.add_nodes_from(['source', 'a', 'b', 'c', 'd', 'e', 'sink'])
-T.add_edges_from([('source', 'a'), ('source', 'b'), ('a', 'c'), ('a', 'd'), ('c', 'd'),
-                 ('c', 'e'), ('c', 'sink'), ('b', 'c'), ('b', 'e'), ('e', 'sink'), ('d', 'sink')])
+#D = nx.DiGraph()
+#
+#D.add_nodes_from(['source', '1', '2', '3', '4', 'sink'])
+#D.add_edges_from([('source', '1'), ('source', '2'), ('1', '3'), ('2', '4'), ('2', '1'),('3', '2'), ('3', 'sink'), ('4', '3'),  ('4', 'sink')])
+#
+#
+#D['source']['1']['capacity'] = 16
+#D['source']['2']['capacity'] = 13
+#D['1']['3']['capacity'] = 12
+#D['2']['4']['capacity'] = 14
+#D['2']['1']['capacity'] = 4
+#D['3']['2']['capacity'] = 9
+#D['3']['sink']['capacity'] = 20
+#D['4']['3']['capacity'] = 7
+#D['4']['sink']['capacity'] = 4
+#
+#D['source']['1']['flow'] = 0
+#D['source']['2']['flow'] = 0
+#D['1']['3']['flow'] = 0
+#D['2']['4']['flow'] = 0
+#D['2']['1']['flow'] = 0
+#D['3']['2']['flow'] = 0
+#D['3']['sink']['flow'] = 0
+#D['4']['3']['flow'] = 0
+#D['4']['sink']['flow'] = 0
+#
+#
+#print(f'flow {max_flow_min_cut(D)}')
 
-T['source']['a']['capacity'] = 40
-T['source']['b']['capacity'] = 40
-T['a']['c']['capacity'] = 10
-T['a']['d']['capacity'] = 10
-T['c']['d']['capacity'] = 20
-T['c']['e']['capacity'] = 10
-T['c']['sink']['capacity'] = 10
-T['b']['c']['capacity'] = 15
-T['b']['e']['capacity'] = 20
-T['e']['sink']['capacity'] = 20
-T['d']['sink']['capacity'] = 30
-
-
-T['source']['a']['flow'] = 0
-T['source']['b']['flow'] = 0
-T['a']['c']['flow'] = 0
-T['a']['d']['flow'] = 0
-T['c']['d']['flow'] = 0
-T['c']['e']['flow'] = 0
-T['c']['sink']['flow'] = 0
-T['b']['c']['flow'] = 0
-T['b']['e']['flow'] = 0
-T['e']['sink']['flow'] = 0
-T['d']['sink']['flow'] = 0
-
-print(max_flow_min_cut(T))
+#T = nx.DiGraph()
+#T.add_nodes_from(['source', 'a', 'b', 'c', 'd', 'e', 'sink'])
+#T.add_edges_from([('source', 'a'), ('source', 'b'), ('a', 'c'), ('a', 'd'), ('c', 'd'),
+#                 ('c', 'e'), ('c', 'sink'), ('b', 'c'), ('b', 'e'), ('e', 'sink'), ('d', 'sink')])
+#
+#T['source']['a']['capacity'] = 40
+#T['source']['b']['capacity'] = 40
+#T['a']['c']['capacity'] = 10
+#T['a']['d']['capacity'] = 10
+#T['c']['d']['capacity'] = 20
+#T['c']['e']['capacity'] = 10
+#T['c']['sink']['capacity'] = 10
+#T['b']['c']['capacity'] = 15
+#T['b']['e']['capacity'] = 20
+#T['e']['sink']['capacity'] = 20
+#T['d']['sink']['capacity'] = 30
+#
+#
+#T['source']['a']['flow'] = 0
+#T['source']['b']['flow'] = 0
+#T['a']['c']['flow'] = 0
+#T['a']['d']['flow'] = 0
+#T['c']['d']['flow'] = 0
+#T['c']['e']['flow'] = 0
+#T['c']['sink']['flow'] = 0
+#T['b']['c']['flow'] = 0
+#T['b']['e']['flow'] = 0
+#T['e']['sink']['flow'] = 0
+#T['d']['sink']['flow'] = 0
+#
+#print(max_flow_min_cut(T))
 # print(nx.dfs_predecessors(T))

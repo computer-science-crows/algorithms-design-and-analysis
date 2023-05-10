@@ -18,7 +18,13 @@ from solutions.Ford_Fulkerson_solution import max_flow_min_cut
 # plot_test_results()
 
 
-sol, val = backtrack_solution(4,3,[5,15,4,7],[10,20,3])
+#sol, val = backtrack_solution(4,3,[5,15,4,7],[10,20,3])
+
+sol, val = backtrack_solution(4,5,[1,5,2,2],[4,4,5,2,2])
+
+#sol, val = backtrack_solution(3,3,[9,7,8],[1,2,3])
+
+
 
 print(f"solucion backtrack {sol}")
 print(f'valor backtrack {val}')
