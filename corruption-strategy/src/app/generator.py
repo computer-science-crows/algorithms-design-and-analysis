@@ -12,9 +12,9 @@ def generator(n=None, m=None, a=None, w=None, samples=1):
 
     while i < samples:
         if n == None:
-            n = random.randint(2, 11)
+            n = random.randint(2, 5)
         if m == None:
-            m = random.randint(1, 11)
+            m = random.randint(1, 5)
 
         a = [random.randint(0, 100) for i in range(n)]
         w = [random.randint(0, 100) for i in range(m)]

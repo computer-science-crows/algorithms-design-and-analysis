@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def save_data(data: dict, path: str):
     cwd = os.getcwd()
-    cwd += "/corruption-strategy/json" + path
+    cwd += "/json" + path
 
     save = []
 
