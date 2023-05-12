@@ -1,4 +1,3 @@
-
 import numpy as np
 
 
@@ -18,16 +17,18 @@ def backtrack_solution_relaxed(n, m, a, w):
     value = max(answer)
     solution = best_solution[answer.index(value)]
 
-    return solution.tolist(), value
+    return solution[0], solution[1], value
 
 
 def _backtrack_solution_relaxed(cities, best_solution, count, a, w, answer, m):
 
     # base case
     if count <= m:
-        current_cost, current_road_selection = cost(cities, a, w, len(a))
+        current_cost, current_cities_selection, current_road_selection = cost(
+            cities, a, w, len(a))
         answer.append(current_cost)
-        best_solution.append(np.copy(current_road_selection))
+        best_solution.append(
+            [np.copy(current_cities_selection).tolist(), np.copy(current_road_selection).tolist()])
 
         if count == len(w):
             return
@@ -35,23 +36,25 @@ def _backtrack_solution_relaxed(cities, best_solution, count, a, w, answer, m):
     # in each iteration one candidate is assign to a position
     for i in range(m):
         city_1, city_2, road_cost = w[i]
-        
+
         if cities[city_1-1][city_2-1] < 0 and city_1 != city_2:
             cities[city_1-1][city_2-1] = count
             cities[city_2-1][city_1-1] = count
             _backtrack_solution_relaxed(cities, best_solution,
-                                count + 1, a, w, answer, m)
+                                        count + 1, a, w, answer, m)
             cities[city_1-1][city_2-1] = -1
             cities[city_2-1][city_1-1] = -1
 
 
 def cost(cities, a, w, n):
 
-    solution = []
     solution_cost = 0
 
     mark = [False for i in range(len(a))]
     mark_cities = [[False for i in range(n)] for i in range(n)]
+
+    selected_roads = []
+    selected_cities = set()
 
     for i in range(n):
         for j in range(n):
@@ -68,7 +71,8 @@ def cost(cities, a, w, n):
                     road_cost -= a[j]
                     mark[j] = True
                 solution_cost += road_cost
-                solution.append((i+1, j+1, cities[i][j]))
+                selected_roads.append(cities[i][j])
+                selected_cities.add(i+1)
+                selected_cities.add(j+1)
 
-    return solution_cost, solution
-
+    return solution_cost, list(selected_cities), selected_roads

@@ -7,11 +7,11 @@ from app.tools import save_data
 
 def tester(function):
     cwd = os.getcwd()
-    cwd += "/corruption-strategy/json"
+    cwd += "/json"
 
     # gets test cases from json
     test_cases = {}
-    with open(cwd+"/test_cases.json", "r") as read_it:
+    with open(cwd+"/test_cases_relaxed.json", "r") as read_it:
         test_cases = json.load(read_it)
 
     # deletes previous tests for this function
@@ -30,7 +30,7 @@ def tester(function):
             testing_data = {}
 
             start = time.time()
-            testing_data["f_result"], testing_data["f_value"] = function(
+            testing_data["f_result_c"], testing_data["f_result_r"], testing_data["f_value"] = function(
                 tc['n'], tc['m'], tc['a'], tc['w'])
             end = time.time()
 
@@ -46,10 +46,11 @@ def tester(function):
             print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
                   "FAILED" + style.RESET if testing_data['matches'] == False else f"Test case #{index + 1} -> " + back.GREEN + style.BOLD +
                   "SUCCESS" + style.RESET)
-            print(f"  result: {testing_data['f_result']}")
-            print(f"  value: {testing_data['f_value']}")
+            print(f"  cities: {testing_data['cities']}")
+            print(f"  roads: {testing_data['roads']}")
+            print(f"  profit: {testing_data['f_value']}")
             if not testing_data['matches']:
-                print(f"   optimal value: {tc['optimal_value']}")
+                print(f"   optimal profit value: {tc['optimal_value']}")
             print(f"  elapsed time: {testing_data['elapsed_time']}")
             print("-------------------------------------------")
         except Exception as ex:
