@@ -33,11 +33,11 @@ def build_graph(n, m, a, w):
         G.nodes[i]['type'] = 'city'
 
     # add artificial edges with infinite capacity
-    for city in range(m):
-        for road in range(m, n+m):
-            G.add_edge(city, road)
-            G[city][road]['capacity'] = inf
-            G[city][road]['flow'] = 0
+    for road in range(m):
+        for city in range(m, n+m):
+            G.add_edge(road, city)
+            G[road][city]['capacity'] = inf
+            G[road][city]['flow'] = 0
 
     print(f'G NODES: {G.nodes(data=True)}')
     print("--------------------------------------")
