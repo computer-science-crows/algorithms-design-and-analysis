@@ -1,7 +1,8 @@
+
 import numpy as np
 
 
-def backtrack_solution(n, m, a, w):
+def backtrack_solution_relaxed(n, m, a, w):
 
     # boolean array to mark selected roads
     cities = [[-1 for i in range(n)] for j in range(n)]
@@ -12,7 +13,7 @@ def backtrack_solution(n, m, a, w):
     # list of solutions
     answer = []
 
-    _backtrack_solution(cities, best_solution, 0, a, w, answer, n)
+    _backtrack_solution_relaxed(cities, best_solution, 0, a, w, answer, m)
 
     value = max(answer)
     solution = best_solution[answer.index(value)]
@@ -20,11 +21,11 @@ def backtrack_solution(n, m, a, w):
     return solution.tolist(), value
 
 
-def _backtrack_solution(cities, best_solution, count, a, w, answer, n):
+def _backtrack_solution_relaxed(cities, best_solution, count, a, w, answer, m):
 
     # base case
-    if count <= len(w):
-        current_cost, current_road_selection = cost(cities, a, w, n)
+    if count <= m:
+        current_cost, current_road_selection = cost(cities, a, w, len(a))
         answer.append(current_cost)
         best_solution.append(np.copy(current_road_selection))
 
@@ -32,15 +33,16 @@ def _backtrack_solution(cities, best_solution, count, a, w, answer, n):
             return
 
     # in each iteration one candidate is assign to a position
-    for i in range(n):
-        for j in range(n):
-            if cities[i][j] < 0 and i != j:
-                cities[i][j] = count
-                cities[j][i] = count
-                _backtrack_solution(cities, best_solution,
-                                    count + 1, a, w, answer, n)
-                cities[i][j] = -1
-                cities[j][i] = -1
+    for i in range(m):
+        city_1, city_2, road_cost = w[i]
+        
+        if cities[city_1-1][city_2-1] < 0 and city_1 != city_2:
+            cities[city_1-1][city_2-1] = count
+            cities[city_2-1][city_1-1] = count
+            _backtrack_solution_relaxed(cities, best_solution,
+                                count + 1, a, w, answer, m)
+            cities[city_1-1][city_2-1] = -1
+            cities[city_2-1][city_1-1] = -1
 
 
 def cost(cities, a, w, n):
@@ -57,7 +59,8 @@ def cost(cities, a, w, n):
             if not mark_cities[i][j] and cities[i][j] > -1:
                 mark_cities[i][j] = True
                 mark_cities[j][i] = True
-                road_cost += w[cities[i][j]]
+                city_1, city_2, road = w[cities[i][j]]
+                road_cost += road
                 if not mark[i]:
                     road_cost -= a[i]
                     mark[i] = True
@@ -65,6 +68,7 @@ def cost(cities, a, w, n):
                     road_cost -= a[j]
                     mark[j] = True
                 solution_cost += road_cost
-                solution.append((i, j, cities[i][j]))
+                solution.append((i+1, j+1, cities[i][j]))
 
     return solution_cost, solution
+
