@@ -175,7 +175,7 @@
 	El problema está en que Tito quiere utilizar una de las habilidades que aprendió en sus años de estudio, la de la malversación de fondos. Todo el dinero necesario para el proyecto que no sea un aporte de alguna ciudad, lo proveerá el país y pasará por manos de Tito. El dinero aportado por las ciudades no pasará por sus manos. Tito quiere maximizar la cantidad de dinero que pasa por él, para poder hacer su magia. Ayude a Tito a seleccionar el conjunto de carreteras a incluir en el proyecto para lograr su objetivo.
 	
 
-	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
+	\section{Definici\'on en t\'erminos matem\'atico - computacionales}\label{section_2}
 	
 	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera y su costo. La salida del problema son dos lista, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
 	
@@ -191,10 +191,14 @@
 
 	La idea es aplicar un algoritmo de flujo a $G$, particularmente el algoritmo de Ford-Fulkerson. 
 	
+	\section{Soluci\'on}
 	
+	\subsection{Backtrack}
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones y se queda con la que más valor aporte, pero muy ineficiente, \textit{O($2^{|E|}$)}, ya que por cada arista del grafo, se decide si escogerla o no en la soluci\'on. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solutions.py.
 	
-	\section{Algoritmo Ford-Fulkerson}
+	\subsection{Algoritmo}
 	
+	\subsubsection{Preliminares}
 	\begin{mydef}
 		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
 	\end{mydef}
@@ -334,7 +338,23 @@
 		\end{enumerate}
 	\end{thm}
 
-	\subsection{Problema}
+		\subsubsection{Algortimo Ford-Fulkerson}
+	
+	El algoritmo Ford-Fulkerson es utilizado para encontrar el flujo máximo en una red de flujo. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
+	
+	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo, es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
+	
+	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
+	
+	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
+	
+	\subsubsection{Propuesta de soluci\'on \'optima}
+	
+	Una vez creado el grafo $G$ explicado en la secci\'on \ref{section_2}
+	
+	
+
+%	\subsection{Problema}
 	
 	
 	
@@ -343,19 +363,15 @@
 	
 
 	
-	El algoritmo Ford-Fulkerson es un algoritmo utilizado para encontrar el flujo máximo en una red de flujo. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
 	
-	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo, es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
-	
-	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
-	
-	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
 	
 	
 	
 %	\subsection{Explicaci\'on del algoritmo}
 	
 	\subsection{Complejidad Temporal}
+	
+	La funci\'on \textsc{max\_flow\_min\_cut(\textit{G})} tiene como complejidad temporal \textit{O(|E||f*|)} donde \textit{f*} es el flujo m\'aximo obtenido al aplicar el algoritmo \textbf{Ford-Fulkerson} al grafo anteriormente creado. El psedoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
 	
 	\begin{algorithm}
 		
@@ -396,6 +412,11 @@
 		\end{algorithmic}
 	
 	\end{algorithm}
+
+	Para el trabajo con grafos por razones de comodidad se utilizó la librería networkx de Python.	En el cálculo de la complejidad temporal no se tiene en cuenta el costo de las operaciones sobre
+	grafos creados con la librería anterior.
+	
+	
 	
 
 	
