@@ -26,23 +26,23 @@ def save_data(data: dict, path: str):
 
 # TODO: arreglar nombres de las soluciones para plotear test cases
 
-def plot_test_results():
+def plot_test_results(number_of_tests, test_file, function_name):
     cwd = os.getcwd()
     cwd += "/corruption-strategy/json/"
 
     save_b = []
-    with open(cwd+'test_cases.json', "r") as read_it:
+    with open(cwd+f'test_cases.json', "r") as read_it:
         save_b = json.load(read_it)
 
-    et_b = [save_b[i]['elapsed_time'] for i in range(3000)]
+    et_b = [save_b[i]['elapsed_time'] for i in range(number_of_tests)]
     sum_b = 0
 
     save_s = []
     with open(cwd+'tests/simplex_solution.json', "r") as read_it:
         save_s = json.load(read_it)
 
-    et_s = [save_s[i]['elapsed_time'] for i in range(3000)]
-    match_s = [save_s[i]['matches'] for i in range(3000)]
+    et_s = [save_s[i]['elapsed_time'] for i in range(number_of_tests)]
+    match_s = [save_s[i]['matches'] for i in range(number_of_tests)]
     sum_s = 0
 
     save_h = []

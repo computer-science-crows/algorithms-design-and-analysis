@@ -112,7 +112,31 @@ def residual_capacity_path(G_r: nx.DiGraph, p):
     return capacity_p
 
 
-def max_flow_min_cut(G: nx.DiGraph):
+def get_project_distro(G_r: nx.DiGraph, G: nx.DiGraph):
+    ''' Gets best project distribution from the last residual graph. Returns empty solution in case there is no possible profit'''
+
+    cities = []
+    roads = []
+    profit = 0
+
+    s = nx.descendants(G_r, 'source')
+    for u in s:
+        try:
+            profit += G['source'][u]['capacity']
+            roads.append(u)
+        except:
+            profit -= G[u]['sink']['capacity']
+            cities.append(u)
+
+    # print(f'Roads in project: {roads}')
+    # print(f'Cities in project: {cities}')
+    # print(f'Profit: {profit}')
+
+    return cities, roads, profit
+
+
+def get_min_cut_residual_graph(G: nx.DiGraph):
+    ''' Gets the last residual graph built by the Ford Fulkerson algorithm'''
 
     G_r = get_residual_graph(G)
     s = 'source'
@@ -130,44 +154,21 @@ def max_flow_min_cut(G: nx.DiGraph):
         G_r = get_residual_graph(G)
         p = find_augmenting_path(G_r, s, t)
 
-    # max_flow = 0
-
-    # for v in G.neighbors(s):
-    #     max_flow += G[s][v]['flow']
-
-    return get_project_distro(G_r, G)
+    return G_r
 
 
-def get_project_distro(G_r: nx.DiGraph, G: nx.DiGraph):
-    cities = []
-    roads = []
-    profit = 0
+def corruption_strategy(n, m, a, w):
+    ''' Finds best distribution so that Tito can work his magic'''
 
-    s = nx.descendants(G_r, 'source')
-    for u in s:
-        try:
-            profit += G['source'][u]['capacity']
-            roads.append(u)
-        except:
-            profit -= G[u]['sink']['capacity']
-            cities.append(u)
-
-    print(f'Roads in project: {roads}')
-    print(f'Cities in project: {cities}')
-    print(f'Profit: {profit}')
-
-    return cities, roads, profit
-
-
-def test_ff(n, m, a, w):
     G = build_graph(n, m, a, w)
-    cities, roads, profit = max_flow_min_cut(G)
+    G_r = get_min_cut_residual_graph(G)
+    cities, roads, profit = get_project_distro(G_r, G)
     return cities, roads, profit
 
 
 # G = build_graph(4, 3, [5, 15, 4, 7], [10, 20, 3])
-G = build_graph(4, 5, [1, 5, 2, 2], [(1, 3, 4),
-                (1, 4, 4), (3, 4, 5), (3, 2, 2), (4, 2, 2)])
+# G = build_graph(4, 5, [1, 5, 2, 2], [(1, 3, 4),
+#                 (1, 4, 4), (3, 4, 5), (3, 2, 2), (4, 2, 2)])
 # get_residual_graph(G)
 
 # G = nx.DiGraph()

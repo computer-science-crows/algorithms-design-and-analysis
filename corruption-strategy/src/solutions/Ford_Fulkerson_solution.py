@@ -13,31 +13,31 @@ def build_graph(n, m, a, w):
     G.nodes['source']['type'] = 'source'
 
     # add city nodes and edges between source and cities with revenue a
-    for i in range(m):
+    for i in range(n):
         G.add_node(i)
         G.add_edge('source', i)
-        G['source'][i]['capacity'] = w[i]
+        G['source'][i]['capacity'] = a[i]
         G['source'][i]['flow'] = 0
-        G.nodes[i]['type'] = 'road'
+        G.nodes[i]['type'] = 'city'
 
     # add artificial node sink
     G.add_node('sink')
     G.nodes['sink']['type'] = 'sink'
 
     # add road nodes and edges between roads and sink with cost w
-    for i in range(m, n+m):
+    for i in range(n, n+m):
         G.add_node(i)
         G.add_edge(i, "sink")
-        G[i]['sink']['capacity'] = a[i-m]
+        G[i]['sink']['capacity'] = w[i-n]
         G[i]['sink']['flow'] = 0
-        G.nodes[i]['type'] = 'city'
+        G.nodes[i]['type'] = 'road'
 
     # add artificial edges with infinite capacity
-    for road in range(m):
-        for city in range(m, n+m):
-            G.add_edge(road, city)
-            G[road][city]['capacity'] = inf
-            G[road][city]['flow'] = 0
+    for city in range(n):
+        for road in range(n, n+m):
+            G.add_edge(city, road)
+            G[city][road]['capacity'] = inf
+            G[city][road]['flow'] = 0
 
     print(f'G NODES: {G.nodes(data=True)}')
     print("--------------------------------------")
@@ -124,7 +124,7 @@ def max_flow_min_cut(G: nx.DiGraph):
         G_r = get_residual_graph(G)
         p = find_augmenting_path(G_r, s, t)
 
-    get_project_distro(G_r, G)
+    get_min_cut(G_r, G)
     max_flow = 0
 
     for v in G.neighbors(s):
@@ -137,125 +137,66 @@ def get_min_cut(G_r: nx.DiGraph, G: nx.DiGraph):
     s = nx.descendants(G_r, 'source').union(['source'])
     t = set(G.nodes()).difference(s)
 
-    edges_in_cut = []
-
+    edges = []
     cities = []
     roads = [u for u in G.nodes() if G.nodes[u]['type'] == 'road']
-    profit = 0
+    value = 0
 
     for u in s:
         for v in t:
             try:
                 G[u][v]
-                edges_in_cut.append((u, v))
+                edges.append((u, v))
                 c = G[u][v]['capacity']
 
-                if G.nodes[u]['type'] == 'city':
-                    cities.append(u)
-                    profit -= c
-
-                if G.nodes[v]['type'] == 'road':
+                if G.nodes[v]['type'] == 'city':
                     cities.append(v)
-                    profit += c
+                    value += c
+
+                if G.nodes[u]['type'] == 'road':
+                    roads.remove(u)
+                    value -= c
 
             except:
                 continue
 
-    print(f'S: {list(s)}')
-    print(f'G: {list(t)}')
-    print(f'Edges in MINCUT: {edges_in_cut}')
-    print(f'Roads in project: {roads}')
-    print(f'Cities in project: {cities}')
-    print(f'Profit: {profit}')
-
-    return cities, roads, profit
+    print(list(s))
+    print(list(t))
+    print(edges)
+    print(roads)
+    print(cities)
 
 
-def get_project_distro(G_r: nx.DiGraph, G: nx.DiGraph):
+def get_project_distro(G: nx.DiGraph):
     cities = []
     roads = []
-    profit = 0
+    value = 0
 
-    s = nx.descendants(G_r, 'source')
-    for u in s:
-        try:
-            profit += G['source'][u]['capacity']
-            roads.append(u)
-        except:
-            profit -= G[u]['sink']['capacity']
-            cities.append(u)
+    for edge in G.edges():
+        u, v = edge[0], edge[1]
+        c = G[u][v]['capacity']
+        if c != inf:
+            f = G[u][v]['flow']
+            if c == f:
+                if G.nodes[v]['type'] == 'city':
+                    cities.append(v)
+                    value += c
+                # if G.nodes[u]['type'] == 'road':
+                #     roads.append(u)
+            else:
+                if G.nodes[u]['type'] == 'road':
+                    roads.append(u)
+                    value -= c
 
-    print(f'Roads in project: {roads}')
-    print(f'Cities in project: {cities}')
-    print(f'Profit: {profit}')
-
-    return cities, roads, profit
+    return cities, roads, value
 
 
-# G = build_graph(4, 3, [5, 15, 4, 7], [10, 20, 3])
-# G = build_graph(4, 5, [1, 5, 2, 2], [4, 4, 5, 2, 2])
+G = build_graph(4, 3, [5, 15, 4, 7], [10, 20, 3])
 # get_residual_graph(G)
-
-G = nx.DiGraph()
-G.add_nodes_from(['source', 1, 2, 3, 4, 5, 6, 7, 8, 9, 'sink'])
-G.add_edges_from([('source', 1), ('source', 2), ('source', 3), ('source', 4), ('source', 5), (1, 6), (1, 8), (2, 6),
-                 (2, 9), (3, 8), (3, 9), (4, 7), (4, 8), (5, 7), (5, 9), (9, 'sink'), (6, 'sink'), (7, 'sink'), (8, 'sink')])
-
-G['source'][1]['capacity'] = 4
-G['source'][2]['capacity'] = 4
-G['source'][3]['capacity'] = 5
-G['source'][4]['capacity'] = 2
-G['source'][5]['capacity'] = 2
-G[1][6]['capacity'] = inf
-G[1][8]['capacity'] = inf
-G[2][6]['capacity'] = inf
-G[2][9]['capacity'] = inf
-G[3][8]['capacity'] = inf
-G[3][9]['capacity'] = inf
-G[4][7]['capacity'] = inf
-G[4][8]['capacity'] = inf
-G[5][7]['capacity'] = inf
-G[5][9]['capacity'] = inf
-G[6]['sink']['capacity'] = 1
-G[7]['sink']['capacity'] = 5
-G[8]['sink']['capacity'] = 2
-G[9]['sink']['capacity'] = 2
-
-G['source'][1]['flow'] = 0
-G['source'][2]['flow'] = 0
-G['source'][3]['flow'] = 0
-G['source'][4]['flow'] = 0
-G['source'][5]['flow'] = 0
-G[1][6]['flow'] = 0
-G[1][8]['flow'] = 0
-G[2][6]['flow'] = 0
-G[2][9]['flow'] = 0
-G[3][8]['flow'] = 0
-G[3][9]['flow'] = 0
-G[4][7]['flow'] = 0
-G[4][8]['flow'] = 0
-G[5][7]['flow'] = 0
-G[5][9]['flow'] = 0
-G[6]['sink']['flow'] = 0
-G[7]['sink']['flow'] = 0
-G[8]['sink']['flow'] = 0
-G[9]['sink']['flow'] = 0
-
-G.nodes['source']['type'] = 'source'
-G.nodes['sink']['type'] = 'sink'
-
-for i in range(1, 6):
-    G.nodes[i]['type'] = 'road'
-
-for i in range(6, 10):
-    G.nodes[i]['type'] = 'city'
-
-print(f'G NODES: {G.nodes(data=True)}')
-print("--------------------------------------")
-print(f'G EDGES: {G.edges(data=True)}')
 
 flow, S = max_flow_min_cut(G)
 print(f'MAX FLOW: {flow}')
+print(f'Sol: {get_project_distro(S)}')
 print()
 
 # T = nx.DiGraph()
