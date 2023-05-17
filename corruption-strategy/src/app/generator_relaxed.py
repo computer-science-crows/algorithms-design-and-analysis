@@ -4,7 +4,7 @@ from app.tools import save_data
 import time
 
 
-def generator(n=None, m=None, a=None, w=None, samples=1):
+def generator_relaxed(n=None, m=None, a=None, w=None, samples=1):
     i = 0
 
     while i < samples:

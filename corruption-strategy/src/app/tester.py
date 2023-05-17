@@ -7,11 +7,11 @@ from app.tools import save_data
 
 def tester(function):
     cwd = os.getcwd()
-    cwd += "/corruption-strategy/json"
+    cwd += "/json"
 
     # gets test cases from json
     test_cases = {}
-    with open(cwd+"/test_cases.json", "r") as read_it:
+    with open(cwd+"/test_cases_relaxed.json", "r") as read_it:
         test_cases = json.load(read_it)
 
     # deletes previous tests for this function
