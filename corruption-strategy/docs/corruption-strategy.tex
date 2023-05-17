@@ -32,6 +32,8 @@
 
 \usepackage[spanish]{babel} % Language hyphenation and typographical rules
 
+\usepackage{algorithm}
+	
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
@@ -175,7 +177,7 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}
 	
-	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con el costo de cada carretera. La salida del problema son dos lista, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
+	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera y su costo. La salida del problema son dos lista, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
 	
 	En la resoluci\'on del problema se construye un grafo dirigido $G=(V,E)$, donde $|V| = m + n + 2$ y $|E|= m + n + n \cdot m$. El conjunto $V$ de v\'ertices est\'a conformado por v\'ertices que representen cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que represente la fuente y un v\'ertice $t$ que representa el receptor. El conjunto de los arcos $E$, contiene los siguientes arcos:
 	\begin{itemize}
@@ -188,7 +190,6 @@
 	\end{itemize}
 
 	La idea es aplicar un algoritmo de flujo a $G$, particularmente el algoritmo de Ford-Fulkerson. 
-	
 	
 	
 	
@@ -354,7 +355,49 @@
 	
 %	\subsection{Explicaci\'on del algoritmo}
 	
-%	\subsection{Complejidad Temporal}
+	\subsection{Complejidad Temporal}
+	
+	\begin{algorithm}
+		
+		\algblock[TryCatchFinally]{try}{endtry}
+		\algcblock[TryCatchFinally]{TryCatchFinally}{finally}{endtry}
+		\algcblockdefx[TryCatchFinally]{TryCatchFinally}{catch}{endtry}
+		[1]{\textbf{catch} #1}
+		{\textbf{end try}}
+		\begin{algorithmic}[1]
+			\Function{max\_flow\_min\_cut}{$G$}
+			\State \textit{G\_r} = \textsc{get\_residual\_graph(\textit{G})}
+			\State \textit{s} = \textit{'source'}
+			\State \textit{t} = \textit{'sink'}
+			
+			\State \textit{p} = \textsc{find\_augmenting\_path(\textit{G\_r, s, t})}
+			
+			\While {\textit{p != None}}
+			\State \textit{capacity\_p} = \textsc{residual\_capacity\_path(G\_r, p)}
+			\For{\textit{(u, v) in p}}
+			\try
+			\State \textit{G[u][v]['flow']} = \textit{G[u][v]['flow'] + capacity\_p}
+			\catch
+			\State \textit{G[v][u]['flow'] = G[v][u]['flow'] - capacity\_p}
+			\endtry
+			\State \textit{ G\_r }= \textsc{get\_residual\_graph($G$)}
+			\State \textit{p} = \textsc{find\_augmenting\_path($G\_r, s, t$)}
+			\EndFor
+			\EndWhile
+			\State \textit{cities, roads, profit } = \textsc{get\_project\_distro(\textit{G\_r, G})}
+			\State \textit{max\_flow} = 0
+			
+			\For{\textit{v in G.neighbors(s)}}
+			\State \textit{max\_flow += G[s][v]['flow']}
+			\EndFor
+			
+			\Return \textit{cities, roads, profit}
+			\EndFunction 
+		\end{algorithmic}
+	
+	\end{algorithm}
+	
+
 	
 %	\subsection{Complejidad espacial}
 		
