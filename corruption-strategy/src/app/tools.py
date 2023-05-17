@@ -28,39 +28,29 @@ def save_data(data: dict, path: str):
 
 def plot_test_results(number_of_tests, test_file, function_name):
     cwd = os.getcwd()
-    cwd += "/corruption-strategy/json/"
+    cwd += "/json/"
 
     save_b = []
-    with open(cwd+f'test_cases.json', "r") as read_it:
+    with open(cwd+f'{test_file}.json', "r") as read_it:
         save_b = json.load(read_it)
 
     et_b = [save_b[i]['elapsed_time'] for i in range(number_of_tests)]
     sum_b = 0
 
     save_s = []
-    with open(cwd+'tests/simplex_solution.json', "r") as read_it:
+    with open(cwd+f'tests/{function_name}.json', "r") as read_it:
         save_s = json.load(read_it)
 
     et_s = [save_s[i]['elapsed_time'] for i in range(number_of_tests)]
     match_s = [save_s[i]['matches'] for i in range(number_of_tests)]
     sum_s = 0
 
-    save_h = []
-
-    with open(cwd+'tests/hungarian_solution.json', "r") as read_it:
-        save_h = json.load(read_it)
-
-    et_h = [save_h[i]['elapsed_time'] for i in range(3000)]
-    match_h = [save_h[i]['matches'] for i in range(3000)]
-    sum_h = 0
-
-    solutions = {2: [et_b, None, 'Backtrack', 'limegreen', sum_b],
-                 0: [et_h, match_h, 'Hungarian', 'aqua', sum_h],
-                 1: [et_s, match_s, 'Simplex', 'orchid', sum_s]}
+    solutions = {0: [et_b, None, 'Backtrack', 'mediumseagreen', sum_b],
+                 1: [et_s, match_s, 'Flujo', 'palevioletred', sum_s]}
 
     # plotting the points
     for i in range(len(solutions)):
-        for j in range(3000):
+        for j in range(number_of_tests):
             et = solutions[i][0][j]
             solutions[i][4] += et
             plt.plot(j, et, marker='o',
@@ -77,7 +67,7 @@ def plot_test_results(number_of_tests, test_file, function_name):
         plt.clf()
 
     for i in range(len(solutions)):
-        ar_mean = solutions[i][4] / 3000
+        ar_mean = solutions[i][4] / number_of_tests
 
         x = solutions[i][2]
         y = ar_mean

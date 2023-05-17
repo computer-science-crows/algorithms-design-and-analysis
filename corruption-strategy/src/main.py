@@ -14,4 +14,4 @@ from solutions.backtrack_solution_relaxed import backtrack_solution_relaxed
 # tester(corruption_strategy)
 
 # Plots each function's results and a comparison of the average elapsed time, and saves the pics in json/tests/plots
-# plot_test_results()
+# plot_test_results(3000, 'test_cases_relaxed', 'corruption_strategy')
