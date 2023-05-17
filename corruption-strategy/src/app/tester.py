@@ -30,11 +30,7 @@ def tester(function):
             testing_data = {}
 
             start = time.time()
-<<<<<<< Updated upstream
-            testing_data["f_result"], testing_data["f_value"] = function(
-=======
             testing_data["cities"], testing_data["roads"], testing_data["profit"] = function(
->>>>>>> Stashed changes
                 tc['n'], tc['m'], tc['a'], tc['w'])
             end = time.time()
 
@@ -50,16 +46,11 @@ def tester(function):
             print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
                   "FAILED" + style.RESET if testing_data['matches'] == False else f"Test case #{index + 1} -> " + back.GREEN + style.BOLD +
                   "SUCCESS" + style.RESET)
-<<<<<<< Updated upstream
-            print(f"  result: {testing_data['f_result']}")
-            print(f"  value: {testing_data['f_value']}")
-=======
             print(f"  cities: {testing_data['cities']}")
             print(f"  roads: {testing_data['roads']}")
             print(f"  profit: {testing_data['profit']}")
 
             # If FAILED
->>>>>>> Stashed changes
             if not testing_data['matches']:
                 print(f"   optimal value: {tc['optimal_value']}")
             print(f"  elapsed time: {testing_data['elapsed_time']}")
