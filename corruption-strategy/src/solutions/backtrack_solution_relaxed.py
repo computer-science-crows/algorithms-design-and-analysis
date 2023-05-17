@@ -69,8 +69,8 @@ def cost(roads, a, w, m):
                 mark[city_2-1] = True
             solution_cost += road_cost
             selected_roads.append(i+1)
-            selected_cities.add(city_1)
-            selected_cities.add(city_2)
+            selected_cities.add(city_1 + m)
+            selected_cities.add(city_2 + m)
 
 
     return solution_cost, list(selected_cities), selected_roads
