@@ -177,183 +177,236 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}\label{section_2}
 	
-	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera \todo{entre ciudades} y su costo. La salida del problema son dos listas, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
+	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera \todo{entre ciudades} y su costo. El objetivo es maximizar la diferencia de la suma de los costos de construir las carreteras seleccionadas y la suma del aporte de cada una de las ciudades que intervienen en esas carreteras. La salida del problema es la distribuci\'on del proyecto como dos listas, una que contiene las ciudades y otra las carreteras a construir tal que se obtenga la ganancia m\'axima.
 	
-	En la resoluci\'on del problema se construye un grafo dirigido $G'=(V',E')$, donde $|V'| = m + n + 2$ y $|E'|= 3 \cdot$ m + n. El conjunto $V'$ de v\'ertices est\'a conformado por v\'ertices que representen cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que represente la fuente y un v\'ertice $t$ que representa el receptor. El conjunto de los arcos $E'$, contiene los siguientes arcos:
+	\subsection{Problema "Proyectos e Intrumentos''}
+	
+	Uno de los problemas de flujo más conocidos es el de "Proyectos e Instrumentos". En este, se tienen un conjunto de proyectos que podemos hacer, cada uno con su costo, y un conjunto de instrumentos, cada uno con algún costo tambi\'en. Cada proyecto depende de algunos instrumentos, y cada instrumento se puede utilizar cualquier número de veces. Se debe elegir un subconjunto de proyectos y un subconjunto de instrumentos tal que, si se elige un proyecto, también se elijan todos los instrumentos de los que depende este proyecto, y maximizar la diferencia entre la suma de los costos de los proyectos elegidos y la suma de los costes de los instrumentos elegidos.
+	
+	Como puede observarse, este es precisamente el problema que nos ocupa, siendo los proyectos, las carreteras y los intrumentos, las ciudades. Este se puede modelar mediante una red de flujo contruyendo un grafo dirigido $G = (V, E)$ como el que se describe a continuaci\'on:
+	
+%	Se construye un grafo dirigido $G'=(V',E')$, donde $|V'| = m + n + 2$ y $|E'|= 3 \cdot$ m + n. 
 	\begin{itemize}
-		\item Arcos desde $s$ hasta cada v\'ertice que representa una carretera. La capacidad de estos arcos es el valor $w_i$ dado de entrada, que representa el costo de cada carretera.
-		
-		\item Arcos desde cada v\'ertice que representa una ciudad hacia el v\'ertice $t$. La capacidad de estos arcos es el valor $a_i$ que representa el aporte de cada ciudad.
-		
-		\item Arcos desde cada v\'ertice que representa una carretera hacia cada v\'ertice que representa una ciudad. La capacidad de estos arcos es $infinito$.
-		
+		\item El conjunto $V$ est\'a formado por $n+m+2$ v\'ertices que representan cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que representa la fuente y un v\'ertice $t$ que representa el receptor. 
+		\item El conjunto $E$ est\'a formado por $n+3\cdot m $ arcos, distribuidos de la siguiente forma:
+		\begin{itemize}
+			\item Arcos desde $s$ hasta cada v\'ertice que representa una carretera con capacidad igual al valor $w_i$ dado de entrada, que representa el costo de construir la carretera $i$.
+			
+			\item Arcos desde cada v\'ertice que representa una ciudad hacia el v\'ertice $t$ con capacidad igual al valor $a_i$ que representa el aporte de la ciudad $i$ al ser incluida en el proyecto.
+			
+			\item Arcos desde cada v\'ertice que representa una carretera hacia cada v\'ertice ciudad que la conforma (extremos) con capacidad igual a $\infty$.
+		\end{itemize}
 	\end{itemize}
-
-	La idea es aplicar un algoritmo de flujo a $G'$, particularmente el algoritmo de Ford-Fulkerson. 
 	
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones y se queda con la que más valor aporte, pero muy ineficiente, \textit{O($2^{|E|}$)}, ya que por cada arista del grafo original, se decide si escogerla o no en la soluci\'on \todo{mejorar esto}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones de posibles carreteras y se queda con la que más ganancia aporte, pero muy ineficiente \textit{O($2^{m}$)}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
 	
 	\subsection{Soluci\'on utilizando flujo}
 	
-	\subsubsection{Preliminares}
-	\begin{mydef}
-		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
-	\end{mydef}
+%	\subsubsection{Preliminares}
+%	\begin{mydef}
+%		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
+%	\end{mydef}
+%
+%	\begin{mydef}\label{red_flujo}
+%		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
+%		
+%		\begin{enumerate}
+%			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
+%			\begin{equation}
+%				0 \leq f(u,v) \leq c(u,v)
+%			\end{equation}
+%		
+%			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
+%			\begin{equation}
+%				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
+%			\end{equation}
+%			
+%		\end{enumerate}
+%		
+%	\end{mydef}
+%
+%	\begin{mydef}\label{flujo_neto}
+%		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
+%	\end{mydef}
+%
+%	\begin{mydef}\label{valor_flujo}
+%		El \textbf{valor de un flujo} se define como:
+%		
+%		\begin{equation}
+%			|f|=\sum_{v \in V} f(s,v)
+%		\end{equation}
+%	\end{mydef}
+%
+%	\begin{mydef}\label{capacidad_residual}
+%		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v $\in$ V.
+%		
+%		Se define la \textbf{capacidad residual} mediante la siguiente función:
+%		
+%		\begin{equation}
+%			c_f(u,v) = 	\left\{		
+%			\begin{array}{lr}				
+%				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
+%				f(v,u) &, \text{si (v,u) $\in$ E}\\
+%				0 &,\text{en otro caso}\\
+%			\end{array}
+%		\right.
+%		\end{equation}
+%	
+%	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
+%	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
+%	\end{mydef}
+%
+%	\begin{mydef}\label{aumento_flujo}
+%		
+%		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
+%		
+%		\begin{equation}
+%			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
+%				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
+%				0 & \text{en otro caso}\\
+%			\end{array}
+%		\right.
+%		\end{equation}
+%		
+%	\end{mydef}
+%	
+%	\begin{lem}
+%		|f $\uparrow$ f'|=|f|+|f'|
+%	\end{lem}
+%	
+%	\begin{mydef}\label{camino_aumentativo}
+%		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
+%	\end{mydef}
+%
+%	\begin{mydef}\label{capacidad_residual_c_a}
+%		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
+%		\begin{equation}
+%			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
+%		\end{equation}
+%	\end{mydef}
+%
+%	\begin{lem}\label{flujo_red_r}
+%		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
+%		
+%		\begin{equation}
+%			f_p(u,v) = \left\{
+%			\begin{array}{lr}
+%				c_f(p) & \text{si (u,v) $\in$ p}\\
+%				0 & \text{en otro caso}
+%			\end{array}
+%			\right.
+%		\end{equation}
+%		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$	
+%		
+%	\end{lem}
+%
+%	\begin{col}
+%		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Sea $f_p$ definida mediante la ecuación * y supóngase que se aumenta f por $f_p$. Entonces la función f $\uparrow$ $f_p$ es un flujo en G con valor |f $\uparrow$ $f_p$| = |f| + |$f_p$| > |f|.
+%	\end{col}
+%
+%	\begin{mydef}\label{corte}
+%		Un \textbf{corte} (S,T) de una red de flujo G = (V,E) es una partici\'on de V en dos conjuntos S y T = V-S de modo 	ue s $\in$ S y t $\in$ T.
+%	\end{mydef}
+%
+%	\begin{mydef}\label{flujo_corte}
+%		Si f es un flujo, entonces el \textbf{flujo neto} f(S,T) a trav\'es del corte (S,T) se define como
+%		\begin{equation}
+%			f(S,T) = \sum_{u\in S} \sum_{v\in T} f(u,v) - \sum_{u \in S}\sum_{v \in T} f(u,v)
+%		\end{equation}
+%	Adem\'as, la \textbf{capacidad} del corte (S,T) se define como
+%	\begin{equation}
+%		c(S,T) = \sum_{u \in S}\sum_{v \in T}c(u,v).
+%	\end{equation} 
+%	\end{mydef}
+%
+%	\begin{lem}
+%		Sea f un flujo en una red de flujo G con origen s y receptor t. Sea (S,T) un corte cualquiera de G. Entonces el flujo neto a través del corte f(S,T) es igual al valor del flujo, osea, |f|
+%		\begin{equation}
+%			f(S,T) = |f|
+%		\end{equation}
+%	\end{lem}
+%
+%	\begin{col}
+%		El valor de cualquier flujo en una red de flujo G está acotado superiormente por la capacidad de cualquier corte de G.
+%		\begin{equation}
+%			f(S,T) = |f| \leq c(S,T)
+%		\end{equation}
+%	\end{col}
+%	
+%	\begin{thm}
+%		Si f es un flujo en una red de flujo G=〈V,E〉 con un origen s y un receptor t, entonces las siguientes condiciones son equivalentes:
+%		\begin{enumerate}
+%			\item f es un flujo máximo en G. 
+%			\item En la red residual $G_f$ no se pueden encontrar más caminos aumentativos.
+%			\item  |f|=c(S,T) para algún corte (S,T) de G.
+%		\end{enumerate}
+%	\end{thm}
 
-	\begin{mydef}\label{red_flujo}
-		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
-		
-		\begin{enumerate}
-			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
-			\begin{equation}
-				0 \leq f(u,v) \leq c(u,v)
-			\end{equation}
-		
-			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
-			\begin{equation}
-				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
-			\end{equation}
-			
-		\end{enumerate}
-		
-	\end{mydef}
-
-	\begin{mydef}\label{flujo_neto}
-		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
-	\end{mydef}
-
-	\begin{mydef}\label{valor_flujo}
-		El \textbf{valor de un flujo} se define como:
-		
-		\begin{equation}
-			|f|=\sum_{v \in V} f(s,v)
-		\end{equation}
-	\end{mydef}
-
-	\begin{mydef}\label{capacidad_residual}
-		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v $\in$ V.
-		
-		Se define la \textbf{capacidad residual} mediante la siguiente función:
-		
-		\begin{equation}
-			c_f(u,v) = 	\left\{		
-			\begin{array}{lr}				
-				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
-				f(v,u) &, \text{si (v,u) $\in$ E}\\
-				0 &,\text{en otro caso}\\
-			\end{array}
-		\right.
-		\end{equation}
-	
-	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
-	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
-	\end{mydef}
-
-	\begin{mydef}\label{aumento_flujo}
-		
-		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
-		
-		\begin{equation}
-			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
-				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
-				0 & \text{en otro caso}\\
-			\end{array}
-		\right.
-		\end{equation}
-		
-	\end{mydef}
-	
-	\begin{lem}
-		|f $\uparrow$ f'|=|f|+|f'|
-	\end{lem}
-	
-	\begin{mydef}\label{camino_aumentativo}
-		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
-	\end{mydef}
-
-	\begin{mydef}\label{capacidad_residual_c_a}
-		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
-		\begin{equation}
-			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
-		\end{equation}
-	\end{mydef}
-
-	\begin{lem}\label{flujo_red_r}
-		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
-		
-		\begin{equation}
-			f_p(u,v) = \left\{
-			\begin{array}{lr}
-				c_f(p) & \text{si (u,v) $\in$ p}\\
-				0 & \text{en otro caso}
-			\end{array}
-			\right.
-		\end{equation}
-		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$	
-		
-	\end{lem}
-
-	\begin{col}
-		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Sea $f_p$ definida mediante la ecuación * y supóngase que se aumenta f por $f_p$. Entonces la función f $\uparrow$ $f_p$ es un flujo en G con valor |f $\uparrow$ $f_p$| = |f| + |$f_p$| > |f|.
-	\end{col}
-
-	\begin{mydef}\label{corte}
-		Un \textbf{corte} (S,T) de una red de flujo G = (V,E) es una partici\'on de V en dos conjuntos S y T = V-S de modo 	ue s $\in$ S y t $\in$ T.
-	\end{mydef}
-
-	\begin{mydef}\label{flujo_corte}
-		Si f es un flujo, entonces el \textbf{flujo neto} f(S,T) a trav\'es del corte (S,T) se define como
-		\begin{equation}
-			f(S,T) = \sum_{u\in S} \sum_{v\in T} f(u,v) - \sum_{u \in S}\sum_{v \in T} f(u,v)
-		\end{equation}
-	Adem\'as, la \textbf{capacidad} del corte (S,T) se define como
-	\begin{equation}
-		c(S,T) = \sum_{u \in S}\sum_{v \in T}c(u,v).
-	\end{equation} 
-	\end{mydef}
-
-	\begin{lem}
-		Sea f un flujo en una red de flujo G con origen s y receptor t. Sea (S,T) un corte cualquiera de G. Entonces el flujo neto a través del corte f(S,T) es igual al valor del flujo, osea, |f|
-		\begin{equation}
-			f(S,T) = |f|
-		\end{equation}
-	\end{lem}
-
-	\begin{col}
-		El valor de cualquier flujo en una red de flujo G está acotado superiormente por la capacidad de cualquier corte de G.
-		\begin{equation}
-			f(S,T) = |f| \leq c(S,T)
-		\end{equation}
-	\end{col}
-	
-	\begin{thm}
-		Si f es un flujo en una red de flujo G=〈V,E〉 con un origen s y un receptor t, entonces las siguientes condiciones son equivalentes:
-		\begin{enumerate}
-			\item f es un flujo máximo en G. 
-			\item En la red residual $G_f$ no se pueden encontrar más caminos aumentativos.
-			\item  |f|=c(S,T) para algún corte (S,T) de G.
-		\end{enumerate}
-	\end{thm}
-
-		\subsubsection{Algortimo Ford-Fulkerson}\label{ff}
-	
-	El algoritmo Ford-Fulkerson es utilizado para encontrar el flujo máximo en una red de flujo [\ref{red_flujo}]. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
-	
-	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo [\ref{camino_aumentativo}], es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
-	
-	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
-	
-	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
+%		\subsubsection{Algortimo Ford-Fulkerson}\label{ff}
+%	
+%	El algoritmo Ford-Fulkerson es utilizado para encontrar el flujo máximo en una red de flujo [\ref{red_flujo}]. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
+%	
+%	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo [\ref{camino_aumentativo}], es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
+%	
+%	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
+%	
+%	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
 	
 	\subsubsection{Propuesta de soluci\'on}
 	
-	Una vez creado el grafo $G'$ explicado en la secci\'on \ref{section_2}, se le aplica el algortimo Ford-Fulkerson con el objetivo de 
+	Se aplica un algoritmo de flujo sobre G y se toma el corte m\'inimo (S, T), construyendo la respuesta basada en este corte de la siguiente manera: 
+	\begin{itemize}
+		\item si un proyecto-vértice pertenece a S, entonces tomamos este proyecto;
+		\item si un vértice-instrumento pertenece a S, entonces tomamos este instrumento; todos los demás proyectos e instrumentos se descartan. 
+	\end{itemize}
+	 
+	 el valor del recorte es igual al costo total de los instrumentos tomados y los proyectos descartados, y debemos minimizarlo. Entonces, el corte mínimo en esta red denota la mejor respuesta.
 	
+	Correctitud
+
+	Creando G' se puede modelar lo anterior usando un algoritmo de flujo, miraremos nuestro corte mínimo, si se corta algún arco entre 
+	y algún 
+	entonces se incluiría el uso de la ganancia de la arista asociada a 
+	en G, si se corta algún arco entre la 
+	y 
+	, entonces se tiene que satisfacer la perdida del j-esimo vertice, se puede ver que si se incluye una arista de G entonces se tienen que incluir sus vertices asociados en G o sacar la arista de la solución pues sería imposible cortar el arco de peso 
+	entre ellos en G'.
 	
-	\subsection{Complejidad Temporal}
+	Luego si no se satura alguna arista de G' desde 
+	a 
+	implicaría que no se puede satisfacer la perdida que genera por lo que el vertice de G asociado 
+	no se debe incluir en la solución.
+	
+	Demostración de correctitud
+	
+	Sabemos que el valor del flujo es igual a la capacidad del corte mínimo y que las aristas que unen a los vértices que pertenecen a 
+	con los vértices que pertenecen a 
+	están saturadas.
+	
+	Sea 
+	el corte mínimo.
+	
+	Si dado el corte mínimo existe un nodo carretera 
+	tal que 
+	esa carretera no será construida porque implica que el dinero que gana Tito al construir 
+	es menor o igual que el dinero que aportan las ciudades que conecta y por tanto Tito no ganaría nada.
+	
+	Si dado el corte mínimo existe un nodo ciudad 
+	que pertenece a 
+	es necesario conectar esa ciudad, la artista entre 
+	y 
+	está saturada por el dinero de las carreteras, o sea, las calles que conectan a 
+	aportan más dinero del que resta 
+	.
+	
+	Por tanto la respuesta final será todo 
+	tal que 
+	.
+	
+	\subsubsection{Complejidad Temporal}
 	
 	La funci\'on principal es \textsc{corruption\_strategy(\textit{n, m, a, w})}. La funci\'on tiene como par\'ametros: $n$, el n\'umero de ciudades, $m$, el n\'umero de carreteras, $a$, lista con el aporte de cada ciudad, $w$, lista con el costo de cada carretera. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
 	
@@ -371,9 +424,9 @@
 	Para el trabajo con grafos por razones de comodidad se utilizó la librería networkx de Python.	En el cálculo de la complejidad temporal no se tiene en cuenta el costo de las operaciones sobre
 	grafos creados con la librería anterior.
 	
-	En la l\'inea 2 del m\'etodo anterior, se llama a la funci\'on \textsc{build\_graph\textit{(n, m, a, w)}}, la cual se encarga de construir el grafo $G'$ explicado en la secci\'on \ref{section_2}. La complejidad temporal de dicha funci\'on es $O(|V'| + |E'|)$, ya que por cada carretera se contruye una arista entre el nodo fuente y el nodo que representa a dicha carretera,  por cada par de ciudades que conforman una carretera, se crean dos arcos, cada una desde la carretera hasta las respectivas ciudades y tambi\'en, por cada nodo que representa a una ciudad, se contruye una arista con el nodo receptor.
+	En la l\'inea 2 del m\'etodo anterior, se llama a la funci\'on \textsc{build\_graph\textit{(n, m, a, w)}}, la cual se encarga de construir el grafo $G$ explicado en la secci\'on \ref{section_2}. La complejidad temporal de dicha funci\'on es $O(|V| + |E|)$, ya que por cada carretera se contruye una arista entre el nodo fuente y el nodo que representa a dicha carretera,  por cada par de ciudades que conforman una carretera, se crean dos arcos, cada una desde la carretera hasta las respectivas ciudades y tambi\'en, por cada nodo que representa a una ciudad, se contruye una arista con el nodo receptor.
 	
-	Una vez creado el grafo, se llama a la funci\'on \textsc{ get\_min\_cut\_residual\_graph(\textit{G})}, que tiene como par\'ametro el grafo $G'$. El pseudoc\'odigo del m\'etodo se muestra a continuaci\'on.
+	Una vez creado el grafo, se llama a la funci\'on \textsc{ get\_min\_cut\_residual\_graph(\textit{G})}, que tiene como par\'ametro el grafo $G$. El pseudoc\'odigo del m\'etodo se muestra a continuaci\'on.
 	
 	\begin{algorithm}[h]
 		
@@ -410,23 +463,23 @@
 	
 	\end{algorithm}
 
-	La funci\'on consiste en aplicar el algortimo Ford-Fulkerson al grafo $G'$, por tanto tiene complejidad temporal $O(|E'||f*|)$, donde $f*$ es el flujo m\'aximo calculado por el algoritmo. Primero, se construye el grafo residual de $G'$,  $G'_r$ (l\'inea 2), el cual se explica en la subsecci\'on \ref{ff}, y se encuentra un camino aumentativo $p$ en dicho grafo (l\'inea 5). El m\'etodo \textsc{get\_residual\_graph(\textit{G})}, tiene una complejidad temporal $O(|$E'$|)$, ya que recorre todas los arcos de $G'$ y construye $G'_r$ con los mismos nodos de $V'$, pero con los arcos de $E'$ cuya capacidad es mayor que su flujo. La funci\'on \textsc{find\_augmenting\_path(\textit{$G_r$, s, t})} realiza un DFS por tanto tiene complejida temporal $O(|V'| + |E_r|)$, donde $E_r$ son el conjunto de arcos del grafo residual $G'_r$. Luego, se continua actualizando el grafo residual cada vez que se encuentra un camino aumentativo. El ciclo termina cuando no exista camino aumentativo en la red residual. Este m\'etodo retorna el grafo residual resultante al hallar el flujo m\'aximo.
+	La funci\'on consiste en aplicar el algortimo Ford-Fulkerson al grafo $G$, por tanto tiene complejidad temporal $O(|E||f*|)$, donde $f*$ es el flujo m\'aximo calculado por el algoritmo. Primero, se construye el grafo residual de $G$,  $G_r$ (l\'inea 2), el cual se explica en la subsecci\'on \ref{ff}, y se encuentra un camino aumentativo $p$ en dicho grafo (l\'inea 5). El m\'etodo \textsc{get\_residual\_graph(\textit{G})}, tiene una complejidad temporal $O(|$E$|)$, ya que recorre todas los arcos de $G$ y construye $G_r$ con los mismos nodos de $V$, pero con los arcos de $E$ cuya capacidad es mayor que su flujo. La funci\'on \textsc{find\_augmenting\_path(\textit{$G_r$, s, t})} realiza un DFS por tanto tiene complejida temporal $O(|V| + |E_r|)$, donde $E_r$ son el conjunto de arcos del grafo residual $G_r$. Luego, se continua actualizando el grafo residual cada vez que se encuentra un camino aumentativo. El ciclo termina cuando no exista camino aumentativo en la red residual. Este m\'etodo retorna el grafo residual resultante al hallar el flujo m\'aximo.
 	
-	Despu\'es de aplicar el algoritmo de flujo a $G'$, se obtiene el \'ultimo $G'_r$ y a este grafo se le aplica el m\'etodo \textsc{get\_project\_distro(\textit{$G_r$, G})} que halla el corte m\'inimo $(S,T)$ y determina las ciudades, carreteras y el valor de la ganancia que es la soluci\'on del problema, a partir de los nodos que conforman la partici\'on S. Este m\'etodo tiene complejidad temporal $O(|S|)$.
+	Despu\'es de aplicar el algoritmo de flujo a $G$, se obtiene el \'ultimo $G_r$ y a este grafo se le aplica el m\'etodo \textsc{get\_project\_distro(\textit{$G_r$, G})} que halla el corte m\'inimo $(S,T)$ y determina las ciudades, carreteras y el valor de la ganancia que es la soluci\'on del problema, a partir de los nodos que conforman la partici\'on S. Este m\'etodo tiene complejidad temporal $O(|S|)$.
 	
 	En conclusi\'on, la funci\'on \textsc{corruption\_strategy(\textit{n, m, a, w})} tiene complejidad temporal,
 	
 	\begin{equation}
 		\begin{aligned}
-			O(|V'| + |E'| + |E'||f*| + |S|) &=\text{ m\'ax}\{|V'|, |E'|, |E'||f*|, |S|\}\\
-			&=O(|E'||f*|)\\
+			O(|V| + |E| + |E||f*| + |S|) &=\text{ m\'ax}\{|V|, |E|, |E||f*|, |S|\}\\
+			&=O(|E||f*|)\\
 		\end{aligned}		
 	\end{equation}
-	ya que $|V'|$ < $|E'|$, por la forma en que est\'a constru\'ido $G'$ y $|S|<|V'|$, debido a que al menos el nodo receptor $t$ no pertenece a $S$.
+	ya que $|V|$ < $|E|$, por la forma en que est\'a constru\'ido $G$ y $|S|<|V|$, debido a que al menos el nodo receptor $t$ no pertenece a $S$.
 
 	
 
-	\subsection{Complejidad Espacial}
+	\subsubsection{Complejidad Espacial}
 	
 	La complejidad espacial de nuestra implementaci\'on es $O(2n + 4m)$. El algoritmo utiliza como entrada una lista de tama\~no $n$ y otra de tama\~no $m$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo dirigido con la librer\'ia networkx de Python que tiene $2 + m + n$ v\'ertices y $n + 3m$ aristas, cuyo costo asumimos no es mayor que $O(2n + 4m)$.
 		
@@ -438,15 +491,19 @@
 	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. La soluci\'on implementada fue testeada para todos los casos de prueba generados y puede encontrarse en $ json/tests/corruption\_strategy\_solution.json $ .
 	
 	\section{Comparaci\'on de soluciones implementadas}          
-    \todo{arreglar tiempos}                                
-	A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. En los casos analizados, el \textit{backtrack} y el \textit{corruption\_startegy}, demoran menos de 0.016 segundos para cada caso de prueba analizado. Se debe tener en cuenta que se tom\'o 5 como tama\~no m\'aximo de los valores $n$ y $m$ obtenidos en la entrada. Como se puede observar, en el backtrack, la mayor\'ia de los casos ocurren entre 0.000 y 0.002, mientras que en la soluci\'on con flujo los tiempos de la mayor\'ia de los casos oscilan entre 0.000 y 0.0010. Lo anterior se debe a que el tama\~no de entrada es peque\~no (menor o igual que 5) y por ello el backtrack es m\'as r\'apido, porque la soluci\'on de flujo no solo depende del tama\~no de entrada, sino que adem\'as depende del valor del flujo m\'aximo, que en la mayor\'ia de los casos es relativamente grande, lo cual afecta la r\'apidez del algoritmo.
-	                                                             
-	\begin{center}
-		\includegraphics[width=7cm]{Backtrack_results.png}
-		\includegraphics[width=7cm]{Flujo_results.png}
-	\end{center}  
-	
-	Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
+
+    A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. Como podemos observar, en los casos analizados, el \textit{backtrack} puede demorar desde 0.000 hasta 0.016 segundos en ejecutarse, pero la mayor\'ia de los casos oscilan entre 0.000 y 0.002. La \textit{soluci\'on con flujo} para todos los casos se demora menos de 0.0016 segundos, lo cual lo convierte en una soluci\'on significativamente mejor que el backtrack.
+    
+    \begin{center}
+    	\includegraphics[width=7cm]{Backtrack_results.png}
+    	\includegraphics[width=7cm]{Flujo_results.png}
+    \end{center}  
+    
+    Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
+    
+    \begin{center}
+    	\includegraphics[width=7cm]{Bar_comparative_plot.png}
+    \end{center}
 	
 	\todo{chequear gr\'aficas}
 	\begin{center}
