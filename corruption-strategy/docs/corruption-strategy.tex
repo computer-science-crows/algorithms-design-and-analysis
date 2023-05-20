@@ -353,19 +353,6 @@
 	Una vez creado el grafo $G'$ explicado en la secci\'on \ref{section_2}, se le aplica el algortimo Ford-Fulkerson con el objetivo de 
 	
 	
-
-%	\subsection{Problema}
-	
-	
-	
-	
-%	\section{L\'inea de pensamiento}
-	
-	
-	
-	
-%	\subsection{Explicaci\'on del algoritmo}
-	
 	\subsection{Complejidad Temporal}
 	
 	La funci\'on principal es \textsc{corruption\_strategy(\textit{n, m, a, w})}. La funci\'on tiene como par\'ametros: $n$, el n\'umero de ciudades, $m$, el n\'umero de carreteras, $a$, lista con el aporte de cada ciudad, $w$, lista con el costo de cada carretera. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
@@ -448,19 +435,12 @@
 	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
 	
 	\section{Tester}
-	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Dichos resultados se muestran en consola de la siguiente forma:
-%		 \begin{center}
-%	 		\includegraphics[width=7cm]{tester_sample.png}
-%	 		
-%	 		\tiny{\textbf{Figura 1.} Ejemplo de c\'omo se muestran los tests de una funci\'on en consola.} 
-%	 	\end{center}
-	 
-	 %Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en $ json/tests/simplex\_solution.json $ y $ json/tests/hungarian\_solution.json $
+	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. La soluci\'on implementada fue testeada para todos los casos de prueba generados y puede encontrarse en $ json/tests/corruption\_strategy\_solution.json $ .
 	
-	\section{Comparaci\'on de soluciones implementadas}
-	
+	\section{Comparaci\'on de soluciones implementadas}          
+    \todo{arreglar tiempos}                                
 	A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. En los casos analizados, el \textit{backtrack} y el \textit{corruption\_startegy}, demoran menos de 0.016 segundos para cada caso de prueba analizado. Se debe tener en cuenta que se tom\'o 5 como tama\~no m\'aximo de los valores $n$ y $m$ obtenidos en la entrada. Como se puede observar, en el backtrack, la mayor\'ia de los casos ocurren entre 0.000 y 0.002, mientras que en la soluci\'on con flujo los tiempos de la mayor\'ia de los casos oscilan entre 0.000 y 0.0010. Lo anterior se debe a que el tama\~no de entrada es peque\~no (menor o igual que 5) y por ello el backtrack es m\'as r\'apido, porque la soluci\'on de flujo no solo depende del tama\~no de entrada, sino que adem\'as depende del valor del flujo m\'aximo, que en la mayor\'ia de los casos es relativamente grande, lo cual afecta la r\'apidez del algoritmo.
-	
+	                                                             
 	\begin{center}
 		\includegraphics[width=7cm]{Backtrack_results.png}
 		\includegraphics[width=7cm]{Flujo_results.png}
@@ -468,6 +448,7 @@
 	
 	Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
 	
+	\todo{chequear gr\'aficas}
 	\begin{center}
 		\includegraphics[width=7cm]{Bar_comparative_plot.png}
 	\end{center}
