@@ -384,7 +384,7 @@
 	Para el trabajo con grafos por razones de comodidad se utilizó la librería networkx de Python.	En el cálculo de la complejidad temporal no se tiene en cuenta el costo de las operaciones sobre
 	grafos creados con la librería anterior.
 	
-	En la l\'inea 2 del m\'etodo anterior, se llama a la funci\'on \textsc{build\_graph\textit{(n, m, a, w)}}, la cual se encarga de construir el grafo $G'$ explicado en la secci\'on \ref{section_2}. La complejidad temporal de dicha funci\'on es $O(|$V'$| + |$E'$|)$, ya que por cada carretera se contruye una arista entre el nodo fuente y el nodo que representa a dicha carretera,  por cada par de ciudades que conforman una carretera, se crean dos arcos, cada una desde la carretera hasta las respectivas ciudades y tambi\'en, por cada nodo que representa a una ciudad, se contruye una arista con el nodo receptor.
+	En la l\'inea 2 del m\'etodo anterior, se llama a la funci\'on \textsc{build\_graph\textit{(n, m, a, w)}}, la cual se encarga de construir el grafo $G'$ explicado en la secci\'on \ref{section_2}. La complejidad temporal de dicha funci\'on es $O(|V'| + |E'|)$, ya que por cada carretera se contruye una arista entre el nodo fuente y el nodo que representa a dicha carretera,  por cada par de ciudades que conforman una carretera, se crean dos arcos, cada una desde la carretera hasta las respectivas ciudades y tambi\'en, por cada nodo que representa a una ciudad, se contruye una arista con el nodo receptor.
 	
 	Una vez creado el grafo, se llama a la funci\'on \textsc{ get\_min\_cut\_residual\_graph(\textit{G})}, que tiene como par\'ametro el grafo $G'$. El pseudoc\'odigo del m\'etodo se muestra a continuaci\'on.
 	
@@ -438,21 +438,10 @@
 	ya que $|V'|$ < $|E'|$, por la forma en que est\'a constru\'ido $G'$ y $|S|<|V'|$, debido a que al menos el nodo receptor $t$ no pertenece a $S$.
 
 	
-	 
-	
-	
-	
-	
 
+	\subsection{Complejidad espacial}
 	
-
-	
-
-	
-
-
-	
-%	\subsection{Complejidad espacial}
+	La complejidad espacial de nuestra implementaci\'on es $O(2n + 4m)$. El algoritmo utiliza como entrada una lista de tama\~no $n$ y otra de tama\~no $m$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo dirigido con la librer\'ia networkx de Python que tiene $2 + m + n$ v\'ertices y $n + 3m$ aristas, cuyo costo asumimos no es mayor que $O(2n + 4m)$.
 		
 	\section{Generador de casos de prueba}
 	
