@@ -93,7 +93,7 @@
 	\Huge\bfseries Proyecto \# 2: Tito el corrupto \\
 } % Article title
 \author{% 
-	%\includegraphics[width=15em]{logo.png}\\
+	\includegraphics[width=15em]{logo.png} \vspace{1em}\\
 	Laura Victoria Riera P\'erez\\
 	Mari\'e del Valle Reyes \vspace{1em} \\
 	\small Cuarto a\~no. Ciencias de la Computaci\'on. \\ % institution
@@ -177,7 +177,7 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}\label{section_2}
 	
-	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera y su costo. La salida del problema son dos lista, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
+	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera \todo{entre ciudades} y su costo. La salida del problema son dos listas, una que contiene las ciudades seleccionadas para construir las carreteras y otra que contiene las carreteras seleccionadas. El objetivo es encontrar la combinaci\'on de ciudades y carreteras que maximice el dinero que llega a Tito, teniendo en cuenta que el dinero de las ciudades no pasa por \'el.
 	
 	En la resoluci\'on del problema se construye un grafo dirigido $G'=(V',E')$, donde $|V'| = m + n + 2$ y $|E'|= 3 \cdot$ m + n. El conjunto $V'$ de v\'ertices est\'a conformado por v\'ertices que representen cada ciudad y cada carretera, adem\'as de un v\'ertice $s$ que represente la fuente y un v\'ertice $t$ que representa el receptor. El conjunto de los arcos $E'$, contiene los siguientes arcos:
 	\begin{itemize}
@@ -191,12 +191,12 @@
 
 	La idea es aplicar un algoritmo de flujo a $G'$, particularmente el algoritmo de Ford-Fulkerson. 
 	
-	\section{Soluci\'on}
+	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones y se queda con la que más valor aporte, pero muy ineficiente, \textit{O($2^{|E|}$)}, ya que por cada arista del grafo original, se decide si escogerla o no en la soluci\'on. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solutions.py.
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones y se queda con la que más valor aporte, pero muy ineficiente, \textit{O($2^{|E|}$)}, ya que por cada arista del grafo original, se decide si escogerla o no en la soluci\'on \todo{mejorar esto}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
 	
-	\subsection{Corruption-Strategy}
+	\subsection{Soluci\'on utilizando flujo}
 	
 	\subsubsection{Preliminares}
 	\begin{mydef}
@@ -348,7 +348,7 @@
 	
 	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
 	
-	\subsubsection{Propuesta de soluci\'on \'optima}
+	\subsubsection{Propuesta de soluci\'on}
 	
 	Una vez creado el grafo $G'$ explicado en la secci\'on \ref{section_2}, se le aplica el algortimo Ford-Fulkerson con el objetivo de 
 	
@@ -439,7 +439,7 @@
 
 	
 
-	\subsection{Complejidad espacial}
+	\subsection{Complejidad Espacial}
 	
 	La complejidad espacial de nuestra implementaci\'on es $O(2n + 4m)$. El algoritmo utiliza como entrada una lista de tama\~no $n$ y otra de tama\~no $m$ como se explic\'o en la definici\'on del problema. Adem\'as, se crea un grafo dirigido con la librer\'ia networkx de Python que tiene $2 + m + n$ v\'ertices y $n + 3m$ aristas, cuyo costo asumimos no es mayor que $O(2n + 4m)$.
 		
@@ -459,15 +459,15 @@
 	
 	\section{Comparaci\'on de soluciones implementadas}
 	
-	En los casos analizados, el \textit{backtrack} puede demorar desde menos de un segundo hasta casi dos minutos en ejecutarse. El \textit{simplex} demora para todos los casos menos de medio segundo, manteni\'endose para la mayor\'ia por debajo de los 0.2 segundos. Por \'ultimo el \textit{hungarian} implementado es el que mejores resultados muestra, tomando menos de 0.02 segundos para todos los casos, la d\'ecima parte de lo que demora el \textit{simplex}. A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. 
-
+	A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. En los casos analizados, el \textit{backtrack} y el \textit{corruption\_startegy}, demoran menos de 0.016 segundos para cada caso de prueba analizado. Se debe tener en cuenta que se tom\'o 5 como tama\~no m\'aximo de los valores $n$ y $m$ obtenidos en la entrada. Como se puede observar, en el backtrack, la mayor\'ia de los casos ocurren entre 0.000 y 0.002, mientras que en la soluci\'on con flujo los tiempos de la mayor\'ia de los casos oscilan entre 0.000 y 0.0010. Lo anterior se debe a que el tama\~no de entrada es peque\~no (menor o igual que 5) y por ello el backtrack es m\'as r\'apido, porque la soluci\'on de flujo no solo depende del tama\~no de entrada, sino que adem\'as depende del valor del flujo m\'aximo, que en la mayor\'ia de los casos es relativamente grande, lo cual afecta la r\'apidez del algoritmo.
+	
 	\begin{center}
-		\includegraphics[width=7cm]{Backtrack_results.png}\\
+		\includegraphics[width=7cm]{Backtrack_results.png}
 		\includegraphics[width=7cm]{Flujo_results.png}
 	\end{center}  
-
+	
 	Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
-
+	
 	\begin{center}
 		\includegraphics[width=7cm]{Bar_comparative_plot.png}
 	\end{center}
