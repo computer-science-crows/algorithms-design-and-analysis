@@ -365,47 +365,6 @@
 	 
 	 el valor del recorte es igual al costo total de los instrumentos tomados y los proyectos descartados, y debemos minimizarlo. Entonces, el corte mínimo en esta red denota la mejor respuesta.
 	
-	Correctitud
-
-	Creando G' se puede modelar lo anterior usando un algoritmo de flujo, miraremos nuestro corte mínimo, si se corta algún arco entre 
-	y algún 
-	entonces se incluiría el uso de la ganancia de la arista asociada a 
-	en G, si se corta algún arco entre la 
-	y 
-	, entonces se tiene que satisfacer la perdida del j-esimo vertice, se puede ver que si se incluye una arista de G entonces se tienen que incluir sus vertices asociados en G o sacar la arista de la solución pues sería imposible cortar el arco de peso 
-	entre ellos en G'.
-	
-	Luego si no se satura alguna arista de G' desde 
-	a 
-	implicaría que no se puede satisfacer la perdida que genera por lo que el vertice de G asociado 
-	no se debe incluir en la solución.
-	
-	Demostración de correctitud
-	
-	Sabemos que el valor del flujo es igual a la capacidad del corte mínimo y que las aristas que unen a los vértices que pertenecen a 
-	con los vértices que pertenecen a 
-	están saturadas.
-	
-	Sea 
-	el corte mínimo.
-	
-	Si dado el corte mínimo existe un nodo carretera 
-	tal que 
-	esa carretera no será construida porque implica que el dinero que gana Tito al construir 
-	es menor o igual que el dinero que aportan las ciudades que conecta y por tanto Tito no ganaría nada.
-	
-	Si dado el corte mínimo existe un nodo ciudad 
-	que pertenece a 
-	es necesario conectar esa ciudad, la artista entre 
-	y 
-	está saturada por el dinero de las carreteras, o sea, las calles que conectan a 
-	aportan más dinero del que resta 
-	.
-	
-	Por tanto la respuesta final será todo 
-	tal que 
-	.
-	
 	\subsubsection{Complejidad Temporal}
 	
 	La funci\'on principal es \textsc{corruption\_strategy(\textit{n, m, a, w})}. La funci\'on tiene como par\'ametros: $n$, el n\'umero de ciudades, $m$, el n\'umero de carreteras, $a$, lista con el aporte de cada ciudad, $w$, lista con el costo de cada carretera. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
