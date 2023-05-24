@@ -177,7 +177,7 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}\label{section_2}
 	
-	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera \todo{entre ciudades} y su costo. El objetivo es maximizar la diferencia de la suma de los costos de construir las carreteras seleccionadas y la suma del aporte de cada una de las ciudades que intervienen en esas carreteras. La salida del problema es la distribuci\'on del proyecto como dos listas, una que contiene las ciudades y otra las carreteras a construir tal que se obtenga la ganancia m\'axima.
+	La entrada de nuestro problema es la cantidad de ciudades $n$, la cantidad de carreteras $m$, una lista $a$ con el dinero aportado por cada ciudad y una lista $w$ con cada carretera y su costo. El objetivo es maximizar la diferencia de la suma de los costos de construir las carreteras seleccionadas y la suma del aporte de cada una de las ciudades que intervienen en esas carreteras. La salida del problema es la distribuci\'on del proyecto como dos listas, una que contiene las ciudades y otra las carreteras a construir tal que se obtenga la ganancia m\'axima.
 	
 	\subsection{Problema "Proyectos e Intrumentos''}
 	
@@ -357,14 +357,19 @@
 	
 	\subsubsection{Propuesta de soluci\'on}
 	
-	Se aplica un algoritmo de flujo sobre G y se toma el corte m\'inimo (S, T), construyendo la respuesta basada en este corte de la siguiente manera: 
-	\begin{itemize}
-		\item si un proyecto-vértice pertenece a S, entonces tomamos este proyecto;
-		\item si un vértice-instrumento pertenece a S, entonces tomamos este instrumento; todos los demás proyectos e instrumentos se descartan. 
-	\end{itemize}
-	 
-	 el valor del recorte es igual al costo total de los instrumentos tomados y los proyectos descartados, y debemos minimizarlo. Entonces, el corte mínimo en esta red denota la mejor respuesta.
+	Se aplica un algoritmo de flujo sobre G y se toma el corte m\'inimo (S, T), la respuesta estar\'a conformada por todas las carreteras y ciudades que pertenezcan al conjunto S. 
 	
+	\textbf{¿Por qu\'e? }
+	
+	Solo puede ocurrir que una carretera pertenezca a S si la ciudad correspondiente tambien pertenece a S. No puede pasar que pertenezaca a S y cruce el corte al mismo tiempo dado que en el grafo dirigido se va desde carreteras a ciudades con capacidad infinita, por tanto esta nunca se agota, y todas las aristas que pertenecen al corte m\'inimo est\'an agotadas. 
+	
+	Si la arista (s, carretera) estuviese pertenciera al corte dicha carretera estuviese en el conjunto T. 
+	
+	Entonces, si la carretera pertenece a S, es porque no est\'a agotada y es mayor que las que cruzan el corte, y como nos interesa maximizar lo que gastamos en carreteras, la tomamos.
+	
+	Luego, si una ciudad pertence a S, de manera an\'aloga al primer caso explicado, la carretera correspondiente tambi\'en debe pertenecer a S. Adem\'as tiene que suceder que el arco correspondiente a dicha ciudad est\'e agotado, de lo contrario tendr\'iamos un camino de s a t, lo cual contradice que estamos partiendo del flujo m\'aximo, por tanto al escoger esta ciudad estamos tomando lo m\'inimo posible para agotar el presupuesto aportado por las ciudades. 
+	 
+	Por tanto, de esta forma, se est\'an tomando combinaciones v\'alidas de ciudades y carreteras, minimizando el aporte de las ciudades y maximizando el costo de las carreteras.
 	\subsubsection{Complejidad Temporal}
 	
 	La funci\'on principal es \textsc{corruption\_strategy(\textit{n, m, a, w})}. La funci\'on tiene como par\'ametros: $n$, el n\'umero de ciudades, $m$, el n\'umero de carreteras, $a$, lista con el aporte de cada ciudad, $w$, lista con el costo de cada carretera. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
