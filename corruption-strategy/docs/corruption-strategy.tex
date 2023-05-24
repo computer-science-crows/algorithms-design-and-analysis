@@ -363,13 +363,14 @@
 	
 	Solo puede ocurrir que una carretera pertenezca a S si la ciudad correspondiente tambien pertenece a S. No puede pasar que pertenezaca a S y cruce el corte al mismo tiempo dado que en el grafo dirigido se va desde carreteras a ciudades con capacidad infinita, por tanto esta nunca se agota, y todas las aristas que pertenecen al corte m\'inimo est\'an agotadas. 
 	
-	Si la arista (s, carretera) estuviese pertenciera al corte dicha carretera estuviese en el conjunto T. 
+	Si el arco (s, carretera) pertenciera al corte dicha carretera estuviese en el conjunto T. 
 	
 	Entonces, si la carretera pertenece a S, es porque no est\'a agotada y es mayor que las que cruzan el corte, y como nos interesa maximizar lo que gastamos en carreteras, la tomamos.
 	
-	Luego, si una ciudad pertence a S, de manera an\'aloga al primer caso explicado, la carretera correspondiente tambi\'en debe pertenecer a S. Adem\'as tiene que suceder que el arco correspondiente a dicha ciudad est\'e agotado, de lo contrario tendr\'iamos un camino de s a t, lo cual contradice que estamos partiendo del flujo m\'aximo, por tanto al escoger esta ciudad estamos tomando lo m\'inimo posible para agotar el presupuesto aportado por las ciudades. 
+	Luego, si una ciudad pertence a S, de manera an\'aloga al primer caso explicado, la carretera correspondiente tambi\'en debe pertenecer a S. Adem\'as tiene que suceder que el arco correspondiente a dicha ciudad est\'e agotado, de lo contrario tendr\'iamos un camino de s a t, lo cual contradice que estamos partiendo del flujo m\'aximo, por lo cual al escoger esta ciudad estamos tomando lo m\'inimo posible para agotar el presupuesto aportado por las ciudades. 
 	 
 	Por tanto, de esta forma, se est\'an tomando combinaciones v\'alidas de ciudades y carreteras, minimizando el aporte de las ciudades y maximizando el costo de las carreteras.
+	
 	\subsubsection{Complejidad Temporal}
 	
 	La funci\'on principal es \textsc{corruption\_strategy(\textit{n, m, a, w})}. La funci\'on tiene como par\'ametros: $n$, el n\'umero de ciudades, $m$, el n\'umero de carreteras, $a$, lista con el aporte de cada ciudad, $w$, lista con el costo de cada carretera. El pseudoc\'odigo siguiente permite un acercamiento a la implementaci\'on realizada.
