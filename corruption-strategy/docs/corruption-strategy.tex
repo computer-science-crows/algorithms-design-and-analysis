@@ -205,32 +205,32 @@
 	
 	\subsection{Soluci\'on utilizando flujo}
 	
-%	\subsubsection{Preliminares}
-%	\begin{mydef}
-%		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
-%	\end{mydef}
+	\subsubsection{Preliminares}
+	\begin{mydef}
+		Una \textbf{red de flujo} $G=(V,E)$ es un grafo dirigido en el que a cada par ordenado (u,v),  u, v$\in$V, se le asocia una función de capacidad no negativa c(u,v)$\geq$ 0 y en el que se distinguen dos vértices: la fuente s y el receptor t.
+	\end{mydef}
+
+	\begin{mydef}\label{red_flujo}
+		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
+		
+		\begin{enumerate}
+			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
+			\begin{equation}
+				0 \leq f(u,v) \leq c(u,v)
+			\end{equation}
+		
+			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
+			\begin{equation}
+				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
+			\end{equation}
+			
+		\end{enumerate}
+		
+	\end{mydef}
 %
-%	\begin{mydef}\label{red_flujo}
-%		Sea G=〈V,E〉 una red de flujo con función de \textbf{capacidad} c y vértices fuente y receptor s y t respectivamente. Un \textbf{flujo} en G es una función real $f:V x V\rightarrow \mathbb{R}^+$ que satisface las siguientes propiedades:
-%		
-%		\begin{enumerate}
-%			\item Restricci\'on de capacidad: Para todo u,v$\in$V se cumple que
-%			\begin{equation}
-%				0 \leq f(u,v) \leq c(u,v)
-%			\end{equation}
-%		
-%			\item Conservaci\'on de flujo: Para todo u$\in$V- \{s,t\}, se cumple que
-%			\begin{equation}
-%				\sum_{v \in V} f(v,u) = \sum_{v \in V} f(u,v)
-%			\end{equation}
-%			
-%		\end{enumerate}
-%		
-%	\end{mydef}
-%
-%	\begin{mydef}\label{flujo_neto}
-%		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
-%	\end{mydef}
+	\begin{mydef}\label{flujo_neto}
+		A la cantidad  no negativa f(u,v) se le denomina \textbf{flujo neto} de u a v.
+	\end{mydef}
 %
 %	\begin{mydef}\label{valor_flujo}
 %		El \textbf{valor de un flujo} se define como:
@@ -240,77 +240,77 @@
 %		\end{equation}
 %	\end{mydef}
 %
-%	\begin{mydef}\label{capacidad_residual}
-%		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v $\in$ V.
-%		
-%		Se define la \textbf{capacidad residual} mediante la siguiente función:
-%		
-%		\begin{equation}
-%			c_f(u,v) = 	\left\{		
-%			\begin{array}{lr}				
-%				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
-%				f(v,u) &, \text{si (v,u) $\in$ E}\\
-%				0 &,\text{en otro caso}\\
-%			\end{array}
-%		\right.
-%		\end{equation}
-%	
-%	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
-%	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
-%	\end{mydef}
+	\begin{mydef}\label{capacidad_residual}
+		Sea G=〈V,E〉 una red de flujo con origen s y receptor t. Sea f un flujo en G, y sean u,v $\in$ V.
+		
+		Se define la \textbf{capacidad residual} mediante la siguiente función:
+		
+		\begin{equation}
+			c_f(u,v) = 	\left\{		
+			\begin{array}{lr}				
+				c(u,v) -f(u,v) & , \text{si (u,v) $\in$ E}\\
+				f(v,u) &, \text{si (v,u) $\in$ E}\\
+				0 &,\text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+	
+	La \textbf{red residual} de G inducida por f es una red $G_f=(V,E_f)$, donde 
+	$E_f= \{ (u,v) \in VxV | c_f(u,v)>0 \}$.
+	\end{mydef}
 %
-%	\begin{mydef}\label{aumento_flujo}
-%		
-%		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
-%		
-%		\begin{equation}
-%			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
-%				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
-%				0 & \text{en otro caso}\\
-%			\end{array}
-%		\right.
-%		\end{equation}
-%		
-%	\end{mydef}
+	\begin{mydef}\label{aumento_flujo}
+		
+		Si f es un flujo en la red original G y $f'$ es un flujo en la red residual correspondiente $G_f$, entonces, se define el aumento del flujo f (en la  red  original) por $f'$, y denotado por $f\uparrow f'$, a la función  $f\uparrow f'$: VxV$\rightarrow$ $\mathbb{R}$ dada por la expresión:
+		
+		\begin{equation}
+			f\uparrow f'(u,v) = \left\{ \begin{array}{lr}
+				f(u,v) + f'(u,v) - f'(v,u) & \text{si (u,v) $\in$ E}\\
+				0 & \text{en otro caso}\\
+			\end{array}
+		\right.
+		\end{equation}
+		
+	\end{mydef}
 %	
 %	\begin{lem}
 %		|f $\uparrow$ f'|=|f|+|f'|
 %	\end{lem}
 %	
-%	\begin{mydef}\label{camino_aumentativo}
-%		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
-%	\end{mydef}
+	\begin{mydef}\label{camino_aumentativo}
+		Dada una red de flujo G=〈V,E〉 y un flujo f, un \textbf{camino aumentativo} p es un camino simple de s a t en la red residual $G_f$.
+	\end{mydef}
 %
-%	\begin{mydef}\label{capacidad_residual_c_a}
-%		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
-%		\begin{equation}
-%			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
-%		\end{equation}
-%	\end{mydef}
+	\begin{mydef}\label{capacidad_residual_c_a}
+		La capacidad residual de un camino aumentativo p, denotada por $c_f(p)$, es el valor máximo en el cual es posible aumentar el flujo en cada arista del camino sin violar la restricción de capacidad
+		\begin{equation}
+			c_f(p) = min\{c_f(u,v) | (u,v) \in p \}
+		\end{equation}
+	\end{mydef}
 %
-%	\begin{lem}\label{flujo_red_r}
-%		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
-%		
-%		\begin{equation}
-%			f_p(u,v) = \left\{
-%			\begin{array}{lr}
-%				c_f(p) & \text{si (u,v) $\in$ p}\\
-%				0 & \text{en otro caso}
-%			\end{array}
-%			\right.
-%		\end{equation}
-%		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$	
-%		
-%	\end{lem}
+	\begin{lem}\label{flujo_red_r}
+		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en la red residual $G_f$. Si se define el flujo $f_p$ , sobre la red residual, como
+		
+		\begin{equation}
+			f_p(u,v) = \left\{
+			\begin{array}{lr}
+				c_f(p) & \text{si (u,v) $\in$ p}\\
+				0 & \text{en otro caso}
+			\end{array}
+			\right.
+		\end{equation}
+		entonces el valor de $f_p$ es $|f_p|=c_f(p)>0$	
+		
+	\end{lem}
 %
 %	\begin{col}
 %		Sea G=〈V,E〉 una red de flujo, sea f un flujo en G y sea p un camino aumentativo en $G_f$. Sea $f_p$ definida mediante la ecuación * y supóngase que se aumenta f por $f_p$. Entonces la función f $\uparrow$ $f_p$ es un flujo en G con valor |f $\uparrow$ $f_p$| = |f| + |$f_p$| > |f|.
 %	\end{col}
 %
-%	\begin{mydef}\label{corte}
-%		Un \textbf{corte} (S,T) de una red de flujo G = (V,E) es una partici\'on de V en dos conjuntos S y T = V-S de modo 	ue s $\in$ S y t $\in$ T.
-%	\end{mydef}
-%
+	\begin{mydef}\label{corte}
+		Un \textbf{corte} (S,T) de una red de flujo G = (V,E) es una partici\'on de V en dos conjuntos S y T = V-S de modo 	ue s $\in$ S y t $\in$ T.
+	\end{mydef}
+
 %	\begin{mydef}\label{flujo_corte}
 %		Si f es un flujo, entonces el \textbf{flujo neto} f(S,T) a trav\'es del corte (S,T) se define como
 %		\begin{equation}
@@ -336,28 +336,30 @@
 %		\end{equation}
 %	\end{col}
 %	
-%	\begin{thm}
-%		Si f es un flujo en una red de flujo G=〈V,E〉 con un origen s y un receptor t, entonces las siguientes condiciones son equivalentes:
-%		\begin{enumerate}
-%			\item f es un flujo máximo en G. 
-%			\item En la red residual $G_f$ no se pueden encontrar más caminos aumentativos.
-%			\item  |f|=c(S,T) para algún corte (S,T) de G.
-%		\end{enumerate}
-%	\end{thm}
+	\begin{thm}\label{max_flow_min_cut}
+		Si f es un flujo en una red de flujo G=〈V,E〉 con un origen s y un receptor t, entonces las siguientes condiciones son equivalentes:
+		\begin{enumerate}
+			\item f es un flujo máximo en G. 
+			\item En la red residual $G_f$ no se pueden encontrar más caminos aumentativos.
+			\item  |f|=c(S,T) para algún corte (S,T) de G.
+		\end{enumerate}
+	\end{thm}
 
-%		\subsubsection{Algortimo Ford-Fulkerson}\label{ff}
-%	
-%	El algoritmo Ford-Fulkerson es utilizado para encontrar el flujo máximo en una red de flujo [\ref{red_flujo}]. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
-%	
-%	El algoritmo encuentra el flujo máximo en la red de flujo utilizando la técnica de aumentar caminos. En cada iteración del algoritmo, se busca un camino aumentativo [\ref{camino_aumentativo}], es decir, un camino desde el nodo fuente hasta el nodo receptor donde todas las aristas tienen capacidad positiva y suficiente para aumentar el flujo actual. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no haya caminos aumentativos en el grafo residual.
-%	
-%	El grafo residual se obtiene a partir del grafo original restando el flujo actual del flujo máximo para obtener la capacidad residual de cada arista. De esta manera, se pueden buscar caminos amentativos en el grafo residual sin utilizar aristas que ya están completamente saturadas.
-%	
-%	El algoritmo Ford-Fulkerson garantiza que, una vez que se alcanza el flujo máximo, no hay caminos aumentativos en el grafo residual y, por lo tanto, el flujo es óptimo.
+
+	\subsubsection{Algortimo Ford-Fulkerson}\label{ff}
 	
-	\subsubsection{Propuesta de soluci\'on}
+	El algoritmo Ford-Fulkerson es utilizado para encontrar el flujo máximo en una red de flujo [\ref{red_flujo}]. Esta red se representa como un grafo dirigido donde cada arista tiene una capacidad que indica la cantidad máxima de flujo que puede pasar por ella.
+	
+	El flujo m\'aximo se obtiene buscando en cada iteración del algoritmo un camino aumentativo [\ref{camino_aumentativo}]. Una vez encontrado el camino aumentativo, se aumenta el flujo en esa ruta tanto como sea posible. Este proceso se repite hasta que ya no hayan caminos aumentativos en el grafo residual [\ref{capacidad_residual}], ya que por teorema [\ref{max_flow_min_cut}], en ese momento se debe haber alcanzado el flujo m\'aximo.
+	
+
+	
+	
+
+\subsubsection{Propuesta de soluci\'on}
 	
 	Se aplica un algoritmo de flujo sobre G y se toma el corte m\'inimo (S, T), la respuesta estar\'a conformada por todas las carreteras y ciudades que pertenezcan al conjunto S. 
+	\\
 	
 	\textbf{¿Por qu\'e? }
 	
@@ -464,17 +466,7 @@
     	\includegraphics[width=7cm]{Flujo_results.png}
     \end{center}  
     
-    Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
-    
-    \begin{center}
-    	\includegraphics[width=7cm]{Bar_comparative_plot.png}
-    \end{center}
-	
-	\todo{chequear gr\'aficas}
-	\begin{center}
-		\includegraphics[width=7cm]{Bar_comparative_plot.png}
-	\end{center}
-	
+   	
 	\begin{thebibliography}
 		a
 		\bibitem{introduction} Cormen, Thomas H. y otros. \emph{Introduction to Algorithms}. 
