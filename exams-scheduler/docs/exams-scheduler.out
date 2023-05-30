@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section.1}{Repositorio del proyecto}{}% 1
+\BOOKMARK [1][-]{section.2}{Definici\363n inicial del problema}{}% 2
+\BOOKMARK [1][-]{section.3}{Definici\363n en t\351rminos matem\341tico - computacionales}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Problema X}{section.3}% 4
+\BOOKMARK [1][-]{section.4}{Soluciones implementadas}{}% 5
+\BOOKMARK [2][-]{subsection.4.1}{Backtrack}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.2}{Soluci\363n}{section.4}% 7
+\BOOKMARK [3][-]{subsubsection.4.2.1}{Preliminares}{subsection.4.2}% 8
+\BOOKMARK [3][-]{subsubsection.4.2.2}{Propuesta de soluci\363n}{subsection.4.2}% 9
+\BOOKMARK [3][-]{subsubsection.4.2.3}{Complejidad Temporal}{subsection.4.2}% 10
+\BOOKMARK [3][-]{subsubsection.4.2.4}{Complejidad Espacial}{subsection.4.2}% 11
+\BOOKMARK [1][-]{section.5}{Generador de casos de prueba}{}% 12
+\BOOKMARK [1][-]{section.6}{Tester}{}% 13
+\BOOKMARK [1][-]{section.7}{Comparaci\363n de soluciones implementadas}{}% 14
