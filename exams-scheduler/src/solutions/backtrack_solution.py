@@ -1,70 +1,79 @@
 import numpy as np
 
 
-def backtrack_solution(n, m, a, w):
+def backtrack_solution(k, exams, propositions: list):
 
-    # boolean array to mark selected roads
-    cities = [[-1 for i in range(n)] for j in range(n)]
+    # list with sorted propositions list
+    sorted_propositions = [proposition.sort() for proposition in propositions]
 
-    # list of best assigment of candidates and position
+    # boolean array to mark selected propositions
+    mark = np.zeros(len(propositions), dtype=bool)
+
+    # list of valid k propositions
     best_solution = []
 
-    # list of solutions
-    answer = []
-
-    _backtrack_solution(cities, best_solution, 0, a, w, answer, n)
-
-    value = max(answer)
-    solution = best_solution[answer.index(value)]
-
-    return solution.tolist(), value
+    _backtrack_solution(propositions,[], k, best_solution, 0)
 
 
-def _backtrack_solution(cities, best_solution, count, a, w, answer, n):
+    # list of propositions with the appropriate size
+    solution = k_valid_propositions(exams, best_solution)
+
+    return solution
+
+
+
+
+def _backtrack_solution(propositions, current_proposition, k, mark, best_solution, count):
 
     # base case
-    if count <= len(w):
-        current_cost, current_road_selection = cost(cities, a, w, n)
-        answer.append(current_cost)
-        best_solution.append(np.copy(current_road_selection))
+    if count == k:
+        if is_valid(current_proposition):
+            best_solution.append(current_proposition)
+        return
 
-        if count == len(w):
-            return
-
-    # in each iteration one candidate is assign to a position
-    for i in range(n):
-        for j in range(n):
-            if cities[i][j] < 0 and i != j:
-                cities[i][j] = count
-                cities[j][i] = count
-                _backtrack_solution(cities, best_solution,
-                                    count + 1, a, w, answer, n)
-                cities[i][j] = -1
-                cities[j][i] = -1
+    # in each iteration one proposition is selected
+    for i in range(len(propositions)):
+        if not mark[i]:
+            mark[i] = True
+            current_proposition.append()
+            _backtrack_solution(propositions, k, mark, best_solution, count + 1)
+            mark[i]=False
+            
 
 
-def cost(cities, a, w, n):
+def is_valid(proposition):
+    '''Returns true if the intersection of the lists is empty, which means that no days match. Otherwise returns false'''
 
-    solution = []
-    solution_cost = 0
+    intersection = set(proposition[0]).intersection(*proposition[1:])
 
-    mark = [False for i in range(len(a))]
-    mark_cities = [[False for i in range(n)] for i in range(n)]
+    return len(intersection) == 0
 
-    for i in range(n):
-        for j in range(n):
-            road_cost = 0
-            if not mark_cities[i][j] and cities[i][j] > -1:
-                mark_cities[i][j] = True
-                mark_cities[j][i] = True
-                road_cost += w[cities[i][j]]
-                if not mark[i]:
-                    road_cost -= a[i]
-                    mark[i] = True
-                if not mark[j]:
-                    road_cost -= a[j]
-                    mark[j] = True
-                solution_cost += road_cost
-                solution.append((i, j, cities[i][j]))
 
-    return solution_cost, solution
+def k_valid_propositions(exams, propositions):
+    '''Returns the proposed list that matches the number of exams per course. Otherwise, it returns the empty set.'''
+
+    sorted_exams = exams.sort()
+    valid = True
+    
+    for proposition in propositions:
+        sorted_proposition = sorted(proposition, key=len)
+        for i in range(len(exams)):
+            if exams[i] != len(sorted_proposition[i]):
+                valid = False
+                break
+        if valid:
+            return proposition
+        
+
+    return []
+
+    
+
+
+
+
+    
+
+    
+
+    
