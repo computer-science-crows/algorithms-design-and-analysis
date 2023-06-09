@@ -1,5 +1,6 @@
 import networkx as nx
 from networkx import find_cliques_recursive
+import random
 
 
 def build_graph(n_c, n_e_c, p):
@@ -15,12 +16,12 @@ def build_graph(n_c, n_e_c, p):
         for j in range(1, len(p)):
             intersection = set(G.nodes[i]['proposition']).intersection(
                 set(G.nodes[j]['proposition']))
-            if len(intersection) != 0:
+            if len(intersection) != 0 and i != j:
                 G.add_edge(i, j)
 
     print('-------------G-------------')
     print('NODES')
-    print(G.nodes(data=True))
+    print(G.nodes())
     print('---------------------------')
     print('EDGES')
     print(G.edges)
@@ -29,15 +30,29 @@ def build_graph(n_c, n_e_c, p):
     return G
 
 
-def max_independent_set():
-    pass
+def greedy_mis(G):
+    S = set()
+    for v in G.nodes():
+        if all(u not in S for u in G.neighbors(v)):
+            S.add(v)
+    return S
+
+
+def randomized_mis(G):
+    S = set()
+    vertices = list(G.nodes())
+    random.shuffle(vertices)
+    for v in vertices:
+        if all(u not in S for u in G.neighbors(v)):
+            S.add(v)
+    return S
 
 
 def make_schedule(n_c, n_e_c, p):
     G: nx.Graph = build_graph(n_c, n_e_c, p)
     cliques = list(find_cliques_recursive(G))
     print(f'Maximal cliques: {cliques}')
-    
+
     chosen_cliques = []
     i = 0
     while len(chosen_cliques) < n_c and i < n_c:
