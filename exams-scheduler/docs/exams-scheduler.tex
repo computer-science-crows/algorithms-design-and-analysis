@@ -95,7 +95,7 @@
 	\Huge\bfseries Proyecto \# 3: Kevin el encargado \\
 } % Article title
 \author{% 
-%	\includegraphics[width=15em]{logo.png} \vspace{1em}\\
+	\includegraphics[height=6cm]{logo.png} \vspace{1em}\\
 	Laura Victoria Riera P\'erez\\
 	Mari\'e del Valle Reyes \vspace{1em} \\
 	\small Cuarto a\~no. Ciencias de la Computaci\'on. \\ % institution
@@ -172,7 +172,7 @@
 
 	Kevin ha sido puesto al frente de la comisión de la facultad que elegirá las fechas de las pruebas de los k cursos que se dan en la facultad.
 	
-	Cada curso tiene una cantidad de pruebas determinadas que quiere poner, y propone para esto, por ejemplo, los días { 17, 34, 65 y 87 } del curso escolar, si vemos a este como una sucesión de días en los que se imparten clases. Para mostrarse flexibles, los cursos a veces elaboran más de una propuesta incluso.
+	Cada curso tiene una cantidad de pruebas determinadas que quiere poner, y propone para esto, por ejemplo, los días \{ 17, 34, 65 y 87 \} del curso escolar, si vemos a este como una sucesión de días en los que se imparten clases. Para mostrarse flexibles, los cursos a veces elaboran más de una propuesta incluso.
 	
 	Por un problema de desorganización las propuestas se regaron y ahora no se sabe que curso propuso que propuesta, pero ya Kevin esta cansado de tanta gestión. Kevin quiere elegir k propuestas que ninguna quiera poner pruebas el mismo día que las otras, así supone que todo el mundo estará contento, ayude a Kevin.
 	
@@ -186,6 +186,7 @@
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
+	\todo{ajustar al problema actual}
 		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones de posibles carreteras y se queda con la que más ganancia aporte, pero muy ineficiente \textit{O($2^{m}$)}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
 		
 		En cuanto al algoritmo de fuerza bruta, una solución posible es generar todas las combinaciones posibles de k propuestas y verificar si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. Esto requeriría generar todas las combinaciones posibles de k propuestas, lo que tomaría $O(n^k)$ tiempo, donde n es el número de propuestas. Dado que n puede ser grande, este algoritmo puede no ser práctico para valores grandes de n.
