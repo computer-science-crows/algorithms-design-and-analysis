@@ -1,34 +1,7 @@
 import networkx as nx
 from math import inf
-import itertools
 
-def build_graph(n_c, p):
 
-    p = list(k for k,_ in itertools.groupby([sorted(proposition) for proposition in p]))
-    G = nx.Graph()
-
-    for i in range(len(p)):
-        G.add_node(i)
-        prop = p[i]
-        G.nodes[i]['proposition'] = prop
-        G.nodes[i]['exams_number'] = len(prop)
-
-    for i in range(len(p) - 1):
-        for j in range(1, len(p)):
-            intersection = set(G.nodes[i]['proposition']).intersection(
-                set(G.nodes[j]['proposition']))
-            if len(intersection) != 0 and i != j:
-                G.add_edge(i, j)
-
-    print('-------------G-------------')
-    print('NODES')
-    print(G.nodes())
-    print('---------------------------')
-    print('EDGES')
-    print(G.edges)
-    print('---------------------------')
-
-    return G
 
 def BMA(G: nx.Graph):
     exclude = {}
@@ -111,6 +84,22 @@ def BMA(G: nx.Graph):
 
     return independent_set
 
+def bellman_ford_mis(k,p,G):
+
+    independent_sets = list(BMA(G))
+    
+    if len(independent_sets) < k:
+        return []
+    
+    solution = []
+    for i in range(k):
+        solution.append(p[independent_sets[i]])
+
+    return solution
+
+
+
+
 
 course_proposals = [
     [17, 34, 65,  87],   
@@ -124,10 +113,12 @@ course_proposals = [
 ]
 k = 3
 
-#G = build_graph(k, course_proposals)
-G = nx.Graph([('a','c'),('a','b'),('h','a'),('h','g'),('h','f'),('g','e'),('g','d'),('e','b'),('e','f'),('d','c'),('d','f')])
-print(G.nodes)
-print(BMA(G))
+# #G = build_graph(k, course_proposals)
+# G = nx.Graph([('a','c'),('a','b'),('h','a'),('h','g'),('h','f'),('g','e'),('g','d'),('e','b'),('e','f'),('d','c'),('d','f')])
+# print(G.nodes)
+# print(BMA(G))
+
+
 
 
 
