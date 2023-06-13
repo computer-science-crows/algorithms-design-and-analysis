@@ -179,28 +179,68 @@
 
 	\section{Definici\'on en t\'erminos matem\'atico - computacionales}\label{section_2}
 	
+	La entrada de nuestro problema es el n\'umero \textit{k} de cursos impartidos en el semestre y una lista \textit{p} que contiene al menos \textit{k} propuestas. Una propuesta es una lista con d\'ias del curso escolar en donde podr\'ian efectuarse las pruebas de un curso. El objetivo es encontrar una cantidad \textit{k} de propuestas sin d\'ias en com\'un para formar el calendario de ex\'amenes. La salida del problema es una lista con una combinaci\'on posible de propuestas en caso de existir, de lo contrario, se ofrecen disculpas a Kevin y se retorna una lista vac\'ia.
 	
-	\subsection{Problema X}
-
+%	\subsection{Problema de Selecci\'on de Actividades}
+%	El problema de selección de actividades es un problema de optimización clásico que se ocupa de la selección de la cantidad m\'axima de actividades no concurrentes que se pueden realizar en un marco de tiempo determinado. 
+	
+	\subsection{Teor\'ia de grafos}
+	Este problema tambi\'en puede ser resuelto utilizando el enfoque de la teoría de grafos, model\'andolo como un grafo donde cada nodo representa una propuesta, y una arista entre dos nodos indica que las propuestas correspondientes tienen alg\'un d\'ia en com\'un. 
+	
+	\begin{mydef}
+		Sea $G = (V, E)$ un grafo. $A \subseteq V$ es un conjunto independiente de $G$ si el subgrafo inducido por $A$ no tiene aristas.  
+	\end{mydef}
+	
+	Un conjunto independiente en este caso, constituir\'ia un conjunto de propuestas que no tienen di\'as en com\'un. El problema estar\'ia en buscar un conjunto independiente de tama\~no \textit{k}.
+	
+	\section{Problema NP: M\'aximo conjunto independiente}
 	
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
-	\todo{ajustar al problema actual}
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones de posibles carreteras y se queda con la que más ganancia aporte, pero muy ineficiente \textit{O($2^{m}$)}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
+	
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima \todo{ajustar al problema actual}. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
 		
-		En cuanto al algoritmo de fuerza bruta, una solución posible es generar todas las combinaciones posibles de k propuestas y verificar si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. Esto requeriría generar todas las combinaciones posibles de k propuestas, lo que tomaría $O(n^k)$ tiempo, donde n es el número de propuestas. Dado que n puede ser grande, este algoritmo puede no ser práctico para valores grandes de n.
+	\subsection{Programaci\'on lineal}
 	
-	\subsection{Soluci\'on}
-	
-	\subsubsection{Preliminares}
-	
-	\subsubsection{Propuesta de soluci\'on}
-	
-	\subsubsection{Complejidad Temporal}
-
-	\subsubsection{Complejidad Espacial}
+	Este problema puede ser modelado tambi\'en como un problema de optimizaci\'on lineal. Sea $ x_{i} $ una variable binaria que indica que se tom\'o el v\'ertice $ i $. Se quiere maximizar la suma de $ x_i \forall i \in V $. Las restricciones a\~nadidas  garantizan que ning\'un par de v\'ertices elegidos sean vecinos, y por tanto la soluci\'on hallada sea un conjunto independiente. 
 		
+	\begin{equation} \left\{
+		\begin{matrix}
+			\max & \displaystyle z=\sum_{i \in V}x_{i}\\
+			\textrm{s.a.} & x_i + x_j \leq 1 & \forall (i, j) \in E \\
+			& x_i \in \{0, 1\} & \forall i \in V \\ 
+		\end{matrix} \right. 
+	\end{equation} 
+	
+	Esta soluci\'on fue implementada utilizando la librer\'ia \textit{PuLP} y puede ser encontrada en \textit{src/solutions/linear\_prog\_solution.py}. La complejidad temporal para resolver problemas con PuLP depende del solucionador subyacente que se utilice. Por defecto, PuLP usa COIN-OR Branch and Cut Solver (CBC), el cual se basa en el método simplex y es combinado con otros algoritmos. La complejidad temporal del método simplex es generalmente $O(n^2 \cdot log(n))$ (el caso peor es $O(2^{n} $), pero en general es bastante r\'apido), donde \textit{n} es el número de variables en el problema. Sin embargo, debido a los algoritmos adicionales utilizados por CBC, la complejidad temporal real puede variar según la instancia específica del problema.
+	
+	%La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
+	
+	\subsection{Metaheur\'istica: Algoritmo gen\'etico}
+	
+	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica. La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
+	
+	El objetivo del algoritmo genético es encontrar una lista binaria con exactamente k valores de 1, lo que representa la selección de k propuestas sin que ninguna de ellas tenga días comunes. Para lograr esto, se emplean dos operadores principales: mutación y cruzamiento.
+	
+	La operación de mutación consiste en intercambiar posiciones en la lista binaria. Esto permite explorar nuevas soluciones al cambiar las propuestas seleccionadas. Por ejemplo, si se encuentra un 1 en un índice, se puede intercambiar ese valor con otro índice donde haya un 0 y viceversa.
+	
+	El operador de cruzamiento, o crossover, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades.
+	
+	La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo si la lista binaria no es válida.
+	
+	El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones. Se generan nuevas soluciones aplicando mutación y crossover, y se seleccionan las mejores soluciones para la siguiente generación, utilizando la función de evaluación como criterio de selección.
+	
+	\subsection{Aproximaciones}
+	
+	Los algoritmos de aproximación son una técnica poderosa para tratar problemas de optimización NP-hard, proporcionando garantías comprobables sobre la distancia de la solución devuelta a la óptima. Estos algoritmos son particularmente útiles cuando una solución exacta es intratable y se puede encontrar rápidamente una solución casi óptima.
+	
+	\subsubsection{Greedy}
+	
+	\subsubsection{Random}
+	
+	\subsubsection{Bellman-Ford}
+	
 	\section{Generador de casos de prueba}
 	
 	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.

@@ -3,7 +3,7 @@ from networkx import find_cliques_recursive
 import random
 
 
-def build_graph(n_c, n_e_c, p):
+def build_graph(p):
     G = nx.Graph()
 
     for i in range(len(p)):
@@ -48,31 +48,10 @@ def randomized_mis(G):
     return S
 
 
-def make_schedule(n_c, n_e_c, p):
-    G: nx.Graph = build_graph(n_c, n_e_c, p)
-    cliques = list(find_cliques_recursive(G))
-    print(f'Maximal cliques: {cliques}')
-
-    chosen_cliques = []
-    i = 0
-    while len(chosen_cliques) < n_c and i < n_c:
-        for clique in cliques:
-            if all(node not in clique for chosen_clique in chosen_cliques for node in chosen_clique):
-                chosen_cliques.append(clique)
-                if len(chosen_cliques) == n_c:
-                    break
-        i += 1
-
-    print(f'Chosen cliques: {chosen_cliques}')
+def make_schedule(n_c, p):
+    G: nx.Graph = build_graph(p)
 
     solution = []
-
-    if len(chosen_cliques) < n_c:
-        print('Sorry Kevin, no possible solution.')
-        return solution
-
-    for c in chosen_cliques:
-        solution.append(G.nodes[c[0]]['proposition'])
 
     print(f'Solution: {solution}')
     return solution
