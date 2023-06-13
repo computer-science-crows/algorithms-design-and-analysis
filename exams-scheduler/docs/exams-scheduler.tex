@@ -186,12 +186,27 @@
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
-	\todo{ajustar al problema actual}
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que prueba todas las combinaciones de posibles carreteras y se queda con la que más ganancia aporte, pero muy ineficiente \textit{O($2^{m}$)}. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
-		
-		En cuanto al algoritmo de fuerza bruta, una solución posible es generar todas las combinaciones posibles de k propuestas y verificar si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. Esto requeriría generar todas las combinaciones posibles de k propuestas, lo que tomaría $O(n^k)$ tiempo, donde n es el número de propuestas. Dado que n puede ser grande, este algoritmo puede no ser práctico para valores grandes de n.
 	
-	\subsection{Soluci\'on}
+	Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. Dado que n puede ser grande, este algoritmo puede no ser práctico para valores grandes de n.
+	
+	
+	En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima 5 ciudades con 5 aristas. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
+		
+		 
+	
+	\subsection{Metaheur\'istica}
+	
+	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica. La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
+	
+	El objetivo del algoritmo genético es encontrar una lista binaria con exactamente k valores de 1, lo que representa la selección de k propuestas sin que ninguna de ellas tenga días comunes. Para lograr esto, se emplean dos operadores principales: mutación y cruzamiento.
+	
+	La operación de mutación consiste en intercambiar posiciones en la lista binaria. Esto permite explorar nuevas soluciones al cambiar las propuestas seleccionadas. Por ejemplo, si se encuentra un 1 en un índice, se puede intercambiar ese valor con otro índice donde haya un 0 y viceversa.
+	
+	El operador de cruzamiento, o crossover, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades.
+	
+	La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo si la lista binaria no es válida.
+	
+	El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones. Se generan nuevas soluciones aplicando mutación y crossover, y se seleccionan las mejores soluciones para la siguiente generación, utilizando la función de evaluación como criterio de selección.
 	
 	\subsubsection{Preliminares}
 	
