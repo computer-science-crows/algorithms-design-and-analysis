@@ -195,6 +195,14 @@
 	
 	\section{Problema NP: M\'aximo conjunto independiente}
 	
+	El problema de hallar el m\'aximo conjunto independiente (MIS por sus siglas en ingl\'es) pertenece a la clase de problemas NP-Completos. Para demostrar que el problema del MIS es NP-completo, debemos demostrar que es tanto NP como NP-difícil.
+	
+	Para mostrar que el problema es \textbf{NP}, necesitamos demostrar que dada una solución al problema, podemos verificar su correctitud en tiempo polinomial. En el caso del problema del MIS, la solución es un conjunto de vértices que no son adyacentes entre sí. Podemos comprobar que la solución es correcta verificando que cada par de vértices en el conjunto no sean adyacentes, lo que se puede hacer en tiempo $O(V+E)$ usando un algoritmo simple que verifica la ausencia de aristas entre todos los pares de vértices en el conjunto.
+	
+	Para mostrar que el problema del conjunto independiente es \textbf{NP-difícil}, necesitamos realizar una reducción de un problema NP-difícil conocido al problema del MIS. Podemos realizar una reducción del problema del Clique M\'aximo, que se sabe que es NP-difícil. Dada una instancia del problema Clique que consiste en un grafo G y un entero k, podemos construir un grafo complementario G' tomando el mismo conjunto de vértices que G e incluyendo una arista entre dos vértices en G' si y solo si son no adyacentes en G. Entonces podemos mostrar que hay clique de tamaño k en G si y sólo si hay un conjunto independiente de tamaño k en G'. Por lo tanto, el problema del MIS también es NP-difícil.
+
+	Combinando estos dos resultados, podemos concluir que el problema de Conjuntos Independientes es \textbf{NP-Completo}.
+	
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
@@ -213,7 +221,7 @@
 		\end{matrix} \right. 
 	\end{equation} 
 	
-	Esta soluci\'on fue implementada utilizando la librer\'ia \textit{PuLP} y puede ser encontrada en \textit{src/solutions/linear\_prog\_solution.py}. La complejidad temporal para resolver problemas con PuLP depende del solucionador subyacente que se utilice. Por defecto, PuLP usa COIN-OR Branch and Cut Solver (CBC), el cual se basa en el método simplex y es combinado con otros algoritmos. La complejidad temporal del método simplex es generalmente $O(n^2 \cdot log(n))$ (el caso peor es $O(2^{n} $), pero en general es bastante r\'apido), donde \textit{n} es el número de variables en el problema. Sin embargo, debido a los algoritmos adicionales utilizados por CBC, la complejidad temporal real puede variar según la instancia específica del problema.
+	Esta soluci\'on fue implementada utilizando la librer\'ia \textit{PuLP} y puede ser encontrada en \textit{src/solutions/linear\_prog\_solution.py}. La complejidad temporal para resolver problemas con PuLP depende del solucionador subyacente que se utilice. Por defecto, PuLP usa COIN-OR Branch and Cut Solver (CBC), el cual se basa en el método simplex y es combinado con otros algoritmos. La complejidad temporal del método simplex es generalmente \todo{chequear que esto se cumpla aqui} $O(n^2 \cdot log(n))$ (el caso peor es $O(2^{n})$, pero en general es bastante r\'apido), donde \textit{n} es el número de variables en el problema. Sin embargo, debido a los algoritmos adicionales utilizados por CBC, la complejidad temporal real puede variar según la instancia específica del problema.
 	
 	%La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
 	
@@ -221,25 +229,29 @@
 	
 	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica. La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
 	
-	El objetivo del algoritmo genético es encontrar una lista binaria con exactamente k valores de 1, lo que representa la selección de k propuestas sin que ninguna de ellas tenga días comunes. Para lograr esto, se emplean dos operadores principales: mutación y cruzamiento.
+	El objetivo del algoritmo es encontrar una lista binaria con exactamente k valores de 1, lo que representa la selección de k propuestas sin que ninguna de ellas tenga días comunes. Para ello, se generan nuevas soluciones aplicando mutación y cruzamiento, y se seleccionan las mejores soluciones para la siguiente generación, utilizando la función de evaluación como criterio de selección. 
 	
-	La operación de mutación consiste en intercambiar posiciones en la lista binaria. Esto permite explorar nuevas soluciones al cambiar las propuestas seleccionadas. Por ejemplo, si se encuentra un 1 en un índice, se puede intercambiar ese valor con otro índice donde haya un 0 y viceversa.
-	
-	El operador de cruzamiento, o crossover, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades.
-	
-	La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo si la lista binaria no es válida.
-	
-	El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones. Se generan nuevas soluciones aplicando mutación y crossover, y se seleccionan las mejores soluciones para la siguiente generación, utilizando la función de evaluación como criterio de selección.
+	La operación de mutación consiste en intercambiar dos posiciones aleatorias en la lista binaria. El operador de cruzamiento, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades. La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo.  El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones o llega al n\'umero m\'aximo de iteraciones.
 	
 	\subsection{Aproximaciones}
 	
 	Los algoritmos de aproximación son una técnica poderosa para tratar problemas de optimización NP-hard, proporcionando garantías comprobables sobre la distancia de la solución devuelta a la óptima. Estos algoritmos son particularmente útiles cuando una solución exacta es intratable y se puede encontrar rápidamente una solución casi óptima.
+	
+	En las soluciones siguientes se utiliz\'o la representaci\'on del problema como utilizando teor\'ia de grafos.
 	
 	\subsubsection{Greedy}
 	
 	\subsubsection{Random}
 	
 	\subsubsection{Bellman-Ford}
+	
+	El algoritmo BMA (Bellman-Ford Maximum Independent Set Approximation) se utiliza para encontrar un conjunto independiente máximo en un grafo. Este enfoque redefine el problema en términos de encontrar un camino de costo mínimo en un grafo ponderado. Cada vértice tiene un costo asociado, que representa el número de vértices que se excluyen si ese vértice se incluye en la solución. El objetivo del algoritmo es minimizar el número de vértices excluidos al agregar cada vértice al camino.
+	
+	Este m\'etodo se ejecuta en múltiples rondas y mantiene listas para hacer un seguimiento de los caminos encontrados, las exclusiones, los costos y los vértices previos. En la ronda inicial (ronda 0), la exclusión de cada vértice $u$ es una lista que incluye a $u$ y a sus vecinos. El costo de $u$ en esta ronda es simplemente la longitud de la lista de exclusión.
+	
+	En las rondas siguientes, el algoritmo considera pares de vértices $(u, v)$ como candidatos para ser agregados al camino. El vértice $u$ se considera si su costo en la ronda actual es menor que infinito, lo cual indica que fue agregado en la ronda anterior. Si se encuentra un candidato $v$, el algoritmo verifica si agregarlo resultaría en un costo menor para $v$ en la siguiente ronda. Si se cumple esta condición, se actualizan los valores de exclusión, costo y vértice previo para $v$.
+	
+	El algoritmo continúa en cada ronda hasta que no se puedan agregar más vértices a ningún camino (conjunto independiente). En este punto, se puede rastrear cada vértice en la última ronda utilizando su vértice anterior para formar el conjunto independiente aproximado. El tamaño de este conjunto aproximado es igual a la última ronda más uno.
 	
 	\section{Generador de casos de prueba}
 	

@@ -1,7 +1,11 @@
 import pulp
+import networkx as nx
 
 
-def linear_prog_sol(V, E, k=None):
+def linear_prog_sol(G: nx.Graph, k=None):
+    V = G.nodes()
+    E = G.edges()
+
     # create the LP problem
     prob = pulp.LpProblem("Maximum Independent Set", pulp.LpMaximize)
 

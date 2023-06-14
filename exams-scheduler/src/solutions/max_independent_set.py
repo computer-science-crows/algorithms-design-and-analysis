@@ -30,30 +30,17 @@ def build_graph(p):
     return G
 
 
-def greedy_mis(G):
-    S = set()
-    for v in G.nodes():
-        if all(u not in S for u in G.neighbors(v)):
-            S.add(v)
-    return S
-
-
-def randomized_mis(G):
-    S = set()
-    vertices = list(G.nodes())
-    random.shuffle(vertices)
-    for v in vertices:
-        if all(u not in S for u in G.neighbors(v)):
-            S.add(v)
-    return S
-
-
-def make_schedule(n_c, p):
+def make_schedule(n_c, p, solver):
     G: nx.Graph = build_graph(p)
 
     solution = []
 
+    # TODO: method selection
+
+    if len(solution) == 0:
+        print('Sorry Kevin, no possible solution :(')
     print(f'Solution: {solution}')
+
     return solution
 
 
