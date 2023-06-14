@@ -2,7 +2,6 @@ import networkx as nx
 from math import inf
 
 
-
 def BMA(G: nx.Graph):
     exclude = {}
     cost = {}
@@ -20,7 +19,7 @@ def BMA(G: nx.Graph):
         for round in range(1,len(G.nodes)):
             previous[f'({u},{round})'] = None
             cost[f'({u},{round})'] = inf
-            print(f"round {round}")
+            
     
     last_round = 0
     last_vertex = None
@@ -28,8 +27,6 @@ def BMA(G: nx.Graph):
     for round in range(0,len(G.nodes)-1):
         change_cost = False
         
-        print(f"ROUND {round}")
-        #last_round += 1
         for u in G.nodes:   
             try:                       
                 not_adjacent_nodes = set(G.nodes).difference(set(exclude[f'({u},{round})'])) 
@@ -49,7 +46,6 @@ def BMA(G: nx.Graph):
                             v_cost += 1
                     
                     if cost[f'({v},{round + 1})'] > v_cost:
-                        print(f"cambio costo con vertice {v} con {u} con v_costo {v_cost} < cost[f'({v},{round+1}) {cost[f'({v},{round+1})']}']")
                         previous[f'({v},{round + 1})'] = u
                         exclude[f'({v},{round + 1})']= v_exclude
                         cost[f'({v},{round+1})'] = v_cost   
@@ -67,9 +63,6 @@ def BMA(G: nx.Graph):
     independent_set = set()
     independent_set.add(t)
 
-    print(t)
-    print(last_round)
-
     while t != None:
         
         t = previous[f'({t},{last_round})']
@@ -78,10 +71,6 @@ def BMA(G: nx.Graph):
         last_round -=1
         
 
-    print(f'previous {previous}')
-    print(f'cost {cost}')
-    print(f'exclude {exclude}')
-
     return independent_set
 
 def bellman_ford_mis(k,p,G):
@@ -89,13 +78,13 @@ def bellman_ford_mis(k,p,G):
     independent_sets = list(BMA(G))
     
     if len(independent_sets) < k:
-        return []
+        return [], False
     
     solution = []
     for i in range(k):
         solution.append(p[independent_sets[i]])
 
-    return solution
+    return solution, True
 
 
 

@@ -227,7 +227,9 @@
 	
 	\subsection{Metaheur\'istica: Algoritmo gen\'etico}
 	
-	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica. La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
+	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica, la cual se escogi\'o debido a que es adecuada para problemas de optimización combinatoria, como el problema de Kevin, donde las soluciones son combinaciones de elementos discretos. Adem\'as constituye un enfoque de búsqueda y optimización que puede manejar grandes espacios de b\'usqueda y proporcionar soluciones de alta calidad en un tiempo razonable.	
+	
+	La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
 	
 	El objetivo del algoritmo es encontrar una lista binaria con exactamente k valores de 1, lo que representa la selección de k propuestas sin que ninguna de ellas tenga días comunes. Para ello, se generan nuevas soluciones aplicando mutación y cruzamiento, y se seleccionan las mejores soluciones para la siguiente generación, utilizando la función de evaluación como criterio de selección. 
 	

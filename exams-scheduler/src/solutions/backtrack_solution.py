@@ -17,7 +17,10 @@ def backtrack_solution(k, propositions: list):
 
     _backtrack_solution(unique_sorted_propositions,[], k,mark, best_solution, 0)
 
-    return best_solution[0]
+    if len(best_solution[0]) > 0:
+        return best_solution[0], True
+    
+    return [], False
 
 
 def _backtrack_solution(propositions, current_proposition, k, mark, best_solution, count):

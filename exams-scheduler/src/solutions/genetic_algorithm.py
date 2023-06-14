@@ -17,7 +17,6 @@ def crossover(parent_1, parent_2, n, k):
     child_1 = parent_1.copy()
     child_2 = parent_2.copy()
 
-
     temp = child_1[0:cross_point]
     child_1[0:cross_point] = child_2[0:cross_point]
     child_2[0:cross_point] = temp
@@ -70,9 +69,9 @@ def genetic_algorithm(k, propositions, generations):
                     for i in range(len(child)):
                         if child[i] > 0:
                             solution.append(unique_sorted_propositions[i])
-                    return solution
+                    return solution, True
         population = new_population  
-    return []
+    return [], False
 
 
 course_proposals = [
