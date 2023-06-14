@@ -44,7 +44,7 @@
 
 \usepackage{enumitem} % Customized lists
 \setlist[itemize]{noitemsep} % Make itemize lists more compact
-
+\usepackage{float}
 \usepackage{abstract} % Allows abstract customization
 \renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
 \renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
@@ -227,7 +227,7 @@
 	
 	\subsection{Metaheur\'istica: Algoritmo gen\'etico}
 	
-	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica, la cual se escogi\'o debido a que es adecuada para problemas de optimización combinatoria, como el problema de Kevin, donde las soluciones son combinaciones de elementos discretos. Adem\'as constituye un enfoque de búsqueda y optimización que puede manejar grandes espacios de b\'usqueda y proporcionar soluciones de alta calidad en un tiempo razonable.	
+	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica, la cual es adecuada para problemas de optimización combinatoria. 	Dado que no existe una solución única para este problema y que una solución válida no garantiza que las soluciones similares sean válidas también, es necesario generar varias propuestas de soluciones para elegir. El algoritmo genético es una buena opción para resolver esto porque utiliza una población de soluciones potenciales que se reproducen y mutan para generar nuevas soluciones. Esto permite generar soluciones aleatorias diferentes y explorar el espacio de b\'usqueda de manera más completa.
 	
 	La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
 	
@@ -245,15 +245,84 @@
 	
 	\subsubsection{Random}
 	
-	\subsubsection{Bellman-Ford}
+	\subsubsection{Bellman-Ford} 
 	
-	El algoritmo BMA (Bellman-Ford Maximum Independent Set Approximation) se utiliza para encontrar un conjunto independiente máximo en un grafo. Este enfoque redefine el problema en términos de encontrar un camino de costo mínimo en un grafo ponderado. Cada vértice tiene un costo asociado, que representa el número de vértices que se excluyen si ese vértice se incluye en la solución. El objetivo del algoritmo es minimizar el número de vértices excluidos al agregar cada vértice al camino.
+	El algoritmo BMA implementado en \cite{bellman-ford} (Bellman-Ford Maximum Independent Set Approximation) se utiliza para encontrar un conjunto independiente máximo en un grafo. Este enfoque redefine el problema en términos de encontrar un camino de costo mínimo en un grafo ponderado. Cada vértice tiene un costo asociado, que representa el número de vértices que se excluyen si ese vértice se incluye en la solución. El objetivo del algoritmo es minimizar el número de vértices excluidos al agregar cada vértice al camino.
 	
-	Este m\'etodo se ejecuta en múltiples rondas y mantiene listas para hacer un seguimiento de los caminos encontrados, las exclusiones, los costos y los vértices previos. En la ronda inicial (ronda 0), la exclusión de cada vértice $u$ es una lista que incluye a $u$ y a sus vecinos. El costo de $u$ en esta ronda es simplemente la longitud de la lista de exclusión.
+	El m\'etodo recibe de entrada el grafo $G=(V, E)$ que encapsula los datos del problema. Este se ejecuta en múltiples rondas y mantiene listas para hacer un seguimiento de los caminos encontrados, las exclusiones, los costos y los vértices previos. En la ronda inicial (ronda 0), la lista de exclusión de cada vértice $u$ incluye a $u$ y a sus vecinos. El costo de $u$ en esta ronda es simplemente la longitud de la lista de exclusión.
 	
 	En las rondas siguientes, el algoritmo considera pares de vértices $(u, v)$ como candidatos para ser agregados al camino. El vértice $u$ se considera si su costo en la ronda actual es menor que infinito, lo cual indica que fue agregado en la ronda anterior. Si se encuentra un candidato $v$, el algoritmo verifica si agregarlo resultaría en un costo menor para $v$ en la siguiente ronda. Si se cumple esta condición, se actualizan los valores de exclusión, costo y vértice previo para $v$.
 	
-	El algoritmo continúa en cada ronda hasta que no se puedan agregar más vértices a ningún camino (conjunto independiente). En este punto, se puede rastrear cada vértice en la última ronda utilizando su vértice anterior para formar el conjunto independiente aproximado. El tamaño de este conjunto aproximado es igual a la última ronda más uno.
+	El algoritmo continúa en cada ronda hasta que no se puedan agregar más vértices a ningún camino (conjunto independiente). En este punto, se puede rastrear cada vértice en la última ronda utilizando su vértice anterior para formar el conjunto independiente aproximado. El tamaño de este conjunto aproximado es igual a la última ronda más uno. 
+	
+	La complejidad temporal de este algoritmo es aproximadamente $O(n(n^2-m))$, donde $n = |V|$ y $m = |E|$.
+	
+%	\vspace{1em}
+%	\textbf{Pseudoc\'odigo}
+%	
+%	\begin{algorithm}[H]
+%		
+%		\algblock[TryCatchFinally]{try}{endtry}
+%		\algcblock[TryCatchFinally]{TryCatchFinally}{finally}{endtry}
+%		\algcblockdefx[TryCatchFinally]{TryCatchFinally}{catch}{endtry}
+%		[1]{\textbf{catch} #1}
+%		{\textbf{end try}}
+%		\begin{algorithmic}[1]
+%			\Function{BMA}{$G$}
+%				\State $I_G$ = []
+%				\ForAll{u $\in$ V}
+%				\State \textit{Exclude[u,0] $\leftarrow$ \{u\}}
+%				\State \textit{Cost[u,0] $\leftarrow$ 1}
+%				\State \textit{Previous[u,0] $\leftarrow$ None}			
+%					\For{\textit{v in G.neighbor(u)}}
+%					\State \textit{Exclude[u,0] $\leftarrow$ Exclude[u,0] $\cup$ \{v\}}
+%					\State \textit{Cost[u,0] $\leftarrow$ Cost[u,0] + 1}
+%					\EndFor
+%					\For{\textit{1 $\leq$ round $\leq$ |V|}}
+%					\State \textit{Previous[u, round] $\leftarrow$ None}
+%					\State \textit{Cost[u,0] $\leftarrow$ $\infty$}
+%					\EndFor
+%				\EndFor
+%				\For{\textit{0 $\leq$ round $\leq$ |V|-1}}
+%					\ForAll{\textit{(u,v)}}
+%					\State\textit{ u $\in$ V, v $\in$ {V\ Exclude[u,round]}}
+%					\If{\textit{Cost[u,round] < $\infty$}}
+%					\State \textit{vExclude $\leftarrow$ Exclude[u, round] $\cup$ \{v\}}
+%					\State \textit{vCost $\leftarrow$ Cost[u, round] + 1}
+%						\For{\textit{j in G.neighbor(v)}}
+%						\If{\textit{j $\notin$ vExclude}}
+%						\State \textit{vExclude $\leftarrow$ vExclude $\in$ {j}}
+%						\State \textit{vCost $\leftarrow$ vCost + 1}
+%						\EndIf
+%						\EndFor
+%						\If{\textit{Cost[v, round + 1] > vCost}}
+%						\State \textit{Previous[v, round + 1] $\leftarrow$ u}
+%						\State\textit{Exclude[v, round + 1] $\leftarrow$ vExclude}
+%						\State \textit{Cost[v, round + 1] $\leftarrow$ vCost}
+%						\EndIf
+%					\EndIf			
+%					\EndFor
+%					\If{no change in \textit{Cost} at this round}
+%					\State\textit{ lastRound $\leftarrow$ round}
+%					\State \textit{lastVexted $\leftarrow$ v}
+%					\State \textbf{break}					
+%					\EndIf
+%				\EndFor
+%			\State \textit{t $\leftarrow$ lastVertex}
+%			\While{\textit{t not None}}
+%			\State $I_G$ $\leftarrow$ $I_G$ $\cup$ {t}
+%			\State\textit{ t $\leftarrow$ Previous[t, lastRound] }
+%			\State \textit{lastRound -= 1}
+%			\EndWhile
+%			
+%			\Return $I_G$
+%			\EndFunction 
+%		\end{algorithmic}
+%		
+%	\end{algorithm}
+
+
+	
 	
 	\section{Generador de casos de prueba}
 	
@@ -288,6 +357,7 @@
 		4ta Edici\'on.		
 		Cambridge, Massachusetts.
 		2022.
+		\bibitem{bellman-ford} Dahshan, M.H. \emph{Maximum Independent Set Approximation Based on Bellman-Ford Algorithm}. Arab J Sci Eng 39, 7003–7011 (2014). https://doi.org/10.1007/s13369-014-1159-7
 	\end{thebibliography}
 \end{document}
 
