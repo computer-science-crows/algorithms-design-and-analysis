@@ -45,10 +45,17 @@ def _backtrack_solution(propositions, current_proposition, k, mark, best_solutio
 def is_valid(proposition):
     '''Returns true if the intersection of the lists is empty, which means that no days match. Otherwise returns false'''
 
-    intersection = set(proposition[0]).intersection(*proposition[1:])
+    for i in range(len(proposition)):        
+        for j in range(len(proposition)):
+            propositions_intersection = {proposition[i]}
+            if i == j:
+                continue
+            propositions_intersection.intersection(proposition[j])
 
-    return len(intersection) == 0
-
+            if len(propositions_intersection) > 0:
+                return False
+            
+    return True
 
 
 course_proposals = [
