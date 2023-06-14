@@ -1,6 +1,6 @@
 import random
-# from solutions.backtrack_solution import backtrack_solution
-# from app.tools import save_data
+from solutions.backtrack_solution import backtrack_solution
+from app.tools import save_data
 import time
 
 
@@ -11,7 +11,7 @@ def get_exam_day(c_k, n):
     return c_day
 
 
-def generator(k=None, e=None, c=None, n=None, samples=1):
+def generator(k=None, propositions=None, n=None, samples=1):
     i = 0
 
     while i < samples:
@@ -25,30 +25,31 @@ def generator(k=None, e=None, c=None, n=None, samples=1):
         n_propositions = random.randint(
             k, 20)          # number of propositions
 
-        c = [[] for i in range(n_propositions)]           # propositions
+        propositions = [[]
+                        for i in range(n_propositions)]           # propositions
 
         for q in range(k):
             for n_ex in range(e[q]):
-                c[q].append(get_exam_day(c[q], n))
+                propositions[q].append(get_exam_day(propositions[q], n))
 
         for q in range(k, n_propositions):
             for n_ex in range(random.choice(e)):
-                c[q].append(get_exam_day(c[q], n))
+                propositions[q].append(get_exam_day(propositions[q], n))
 
         print(k)
         print(e)
-        print(c)
+        print(propositions)
 
-        # start = time.time()
-        # solution, value = backtrack_solution(k, e, c)
-        # end = time.time()
-        # print(f'time:{end-start}')
+        start = time.time()
+        solution, value = backtrack_solution(k, propositions)
+        end = time.time()
+        print(f'time:{end-start}')
         i += 1
 
-        # data = {"k": k, "e": e, "c": c, 'elapsed_time': end - start,
-        #         "optimal_solution": solution, "optimal_value": value}
+        data = {"k": k, "propositions": propositions, 'elapsed_time': end - start,
+                "optimal_solution": solution, "optimal_value": value}
 
-        # save_data(data, "/test_cases.json")
+        save_data(data, "/test_cases.json")
 
         k = None
         e = None
