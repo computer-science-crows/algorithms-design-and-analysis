@@ -17,7 +17,7 @@ def backtrack_solution(k, propositions: list):
 
     _backtrack_solution(unique_sorted_propositions,[], k,mark, best_solution, 0)
 
-    if len(best_solution[0]) > 0:
+    if len(best_solution) > 0:
         return best_solution[0], True
     
     return [], False
@@ -52,16 +52,9 @@ def is_valid(proposition):
 
 
 course_proposals = [
-    [17, 34, 65,  87],   
-    [18, 35, 66, 88],
-    [18, 35, 66, 88],
-    [19, 36, 67, 89],
-    [20, 37, 68, 90],
-    [21, 38, 69, 91],
-    [22, 39, 70, 92],
-    [23, 40, 71, 93],
+   [[56, 45, 43, 14, 1], [5, 58, 28, 43, 20]]
 ]
-k = 3
+k = 2
 
 print(backtrack_solution(k,course_proposals))
 
