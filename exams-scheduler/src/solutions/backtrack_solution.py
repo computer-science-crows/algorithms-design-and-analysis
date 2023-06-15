@@ -14,9 +14,9 @@ def backtrack_solution(k, propositions: list):
 
     # list of valid k propositions
     best_solution = []
-
+    
     _backtrack_solution(unique_sorted_propositions,[], k,mark, best_solution, 0)
-
+    
     if len(best_solution) > 0:
         return best_solution[0], True
     
@@ -47,10 +47,11 @@ def is_valid(proposition):
 
     for i in range(len(proposition)):        
         for j in range(len(proposition)):
-            propositions_intersection = {proposition[i]}
+            propositions_intersection = set()                     
             if i == j:
                 continue
-            propositions_intersection.intersection(proposition[j])
+            
+            propositions_intersection.intersection(proposition[i],proposition[j])
 
             if len(propositions_intersection) > 0:
                 return False
@@ -58,17 +59,30 @@ def is_valid(proposition):
     return True
 
 
+#course_proposals = [
+#   [[56, 45, 43, 14, 1], [5, 58, 28, 43, 20]]
+#]
+#k = 2
+
+
 course_proposals = [
-   [[56, 45, 43, 14, 1], [5, 58, 28, 43, 20]]
+    [17, 34, 65,  87],   
+    [18, 35, 66, 88],
+    [18, 35, 66, 88],
+    [19, 36, 67, 89],
+    [20, 37, 68, 90],
+    [21, 38, 69, 91],
+    [22, 39, 70, 92],
+    [23, 40, 71, 93],
 ]
-k = 2
+k = 3
+
+#test = [[18],[9],[7,9,18],[2,6,18,26,34]] 
+#print(is_valid(test))
+
+
 
 print(backtrack_solution(k,course_proposals))
-
-    
-
-
-
 
     
 
