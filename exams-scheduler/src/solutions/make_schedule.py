@@ -1,6 +1,4 @@
 import networkx as nx
-from networkx import find_cliques_recursive
-import random
 
 
 def build_graph(p):
@@ -30,19 +28,25 @@ def build_graph(p):
     return G
 
 
-def make_schedule(n_c, p, solver):
-    G: nx.Graph = build_graph(p)
-
+def make_schedule(k, propositions, solver):
+    mis = []
     solution = []
+    value = False
 
-    # TODO: method selection
+    if solver.__name__ == 'genetic algorithm':
+        mis, value = solver(k, propositions)
 
-    if len(solution) == 0:
+    else:
+        G: nx.Graph = build_graph(propositions)
+        mis, value = solver(G)
+
+    if len(mis) < k:
         print('Sorry Kevin, no possible solution :(')
+        value = False
+        
+    else:
+        for vertex in mis[:k]:
+            solution.append(G.nodes[vertex]['proposition'])
+
     print(f'Solution: {solution}')
-
-    return solution
-
-
-make_schedule(4, [4, 5, 1, 4], [[12, 14, 28, 29], [17, 23, 12, 21, 1], [22], [26, 25, 17, 1], [
-    12], [14, 5, 26, 15], [13, 26, 14, 16, 4], [10], [8, 5, 3, 6, 25], [8], [28, 30, 7, 19, 24]])
+    return solution, value

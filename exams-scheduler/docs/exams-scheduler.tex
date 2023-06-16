@@ -207,7 +207,7 @@
 	
 	\subsection{Backtrack}
 	
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima \todo{ajustar al problema actual}. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima de 6 cursos con 20 propuestas de 5 evaluaciones cada una. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
 		
 	\subsection{Programaci\'on lineal}
 	
@@ -221,7 +221,7 @@
 		\end{matrix} \right. 
 	\end{equation} 
 	
-	Esta soluci\'on fue implementada utilizando la librer\'ia \textit{PuLP} y puede ser encontrada en \textit{src/solutions/linear\_prog\_solution.py}. La complejidad temporal para resolver problemas con PuLP depende del solucionador subyacente que se utilice. Por defecto, PuLP usa COIN-OR Branch and Cut Solver (CBC), el cual se basa en el método simplex y es combinado con otros algoritmos. La complejidad temporal del método simplex es generalmente \todo{chequear que esto se cumpla aqui} $O(n^2 \cdot log(n))$ (el caso peor es $O(2^{n})$, pero en general es bastante r\'apido), donde \textit{n} es el número de variables en el problema. Sin embargo, debido a los algoritmos adicionales utilizados por CBC, la complejidad temporal real puede variar según la instancia específica del problema.
+	Esta soluci\'on fue implementada utilizando la librer\'ia \textit{PuLP} y puede ser encontrada en \textit{src/solutions/linear\_prog\_solution.py}. La complejidad temporal para resolver problemas con PuLP depende del solucionador subyacente que se utilice. Por defecto, PuLP usa COIN-OR Branch and Cut Solver (CBC), el cual se basa en el método simplex y es combinado con otros algoritmos. La complejidad temporal del método simplex es en el caso peor $O(2^{n})$, pero en general es bastante r\'apido. Sin embargo, debido a los algoritmos adicionales utilizados por CBC, la complejidad temporal real puede variar según la instancia específica del problema.
 	
 	%La complejidad temporal del simplex para el caso peor es O($ 2^{n} $), pero en general es bastante r\'apido.
 	
@@ -235,15 +235,11 @@
 	
 	La operación de mutación consiste en intercambiar dos posiciones aleatorias en la lista binaria. El operador de cruzamiento, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades. La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo.  El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones o llega al n\'umero m\'aximo de iteraciones.
 	
-	\subsection{Aproximaciones}
+	\subsection{Aproximaci\'on}
 	
 	Los algoritmos de aproximación son una técnica poderosa para tratar problemas de optimización NP-hard, proporcionando garantías comprobables sobre la distancia de la solución devuelta a la óptima. Estos algoritmos son particularmente útiles cuando una solución exacta es intratable y se puede encontrar rápidamente una solución casi óptima.
 	
-	En las soluciones siguientes se utiliz\'o la representaci\'on del problema como utilizando teor\'ia de grafos.
-	
-	\subsubsection{Greedy}
-	
-	\subsubsection{Random}
+	En la soluci\'on siguiente se utiliz\'o la representaci\'on del problema como utilizando teor\'ia de grafos.
 	
 	\subsubsection{Bellman-Ford}
 	

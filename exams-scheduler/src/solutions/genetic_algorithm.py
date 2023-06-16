@@ -49,7 +49,7 @@ def evaluate(individual, propositions, k):
     return len(propositions_decode) == k and len(set(propositions_decode[0]).intersection(*propositions_decode[1:])) == 0
 
 
-def genetic_algorithm(k, propositions, generations):
+def genetic_algorithm(k, propositions, generations=100):
 
     # list with sorted propositions list
     unique_sorted_propositions= list(k for k,_ in itertools.groupby([sorted(proposition) for proposition in propositions]))

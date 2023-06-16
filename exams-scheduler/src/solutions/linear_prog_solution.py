@@ -23,18 +23,10 @@ def linear_prog_sol(G: nx.Graph, k=None):
     prob.solve()
 
     solution = []
-    print("Maximum Independent Set:")
+    # print("Maximum Independent Set:")
     for i in V:
         if x[i].value() == 1:
-            print(i)
+            # print(i)
             solution.append(i)
 
-    return solution if k == None else [] if k > len(solution) else solution[:k]
-
-
-# Define the graph
-V = range(0, 11)
-E = [(0, 1), (0, 4), (0, 5), (0, 6), (0, 10), (1, 3),
-     (1, 4), (3, 5), (3, 6), (3, 8), (5, 6), (5, 8), (8, 9)]
-
-print(linear_prog_sol(V, E, 5))
+    return (solution, True) if len(solution) > 0 else (solution, False)

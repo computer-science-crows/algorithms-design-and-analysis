@@ -16,17 +16,18 @@ def generator(k=None, propositions=None, n=None, samples=1):
 
     while i < samples:
         if k == None:       # number of courses
-            k = random.randint(2, 5)
-        if e == None:       # number of exams per course
-            e = [random.randint(1, 5) for i in range(k)]
+            k = random.randint(2, 6)
         if n == None:       # number of days of semester
-            n = random.randint(1, 80)
+            n = random.randint(40, 80)
 
-        n_propositions = random.randint(
-            k, 20)          # number of propositions
+        # number of exams per course
+        e = [random.randint(1, 5) for i in range(k)]
 
-        propositions = [[]
-                        for i in range(n_propositions)]           # propositions
+        # number of propositions
+        n_propositions = random.randint(k, 20)
+
+        # propositions
+        propositions = [[]for i in range(n_propositions)]
 
         for q in range(k):
             for n_ex in range(e[q]):
@@ -45,7 +46,7 @@ def generator(k=None, propositions=None, n=None, samples=1):
         end = time.time()
         print(f'time:{end-start}')
         i += 1
-
+        print(f'ITERATION: {i}')
         data = {"k": k, "propositions": propositions, 'elapsed_time': end - start,
                 "optimal_solution": solution, "optimal_value": value}
 
@@ -53,6 +54,3 @@ def generator(k=None, propositions=None, n=None, samples=1):
 
         k = None
         e = None
-
-
-generator()

@@ -5,21 +5,21 @@ from colored import fore, back, style
 from app.tools import save_data
 
 
-def tester(function):
+def tester(function, solver):
     cwd = os.getcwd()
     cwd += "/json"
 
     # gets test cases from json
     test_cases = {}
-    with open(cwd+"/test_cases_relaxed.json", "r") as read_it:
+    with open(cwd+"/test_cases.json", "r") as read_it:
         test_cases = json.load(read_it)
 
     # deletes previous tests for this function
-    with open(cwd+f"/tests/{function.__name__}.json", "w") as write_it:
+    with open(cwd+f"/tests/{solver.__name__}.json", "w") as write_it:
         json.dump([], write_it)
 
     # prints function test in console
-    print(style.BOLD + f"Testing {function.__name__}" + style.RESET)
+    print(style.BOLD + f"Testing {solver.__name__}" + style.RESET)
     print("-------------------------------------------")
 
     # for each test case calls the function with the specified parameters, times it and checks if the solution matches the
@@ -31,7 +31,7 @@ def tester(function):
 
             start = time.time()
             testing_data["solution"], testing_data["value"] = function(
-                tc['k'], tc['propositions'])
+                tc['k'], tc['propositions'], solver)
             end = time.time()
 
             testing_data["elapsed_time"] = end - start
@@ -40,7 +40,7 @@ def tester(function):
             if testing_data["value"] == tc["optimal_value"]:
                 testing_data["matches"] = True
 
-            save_data(testing_data, f"/tests/{function.__name__}.json")
+            save_data(testing_data, f"/tests/{solver.__name__}.json")
 
             # prints test results
             print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
