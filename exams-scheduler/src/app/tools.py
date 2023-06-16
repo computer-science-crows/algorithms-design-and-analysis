@@ -81,46 +81,38 @@ def comparative_plot(number_of_tests, test_file):
     save_b = []
     with open(cwd+f'{test_file}.json', "r") as read_it:
         save_b = json.load(read_it)
-
-    et_b = [save_b[i]['elapsed_time'] for i in range(number_of_tests)]
-    sum_b = np.sum(et_b)
+    sum_b = np.sum([save_b[i]['elapsed_time'] for i in range(number_of_tests)])
 
     save_lp = []
     with open(cwd+f'tests/linear_prog_sol.json', "r") as read_it:
         save_lp = json.load(read_it)
-
-    et_lp = [save_lp[i]['elapsed_time'] for i in range(number_of_tests)]
-    match_lp = [save_lp[i]['matches'] for i in range(number_of_tests)]
-    sum_lp = np.sum(et_lp)
+    sum_lp = np.sum([save_lp[i]['elapsed_time']
+                    for i in range(number_of_tests)])
 
     save_ga = []
     with open(cwd+f'tests/genetic_algorithm.json', "r") as read_it:
         save_ga = json.load(read_it)
-
-    et_ga = [save_ga[i]['elapsed_time'] for i in range(number_of_tests)]
-    match_ga = [save_ga[i]['matches'] for i in range(number_of_tests)]
-    sum_ga = np.sum(et_ga)
+    sum_ga = np.sum([save_ga[i]['elapsed_time']
+                    for i in range(number_of_tests)])
 
     save_bma = []
     with open(cwd+f'tests/bellman_ford_mis.json', "r") as read_it:
         save_bma = json.load(read_it)
+    sum_bma = np.sum([save_bma[i]['elapsed_time']
+                     for i in range(number_of_tests)])
 
-    et_bma = [save_bma[i]['elapsed_time'] for i in range(number_of_tests)]
-    match_bma = [save_bma[i]['matches'] for i in range(number_of_tests)]
-    sum_bma = np.sum(et_bma)
-
-    solutions = {0: [et_b, None, 'Backtrack', 'orange', sum_b],
-                 1: [et_lp, match_lp, 'Programación Lineal', 'lightgreen', sum_lp],
-                 2: [et_ga, match_ga, 'Algoritmo Genético', 'plum', sum_ga],
-                 3: [et_bma, match_bma, 'BMA', 'skyblue', sum_bma]}
+    solutions = {0: ['Backtrack', 'orange', sum_b],
+                 1: ['Prog. Lineal', 'lightgreen', sum_lp],
+                 2: ['A. Genético', 'plum', sum_ga],
+                 3: ['BMA', 'skyblue', sum_bma]}
 
     for i in range(len(solutions)):
-        ar_mean = solutions[i][4] / number_of_tests
+        ar_mean = solutions[i][2] / number_of_tests
 
-        x = solutions[i][2]
+        x = solutions[i][0]
         y = ar_mean
-        plt.bar(x, y, color=solutions[i][3],
-                width=0.4)
+        plt.bar(x, y, color=solutions[i][1],
+                width=0.5)
 
         plt.text(x, y, f'{round(y, 4)}', ha='center')
 
