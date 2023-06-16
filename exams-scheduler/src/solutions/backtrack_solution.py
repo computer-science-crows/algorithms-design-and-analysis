@@ -44,17 +44,16 @@ def _backtrack_solution(propositions, current_proposition, k, mark, best_solutio
 
 def is_valid(proposition):
     '''Returns true if the intersection of the lists is empty, which means that no days match. Otherwise returns false'''
-
-    for i in range(len(proposition)):        
-        for j in range(len(proposition)):
-            propositions_intersection = set()                     
-            if i == j:
-                continue
-            
-            propositions_intersection.intersection(proposition[i],proposition[j])
-
-            if len(propositions_intersection) > 0:
-                return False
+    print(f"proposition {proposition}")
+    for i in range(len(proposition)):    
+        print(f"proposition [i] {proposition [i]}")            
+        for j in range(len(proposition[i])):
+            for k in range(len(proposition)):
+                if i != k:
+                    if proposition[i][j] not in proposition[k]:
+                        continue
+                    else:
+                        return False
             
     return True
 
@@ -65,22 +64,23 @@ def is_valid(proposition):
 #k = 2
 
 
-course_proposals = [
-    [17, 34, 65,  87],   
-    [18, 35, 66, 88],
-    [18, 35, 66, 88],
-    [19, 36, 67, 89],
-    [20, 37, 68, 90],
-    [21, 38, 69, 91],
-    [22, 39, 70, 92],
-    [23, 40, 71, 93],
-]
-k = 3
+# course_proposals = [
+#     [17, 34, 65,  87],   
+#     [18, 35, 66, 88],
+#     [18, 35, 66, 88],
+#     [19, 36, 67, 89],
+#     [20, 37, 68, 90],
+#     [21, 38, 69, 91],
+#     [22, 39, 70, 92],
+#     [23, 40, 71, 93],
+# ]
+# k = 3
 
 #test = [[18],[9],[7,9,18],[2,6,18,26,34]] 
 #print(is_valid(test))
 
-
+k = 4
+course_proposals = [[9,13,17,44,50],[46],[10,23,36,40],[14,17,31],[5,11,29,28,45]]
 
 print(backtrack_solution(k,course_proposals))
 
