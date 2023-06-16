@@ -24,7 +24,8 @@ def tester(function, solver):
 
     # for each test case calls the function with the specified parameters, times it and checks if the solution matches the
     # optimal one obtained previously using backtrack. These results are saved in a json file
-    failed_tc = 0
+    failed_tc_count = 0
+    failed_tc = []
     for index, tc in enumerate(test_cases):
         try:
             testing_data = {}
@@ -58,11 +59,16 @@ def tester(function, solver):
 
         # If exception in function occured
         except Exception as ex:
-            failed_tc += 1
+            failed_tc_count += 1
             print(f"Test case #{index + 1} -> " + back.RED + style.BOLD +
                   "FAILED" + style.RESET)
             print("An Exception ocurred!!")
             print("-------------------------------------------")
             print(ex)
+            failed_tc.append((index + 1, ex))
 
-    return (f'Failed: {failed_tc}')
+    print(f'{failed_tc_count} exception(s) occured while testing.')
+    for ftc in failed_tc:
+        print(ftc)
+
+    return (f'Failed: {failed_tc_count}')

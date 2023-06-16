@@ -1,6 +1,7 @@
 import json
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def save_data(data: dict, path: str):
@@ -26,7 +27,7 @@ def save_data(data: dict, path: str):
 
 # TODO: arreglar nombres de las soluciones para plotear test cases
 
-def plot_test_results(number_of_tests, test_file, function_name):
+def plot_test_results(number_of_tests, test_file, function_name, title, color='skyblue'):
     cwd = os.getcwd()
     cwd += "/json/"
 
@@ -45,8 +46,8 @@ def plot_test_results(number_of_tests, test_file, function_name):
     match_s = [save_s[i]['matches'] for i in range(number_of_tests)]
     sum_s = 0
 
-    solutions = {0: [et_b, None, 'Backtrack', 'mediumseagreen', sum_b],
-                 1: [et_s, match_s, 'Flujo', 'palevioletred', sum_s]}
+    solutions = {0: [et_b, None, 'Backtrack', 'orange', sum_b],
+                 1: [et_s, match_s, title, color, sum_s]}
 
     # plotting the points
     for i in range(len(solutions)):
@@ -54,10 +55,16 @@ def plot_test_results(number_of_tests, test_file, function_name):
             et = solutions[i][0][j]
             solutions[i][4] += et
             plt.plot(j, et, marker='o',
-                     color='red' if solutions[i][1] == False else solutions[i][3])
-        plt.title(
-            f'Resultados obtenidos con la solución mediante {solutions[i][2]}')
+                     color='red' if i > 0 and solutions[i][1][j] == False else solutions[i][3])
 
+        if i > 0:
+            plt.suptitle(
+                f'Resultados obtenidos con la solución mediante {solutions[i][2]}')
+            plt.title(
+                f'Cantidad de tests fallidos: {len(list(filter(lambda x: x == False, match_s)))}')
+        else:
+            plt.title(
+                f'Resultados obtenidos con la solución mediante {solutions[i][2]}')
         # naming the x axis
         plt.xlabel('Test')
         # naming the y axis
@@ -65,6 +72,47 @@ def plot_test_results(number_of_tests, test_file, function_name):
 
         plt.savefig(cwd+f"tests/plots/{solutions[i][2]}_results.png")
         plt.clf()
+
+
+def comparative_plot(number_of_tests, test_file):
+    cwd = os.getcwd()
+    cwd += "/json/"
+
+    save_b = []
+    with open(cwd+f'{test_file}.json', "r") as read_it:
+        save_b = json.load(read_it)
+
+    et_b = [save_b[i]['elapsed_time'] for i in range(number_of_tests)]
+    sum_b = np.sum(et_b)
+
+    save_lp = []
+    with open(cwd+f'tests/linear_prog_sol.json', "r") as read_it:
+        save_lp = json.load(read_it)
+
+    et_lp = [save_lp[i]['elapsed_time'] for i in range(number_of_tests)]
+    match_lp = [save_lp[i]['matches'] for i in range(number_of_tests)]
+    sum_lp = np.sum(et_lp)
+
+    save_ga = []
+    with open(cwd+f'tests/genetic_algorithm.json', "r") as read_it:
+        save_ga = json.load(read_it)
+
+    et_ga = [save_ga[i]['elapsed_time'] for i in range(number_of_tests)]
+    match_ga = [save_ga[i]['matches'] for i in range(number_of_tests)]
+    sum_ga = np.sum(et_ga)
+
+    save_bma = []
+    with open(cwd+f'tests/bellman_ford_mis.json', "r") as read_it:
+        save_bma = json.load(read_it)
+
+    et_bma = [save_bma[i]['elapsed_time'] for i in range(number_of_tests)]
+    match_bma = [save_bma[i]['matches'] for i in range(number_of_tests)]
+    sum_bma = np.sum(et_bma)
+
+    solutions = {0: [et_b, None, 'Backtrack', 'orange', sum_b],
+                 1: [et_lp, match_lp, 'Programación Lineal', 'lightgreen', sum_lp],
+                 2: [et_ga, match_ga, 'Algoritmo Genético', 'plum', sum_ga],
+                 3: [et_bma, match_bma, 'BMA', 'skyblue', sum_bma]}
 
     for i in range(len(solutions)):
         ar_mean = solutions[i][4] / number_of_tests

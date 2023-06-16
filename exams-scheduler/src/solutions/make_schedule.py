@@ -17,14 +17,6 @@ def build_graph(p):
             if len(intersection) != 0 and i != j:
                 G.add_edge(i, j)
 
-    print('-------------G-------------')
-    print('NODES')
-    print(G.nodes())
-    print('---------------------------')
-    print('EDGES')
-    print(G.edges)
-    print('---------------------------')
-
     return G
 
 
@@ -33,20 +25,25 @@ def make_schedule(k, propositions, solver):
     solution = []
     value = False
 
-    if solver.__name__ == 'genetic algorithm':
+    if solver.__name__ == 'genetic_algorithm':
         mis, value = solver(k, propositions)
+        solution = mis[:k]
 
     else:
         G: nx.Graph = build_graph(propositions)
-        mis, value = solver(G)
+
+        if solver.__name__ == 'bellman_ford_mis':
+            mis, value = solver(k, propositions, G)
+        else:
+            mis, value = solver(G)
+
+        for vertex in mis[:k]:
+            solution.append(G.nodes[vertex]['proposition'])
 
     if len(mis) < k:
         print('Sorry Kevin, no possible solution :(')
+        solution = []
         value = False
-        
-    else:
-        for vertex in mis[:k]:
-            solution.append(G.nodes[vertex]['proposition'])
 
     print(f'Solution: {solution}')
     return solution, value

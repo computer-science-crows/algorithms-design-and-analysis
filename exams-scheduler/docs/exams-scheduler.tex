@@ -260,22 +260,23 @@
 	
 	\section{Comparaci\'on de soluciones implementadas}          
 
-%    A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. Como podemos observar, en los casos analizados, el \textit{backtrack} puede demorar desde 0.000 hasta 0.016 segundos en ejecutarse, pero la mayor\'ia de los casos oscilan entre 0.000 y 0.002. La \textit{soluci\'on con flujo} para todos los casos se demora menos de 0.0016 segundos, lo cual lo convierte en una soluci\'on significativamente mejor que el backtrack.
-%    
-%    \begin{center}
-%    	\includegraphics[width=7cm]{Backtrack_results.png}
-%    	\includegraphics[width=7cm]{Flujo_results.png}
-%    \end{center}  
-%    
-%    Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
-%    
+    A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. Como podemos observar, en los casos analizados, el \textit{backtrack} puede demorar hasta 2 minutos y medio en ejecutarse, aunque la mayor\'ia de los casos oscilan entre 0 y 20 segundos. La soluci\'on con programaci\'on lineal para todos los casos demora menos de 0.02 segundos. La aproximaci\'on basada en Bellman Ford prob\'o tener un 91.5\% de efectividad con 255 casos fallidos, todos demorando menos de 0.017 segundos. Por \'ultimo la soluci\'on mediante algoritmo gen\'etico para 100 generaciones tuvo un 93.5\% de efectividad con 195 casos fallidos, tomando un tiempo menor a los 0.004 segundos en la ejecuci\'on de los mismos. 
+   
+    \begin{center}
+    	\includegraphics[width=6.5cm]{Backtrack_results.png}
+    \end{center}  
+	
+	\begin{center}
+		\includegraphics[width=6.5cm]{LP_results}
+		\includegraphics[width=6.5cm]{GA_results}
+		\includegraphics[width=6.5cm]{BMA_results}
+	\end{center}
+ 
+    Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
+    
 %    \begin{center}
 %    	\includegraphics[width=7cm]{Bar_comparative_plot.png}
 %    \end{center}
-%	
-%	\begin{center}
-%		\includegraphics[width=7cm]{Bar_comparative_plot.png}
-%	\end{center}
 	
 	\begin{thebibliography}
 		a
