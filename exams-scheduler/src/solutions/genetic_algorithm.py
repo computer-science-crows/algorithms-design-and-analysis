@@ -78,18 +78,3 @@ def genetic_algorithm(k, propositions, generations=100):
                     return solution, True
         population = new_population
     return [], False
-
-
-# course_proposals = [
-#     [17, 34, 65,  87],
-#     [18, 35, 66, 88],
-#     [18, 35, 66, 88],
-#     [19, 36, 67, 89],
-#     [20, 37, 68, 90],
-#     [21, 38, 69, 91],
-#     [22, 39, 70, 92],
-#     [23, 40, 71, 93],
-# ]
-# k = 3
-
-# print(genetic_algorithm(k,course_proposals,100))

@@ -72,8 +72,7 @@ def BMA(G: nx.Graph):
     return independent_set
 
 
-def bellman_ford_mis(k, p, G):
-
+def bellman_ford_mis(G):
     independent_sets = list(BMA(G))
     value = False
 
@@ -83,21 +82,3 @@ def bellman_ford_mis(k, p, G):
         independent_sets = []
 
     return independent_sets, value
-
-
-course_proposals = [
-    [17, 34, 65,  87],
-    [18, 35, 66, 88],
-    [18, 35, 66, 88],
-    [19, 37, 67, 89],
-    [20, 37, 68, 90],
-    [21, 38, 69, 91],
-    [22, 39, 70, 92],
-    [23, 40, 71, 93],
-]
-k = 2
-
-# #G = build_graph(k, course_proposals)
-# G = nx.Graph([('a','c'),('a','b'),('h','a'),('h','g'),('h','f'),('g','e'),('g','d'),('e','b'),('e','f'),('d','c'),('d','f')])
-# print(G.nodes)
-# print(BMA(G))
