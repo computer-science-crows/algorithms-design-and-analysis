@@ -8,7 +8,7 @@ from solutions.genetic_algorithm import genetic_algorithm
 from solutions.bellman_ford_mis import bellman_ford_mis
 from solutions.make_schedule import make_schedule
 
-# Uncomment lines 11, 14 and 17 as you wish to excecute the desired functions :)
+# Uncomment lines 14, 17, 20-25 and 26 as you wish to excecute the desired functions :)
 
 # Generates the number of test cases specified and adds them to test_cases.json
 # generator(samples=3000)
@@ -23,5 +23,4 @@ from solutions.make_schedule import make_schedule
 #                   'Algoritmo Genético', 'plum')
 # plot_test_results(3000, 'test_cases', 'bellman_ford_mis',
 #                   'BMA', 'skyblue')
-
-comparative_plot(3000, 'test_cases')
+# comparative_plot(3000, 'test_cases')

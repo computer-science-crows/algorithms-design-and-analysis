@@ -2,7 +2,7 @@ import pulp
 import networkx as nx
 
 
-def linear_prog_sol(G: nx.Graph, k=None):
+def linear_prog_sol(G: nx.Graph):
     V = G.nodes()
     E = G.edges()
 

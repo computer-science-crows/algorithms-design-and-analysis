@@ -32,10 +32,7 @@ def make_schedule(k, propositions, solver):
     else:
         G: nx.Graph = build_graph(propositions)
 
-        if solver.__name__ == 'bellman_ford_mis':
-            mis, value = solver(k, propositions, G)
-        else:
-            mis, value = solver(G)
+        mis, value = solver(G)
 
         for vertex in mis[:k]:
             solution.append(G.nodes[vertex]['proposition'])
