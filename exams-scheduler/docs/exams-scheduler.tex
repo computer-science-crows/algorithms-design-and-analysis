@@ -185,7 +185,7 @@
 %	El problema de selección de actividades es un problema de optimización clásico que se ocupa de la selección de la cantidad m\'axima de actividades no concurrentes que se pueden realizar en un marco de tiempo determinado. 
 	
 	\subsection{Teor\'ia de grafos}
-	Este problema tambi\'en puede ser resuelto utilizando el enfoque de la teoría de grafos, model\'andolo como un grafo donde cada nodo representa una propuesta, y una arista entre dos nodos indica que las propuestas correspondientes tienen alg\'un d\'ia en com\'un. 
+	Este problema puede ser resuelto utilizando el enfoque de la teoría de grafos, model\'andolo como un grafo donde cada nodo representa una propuesta, y una arista entre dos nodos indica que las propuestas correspondientes tienen alg\'un d\'ia en com\'un. 
 	
 	\begin{mydef}
 		Sea $G = (V, E)$ un grafo. $A \subseteq V$ es un conjunto independiente de $G$ si el subgrafo inducido por $A$ no tiene aristas.  
@@ -193,25 +193,28 @@
 	
 	Un conjunto independiente en este caso, constituir\'ia un conjunto de propuestas que no tienen di\'as en com\'un. El problema estar\'ia en buscar un conjunto independiente de tama\~no \textit{k}.
 	
+	En el peor de los casos \textit{k} ser\'a mayor o igual que el conjunto independiente m\'aximo de \textit{G}, por lo que este trabajo estar\'a enfocado a resolver dicho problema. Si \textit{k} es menor, simplemente se devuelven los primeros \textit{k} elementos del conjunto.
+	
 	\section{Problema NP: M\'aximo conjunto independiente}
 	
-	El problema de hallar el m\'aximo conjunto independiente (MIS por sus siglas en ingl\'es) pertenece a la clase de problemas NP-Completos. Para demostrar que el problema del MIS es NP-completo, debemos demostrar que es tanto NP como NP-difícil.
+	El problema de hallar el m\'aximo conjunto independiente (MIS por sus siglas en ingl\'es) pertenece a la clase de problemas NP-Completos. Para demostrar que el problema del MIS es NP-completo, se debe demostrar que es tanto NP como NP-hard.
 	
-	Para mostrar que el problema es \textbf{NP}, necesitamos demostrar que dada una solución al problema, podemos verificar su correctitud en tiempo polinomial. En el caso del problema del MIS, la solución es un conjunto de vértices que no son adyacentes entre sí. Podemos comprobar que la solución es correcta verificando que cada par de vértices en el conjunto no sean adyacentes, lo que se puede hacer en tiempo $O(V+E)$ usando un algoritmo simple que verifica la ausencia de aristas entre todos los pares de vértices en el conjunto.
+	Para mostrar que el problema es \textbf{NP}, se necesita demostrar que dada una solución al problema, podemos verificar su correctitud en tiempo polinomial. En el caso del problema del MIS, la solución es el conjunto m\'aximo de vértices que no son adyacentes entre sí. Es posible comprobar que la solución es correcta verificando que cada par de vértices en el conjunto no tengan una arista entre ellos, lo que se puede hacer en tiempo $O(n^{2})$, donde n es el n\'umero de v\'ertices en el conjunto.
 	
-	Para mostrar que el problema del conjunto independiente es \textbf{NP-difícil}, necesitamos realizar una reducción de un problema NP-difícil conocido al problema del MIS. Podemos realizar una reducción del problema del Clique M\'aximo, que se sabe que es NP-difícil. Dada una instancia del problema Clique que consiste en un grafo G y un entero k, podemos construir un grafo complementario G' tomando el mismo conjunto de vértices que G e incluyendo una arista entre dos vértices en G' si y solo si son no adyacentes en G. Entonces podemos mostrar que hay clique de tamaño k en G si y sólo si hay un conjunto independiente de tamaño k en G'. Por lo tanto, el problema del MIS también es NP-difícil.
+	Por otro lado, para demostrar que el problema del MIS es \textbf{NP-hard}, se debe realizar una reducción de un problema NP-hard conocido a dicho problema. Se puede realizar una reducción del problema del Clique M\'aximo, que se sabe que es NP-hard. 
+	Una instancia del problema del clique m\'aximo consiste en un grafo G y un entero k, a partir de lo cual es posible construir en tiempo polinomial un grafo complementario G', tomando el mismo conjunto de vértices que G e incluyendo una arista entre dos vértices en G' si y solo si son no adyacentes en G. De esta forma, existe un clique de tamaño k en G si y sólo si existe un conjunto independiente de tamaño k en G'. Por lo tanto, el problema del MIS también es NP-hard.
 
-	Combinando estos dos resultados, podemos concluir que el problema de Conjuntos Independientes es \textbf{NP-Completo}.
+	Finalmente, se puede concluir que el problema del MIS es \textbf{NP-Completo}.
 	
 	\section{Soluciones implementadas}
 	
 	\subsection{Backtrack}
 	
-		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima de 6 cursos con 20 propuestas de 5 evaluaciones cada una. Dicha solución puede ser encontrada en src/solutions/backtrack\_solution.py.
+		Como primera solución al problema fue implementado un \textit{backtrack}. Esta es una solución correcta, ya que  genera todas las combinaciones posibles de k propuestas y verifica si cumplen con la restricción de que no haya dos cursos con exámenes el mismo día. La complejidad temporal de este algoritmo es $O(n^k)$, donde n es el número de propuestas. En una computadora de 32GB de RAM, intel core i7-11na generación, se puede resolver para una cantidad máxima de 6 cursos con 20 propuestas de 5 evaluaciones cada una. Dicha solución puede ser encontrada en \textit{src/solutions/backtrack\_solution.py}.
 		
 	\subsection{Programaci\'on lineal}
 	
-	Este problema puede ser modelado tambi\'en como un problema de optimizaci\'on lineal. Sea $ x_{i} $ una variable binaria que indica que se tom\'o el v\'ertice $ i $. Se quiere maximizar la suma de $ x_i \forall i \in V $. Las restricciones a\~nadidas  garantizan que ning\'un par de v\'ertices elegidos sean vecinos, y por tanto la soluci\'on hallada sea un conjunto independiente. 
+	Este problema puede ser modelado tambi\'en como un \textit{problema de optimizaci\'on lineal}. Sea $ x_{i} $ una variable binaria que indica que se tom\'o el v\'ertice $ i $. Se quiere maximizar la suma de $ x_i \forall i \in V $. Las restricciones a\~nadidas  garantizan que ning\'un par de v\'ertices elegidos sean vecinos, y por tanto la soluci\'on hallada sea un conjunto independiente. 
 		
 	\begin{equation} \left\{
 		\begin{matrix}
@@ -227,7 +230,7 @@
 	
 	\subsection{Metaheur\'istica: Algoritmo gen\'etico}
 	
-	En la resoluci\'on del problema se utiliza el algortimo gen\'etico como metaheur\'istica, la cual se escogi\'o debido a que es adecuada para problemas de optimización combinatoria, como el problema de Kevin, donde las soluciones son combinaciones de elementos discretos. Adem\'as constituye un enfoque de búsqueda y optimización que puede manejar grandes espacios de b\'usqueda y proporcionar soluciones de alta calidad en un tiempo razonable.	
+	En la resoluci\'on del problema se utiliza el \textit{algortimo gen\'etico} como metaheur\'istica, la cual es adecuada para problemas de optimización combinatoria.   Dado que no existe una solución única para este problema y que una solución válida no garantiza que las soluciones similares sean válidas también, es necesario generar varias propuestas de soluciones para elegir. El algoritmo genético es una buena opción para resolver esto porque utiliza una población de soluciones potenciales que se reproducen y mutan para generar nuevas soluciones. Esto permite generar soluciones aleatorias diferentes y explorar el espacio de b\'usqueda de manera más completa.
 	
 	La implementación se basa en representar las soluciones como una lista binaria del mismo tamaño que la lista de propuestas de entrada. En esta representación, un valor de 1 en un índice indica que esa propuesta ha sido seleccionada, mientras que un valor de 0 indica que no ha sido seleccionada.
 	
@@ -236,40 +239,103 @@
 	La operación de mutación consiste en intercambiar dos posiciones aleatorias en la lista binaria. El operador de cruzamiento, se aplica a dos listas binarias. Dado un índice i, se intercambian todos los elementos hasta el índice i de una lista con los elementos de la otra lista. Esto permite combinar características de ambas soluciones y explorar nuevas posibilidades. La función de evaluación se encarga de determinar la calidad de una solución. En este caso, devuelve un número positivo si la lista binaria es válida, es decir, si cumple con las restricciones de que las propuestas seleccionadas no tengan días comunes. Por el contrario, devuelve un número negativo.  El algoritmo genético continúa iterando hasta encontrar una lista binaria válida que cumpla con las restricciones o llega al n\'umero m\'aximo de iteraciones.
 	
 	\subsection{Aproximaci\'on}
-	
+
 	Los algoritmos de aproximación son una técnica poderosa para tratar problemas de optimización NP-hard, proporcionando garantías comprobables sobre la distancia de la solución devuelta a la óptima. Estos algoritmos son particularmente útiles cuando una solución exacta es intratable y se puede encontrar rápidamente una solución casi óptima.
 	
-	En la soluci\'on siguiente se utiliz\'o la representaci\'on del problema como utilizando teor\'ia de grafos.
+	En la soluci\'on siguiente se utiliz\'o la representaci\'on del problema utilizando teor\'ia de grafos.
 	
-	\subsubsection{Bellman-Ford}
+	\subsubsection{Bellman-Ford} 
 	
-	El algoritmo BMA (Bellman-Ford Maximum Independent Set Approximation) se utiliza para encontrar un conjunto independiente máximo en un grafo. Este enfoque redefine el problema en términos de encontrar un camino de costo mínimo en un grafo ponderado. Cada vértice tiene un costo asociado, que representa el número de vértices que se excluyen si ese vértice se incluye en la solución. El objetivo del algoritmo es minimizar el número de vértices excluidos al agregar cada vértice al camino.
+	El algoritmo \textit{BMA} (Bellman-Ford Maximum Independent Set Approximation) implementado en \cite{bellman-ford}  se utiliza para encontrar un conjunto independiente máximo en un grafo. Este enfoque redefine el problema en términos de encontrar un camino de costo mínimo en un grafo ponderado. Cada vértice tiene un costo asociado, que representa el número de vértices que se excluyen si ese vértice se incluye en la solución. El objetivo del algoritmo es minimizar el número de vértices excluidos al agregar cada vértice al camino.
 	
-	Este m\'etodo se ejecuta en múltiples rondas y mantiene listas para hacer un seguimiento de los caminos encontrados, las exclusiones, los costos y los vértices previos. En la ronda inicial (ronda 0), la exclusión de cada vértice $u$ es una lista que incluye a $u$ y a sus vecinos. El costo de $u$ en esta ronda es simplemente la longitud de la lista de exclusión.
+	El m\'etodo recibe de entrada el grafo $G=(V, E)$ que encapsula los datos del problema. Este se ejecuta en múltiples rondas y mantiene listas para hacer un seguimiento de los caminos encontrados, las exclusiones, los costos y los vértices previos. En la ronda inicial (ronda 0), la lista de exclusión de cada vértice $u$ incluye a $u$ y a sus vecinos. El costo de $u$ en esta ronda es simplemente la longitud de la lista de exclusión.
 	
 	En las rondas siguientes, el algoritmo considera pares de vértices $(u, v)$ como candidatos para ser agregados al camino. El vértice $u$ se considera si su costo en la ronda actual es menor que infinito, lo cual indica que fue agregado en la ronda anterior. Si se encuentra un candidato $v$, el algoritmo verifica si agregarlo resultaría en un costo menor para $v$ en la siguiente ronda. Si se cumple esta condición, se actualizan los valores de exclusión, costo y vértice previo para $v$.
 	
-	El algoritmo continúa en cada ronda hasta que no se puedan agregar más vértices a ningún camino (conjunto independiente). En este punto, se puede rastrear cada vértice en la última ronda utilizando su vértice anterior para formar el conjunto independiente aproximado. El tamaño de este conjunto aproximado es igual a la última ronda más uno.
+	El algoritmo continúa en cada ronda hasta que no se puedan agregar más vértices a ningún camino (conjunto independiente). En este punto, se puede rastrear cada vértice en la última ronda utilizando su vértice anterior para formar el conjunto independiente aproximado. El tamaño de este conjunto aproximado es igual a la última ronda más uno. 
 	
+	La complejidad temporal de este algoritmo es aproximadamente $O(n(n^2-m))$, donde $n = |V|$ y $m = |E|$.
+	
+	%  \vspace{1em}
+	%  \textbf{Pseudoc\'odigo}
+	%  
+	%  \begin{algorithm}[H]
+		%    
+		%    \algblock[TryCatchFinally]{try}{endtry}
+		%    \algcblock[TryCatchFinally]{TryCatchFinally}{finally}{endtry}
+		%    \algcblockdefx[TryCatchFinally]{TryCatchFinally}{catch}{endtry}
+		%    [1]{\textbf{catch} #1}
+		%    {\textbf{end try}}
+		%    \begin{algorithmic}[1]
+			%      \Function{BMA}{$G$}
+			%        \State $I_G$ = []
+			%        \ForAll{u $\in$ V}
+			%        \State \textit{Exclude[u,0] $\leftarrow$ \{u\}}
+			%        \State \textit{Cost[u,0] $\leftarrow$ 1}
+			%        \State \textit{Previous[u,0] $\leftarrow$ None}      
+			%          \For{\textit{v in G.neighbor(u)}}
+			%          \State \textit{Exclude[u,0] $\leftarrow$ Exclude[u,0] $\cup$ \{v\}}
+			%          \State \textit{Cost[u,0] $\leftarrow$ Cost[u,0] + 1}
+			%          \EndFor
+			%          \For{\textit{1 $\leq$ round $\leq$ |V|}}
+			%          \State \textit{Previous[u, round] $\leftarrow$ None}
+			%          \State \textit{Cost[u,0] $\leftarrow$ $\infty$}
+			%          \EndFor
+			%        \EndFor
+			%        \For{\textit{0 $\leq$ round $\leq$ |V|-1}}
+			%          \ForAll{\textit{(u,v)}}
+			%          \State\textit{ u $\in$ V, v $\in$ {V\ Exclude[u,round]}}
+			%          \If{\textit{Cost[u,round] < $\infty$}}
+			%          \State \textit{vExclude $\leftarrow$ Exclude[u, round] $\cup$ \{v\}}
+			%          \State \textit{vCost $\leftarrow$ Cost[u, round] + 1}
+			%            \For{\textit{j in G.neighbor(v)}}
+			%            \If{\textit{j $\notin$ vExclude}}
+			%            \State \textit{vExclude $\leftarrow$ vExclude $\in$ {j}}
+			%            \State \textit{vCost $\leftarrow$ vCost + 1}
+			%            \EndIf
+			%            \EndFor
+			%            \If{\textit{Cost[v, round + 1] > vCost}}
+			%            \State \textit{Previous[v, round + 1] $\leftarrow$ u}
+			%            \State\textit{Exclude[v, round + 1] $\leftarrow$ vExclude}
+			%            \State \textit{Cost[v, round + 1] $\leftarrow$ vCost}
+			%            \EndIf
+			%          \EndIf      
+			%          \EndFor
+			%          \If{no change in \textit{Cost} at this round}
+			%          \State\textit{ lastRound $\leftarrow$ round}
+			%          \State \textit{lastVexted $\leftarrow$ v}
+			%          \State \textbf{break}          
+			%          \EndIf
+			%        \EndFor
+			%      \State \textit{t $\leftarrow$ lastVertex}
+			%      \While{\textit{t not None}}
+			%      \State $I_G$ $\leftarrow$ $I_G$ $\cup$ {t}
+			%      \State\textit{ t $\leftarrow$ Previous[t, lastRound] }
+			%      \State \textit{lastRound -= 1}
+			%      \EndWhile
+			%      
+			%      \Return $I_G$
+			%      \EndFunction 
+			%    \end{algorithmic}
+		%    
+	%  \end{algorithm}
+
 	\section{Generador de casos de prueba}
 	
 	En \textit{src/app/generator.py} fue implementado un generador, el cual recibe una cantidad $ s $ de muestras a producir, genera valores random con el formato de entrada de los algoritmos implementados, halla la soluci\'on \'optima con $ backtrack $ y las guarda en $ json/test\_cases.json $. Se generaron 3000 casos de prueba.
 	
 	\section{Tester}
-	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. La soluci\'on implementada fue testeada para todos los casos de prueba generados y puede encontrarse en $ json/tests/corruption\_strategy\_solution.json $ .
+	En \textit{src/app/tester.py} fue implementado un tester, que recibe una funci\'on y prueba el desempe\~no de la misma en cuanto a si obtuvo la soluci\'on \'optima o no, y el tiempo que demor\'o en hacerlo, comparando con los casos de prueba obtenidos con el generador. Adem\'as, estos resultados se guardan en un $ .json $ con el nombre de la funci\'on en la carpeta tests. Las soluciones implementadas fueron testeadas para todos los casos de prueba generados y pueden encontrarse en el directorio $ json/tests/ $ .
 	
 	\section{Comparaci\'on de soluciones implementadas}          
 
-    A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests. Como podemos observar, en los casos analizados, el \textit{backtrack} puede demorar hasta 2 minutos y medio en ejecutarse, aunque la mayor\'ia de los casos oscilan entre 0 y 20 segundos. La soluci\'on con programaci\'on lineal para todos los casos demora menos de 0.02 segundos. La aproximaci\'on basada en Bellman Ford prob\'o tener un 91.5\% de efectividad con 255 casos fallidos, todos demorando menos de 0.017 segundos. Por \'ultimo la soluci\'on mediante algoritmo gen\'etico para 100 generaciones tuvo un 93.5\% de efectividad con 195 casos fallidos, tomando un tiempo menor a los 0.004 segundos en la ejecuci\'on de los mismos. 
+    A continuaci\'on se muestra una gr\'afica por cada algoritmo con el tiempo que demor\'o en cada uno de los 3000 tests, mostr\'andose en rojo los tests fallidos. Como se puede observar, en los casos analizados, el \textit{backtrack} puede demorar hasta 2 minutos y medio en ejecutarse, aunque la mayor\'ia de los casos oscilan entre 0 y 20 segundos. La soluci\'on con \textit{programaci\'on lineal} para todos los casos demora menos de 0.02 segundos y son todos correctos. La aproximaci\'on basada en \textit{Bellman Ford} tarda menos de 0.017 segundos y prob\'o tener un 91.5\% de efectividad con 255 casos fallidos. Por \'ultimo, la soluci\'on mediante \textit{algoritmo gen\'etico} para 100 generaciones toma un tiempo menor a los 0.004 segundos en la ejecuci\'on de todos los casos y tuvo un 93.5\% de efectividad con 195 fallos. 
    
     \begin{center}
-    	\includegraphics[width=6.5cm]{Backtrack_results.png}
-    \end{center}  
-	
-	\begin{center}
-		\includegraphics[width=6.5cm]{LP_results}
-		\includegraphics[width=6.5cm]{GA_results}
-		\includegraphics[width=6.5cm]{BMA_results}
+    	\includegraphics[width=7cm]{Backtrack_results.png}
+		\includegraphics[width=7cm]{LP_results}
+		\includegraphics[width=7cm]{GA_results}
+		\includegraphics[width=7cm]{BMA_results}
 	\end{center}
  
     Adem\'as, en la siguiente gr\'afica se ofrece una comparaci\'on del tiempo promedio que le toma a cada algoritmo ejecutar los casos de prueba. 
@@ -278,7 +344,7 @@
     	\includegraphics[width=12cm]{Bar_comparative_plot.png}
     \end{center}
 	
-	A pesar de que el simplex tuvo una efectividad del 100\% mientras se muestra relativamente r\'apido, no se garantiza que para entradas m\'as grandes que las que pueden generarse por el backtrack sea eficiente. Comparando el tiempo de ejecuci\'on y el porciento de efectividad, y teniendo en cuenta el comportamiento para entradas m\'as grandes, se concluye que el algoritmo gen\'etico es el de mejor rendimiento y el m\'as recomendable para ayudar a Kevin a establecer el calendario de ex\'amenes.
+	A pesar de que el simplex tuvo una efectividad del 100\% mientras se muestra relativamente r\'apido, no se garantiza que para entradas m\'as grandes que las que pueden generarse con el backtrack sea eficiente. Comparando el tiempo de ejecuci\'on y el porciento de efectividad, y teniendo en cuenta el posible comportamiento para entradas m\'as grandes, se concluye que el algoritmo gen\'etico es el m\'as recomendable para ayudar a Kevin a establecer el calendario de ex\'amenes.
 	
 	\begin{thebibliography}
 		a
@@ -287,6 +353,10 @@
 		4ta Edici\'on.		
 		Cambridge, Massachusetts.
 		2022.
+		\bibitem{bellman-ford} Dahshan, M.H. 
+		\emph{Maximum Independent Set Approximation Based on Bellman-Ford Algorithm}. 
+		Arab J Sci Eng 39, 
+		7003–7011. 2014. 
 	\end{thebibliography}
 \end{document}
 
